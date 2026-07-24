@@ -26,7 +26,9 @@ function CategoryPage() {
 
   const filtered = useMemo(() => {
     let list = [...products];
-    if (["kits","perfumes","skincare","bath","masculino"].includes(slug)) list = list.filter(p => p.category === slug);
+    if (["feminino","masculino","acessorios","calcados","conjuntos"].includes(slug)) list = list.filter(p => p.category === slug);
+    else if (slug === "novidades") list = list.filter(p => p.isNew || p.badge === "Novo");
+    else if (slug === "promocoes") list = list.filter(p => !!p.oldPrice || p.badge === "Promoção");
     else if (slug === "promocoes") list = list.filter(p => p.oldPrice);
     else if (["lancamentos","bestsellers"].includes(slug)) list = list.filter(p => p.collection === slug);
     list = list.filter(p => p.price <= maxPrice);

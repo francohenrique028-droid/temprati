@@ -47,9 +47,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "luxo — cosméticos e perfumaria premium" },
-      { name: "description", content: "luxo sem igual: perfumes, skincare, bath & body e kits exclusivos." },
-      { property: "og:title", content: "luxo — cosméticos e perfumaria premium" },
+      { title: "luxo — moda premium" },
+      { name: "description", content: "luxo sem igual: roupas, calçados e acessórios com design atemporal." },
+      { property: "og:title", content: "luxo — moda premium" },
       { property: "og:description", content: "luxo sem igual." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
