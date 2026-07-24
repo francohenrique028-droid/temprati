@@ -7,7 +7,7 @@ import bannerMobile from "@/assets/banner-mobile.png.asset.json";
 import catVestidos from "@/assets/cat-vestidos.jpg.asset.json";
 import catBlusas from "@/assets/cat-blusas.jpg.asset.json";
 import catCalcas from "@/assets/cat-calcas.jpg.asset.json";
-import catSkincare from "@/assets/cat-skincare.jpg";
+import catCalcados from "@/assets/cat-calcados.jpg.asset.json";
 import catBath from "@/assets/cat-bath.jpg";
 import catBolsas from "@/assets/cat-bolsas.jpg";
 import { ProductGrid } from "@/components/product/ProductGrid";
@@ -32,7 +32,7 @@ const categories = [
   { name: "vestidos", href: "/categoria/vestidos", img: catVestidos.url },
   { name: "blusas", href: "/categoria/blusas", img: catBlusas.url },
   { name: "calças", href: "/categoria/calcas", img: catCalcas.url },
-  { name: "calçados", href: "/categoria/calcados", img: catSkincare },
+  { name: "calçados", href: "/categoria/calcados", img: catCalcados.url },
   { name: "acessórios", href: "/categoria/acessorios", img: catBath },
   { name: "bolsas", href: "/categoria/bolsas", img: catBolsas },
 ];
