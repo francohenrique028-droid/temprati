@@ -17,26 +17,26 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "luxo — moda premium feminina e masculina" },
-      { name: "description", content: "luxo sem igual: roupas, calçados e acessórios com design atemporal, tecidos nobres e caimento impecável." },
-      { property: "og:title", content: "luxo — moda premium" },
-      { property: "og:description", content: "luxo sem igual: roupas, calçados e acessórios com design atemporal." },
+      { title: "#temprati — moda feminina premium" },
+      { name: "description", content: "roupas, calçados e acessórios femininos com design atemporal, tecidos nobres e caimento impecável." },
+      { property: "og:title", content: "#temprati — moda feminina premium" },
+      { property: "og:description", content: "roupas, calçados e acessórios femininos com design atemporal." },
     ],
   }),
   component: HomePage,
 });
 
 const categories = [
-  { name: "feminino", href: "/categoria/feminino", img: catKits },
-  { name: "masculino", href: "/categoria/masculino", img: catPerfumes },
-  { name: "acessórios", href: "/categoria/acessorios", img: catSkincare },
-  { name: "calçados", href: "/categoria/calcados", img: catBath },
+  { name: "vestidos", href: "/categoria/vestidos", img: catKits },
+  { name: "blusas", href: "/categoria/blusas", img: catPerfumes },
+  { name: "calçados", href: "/categoria/calcados", img: catSkincare },
+  { name: "acessórios", href: "/categoria/acessorios", img: catBath },
 ];
 
 const testimonials = [
   { name: "marina c.", text: "as peças têm um caimento impecável, tecido de qualidade e acabamento digno de marca de luxo." },
-  { name: "rafael l.", text: "camisas que vestem muito bem, tecido nobre e corte perfeito. virei cliente fiel." },
-  { name: "beatriz s.", text: "meu vestido chegou rápido, super bem embalado e ainda mais bonito do que na foto!" },
+  { name: "juliana p.", text: "amei meu vestido! modelagem perfeita, tecido leve e super confortável para usar o dia todo." },
+  { name: "beatriz s.", text: "meu pedido chegou rápido, super bem embalado e ainda mais bonito do que na foto!" },
 ];
 
 function HomePage() {
@@ -144,20 +144,20 @@ function HomePage() {
         <ProductGrid items={newArrivals()} />
       </section>
 
-      {/* PARA ELES */}
+      {/* NOVA COLEÇÃO */}
       <section className="container-x py-16">
         <div className="grid items-center gap-8 rounded-2xl border border-border bg-secondary/50 p-8 md:grid-cols-2 md:p-14">
           <div>
-            <p className="text-xs font-medium lowercase tracking-wider text-primary">para eles</p>
-            <h3 className="mt-3 text-3xl font-semibold lowercase tracking-tight md:text-5xl">masculino</h3>
+            <p className="text-xs font-medium lowercase tracking-wider text-primary">nova coleção</p>
+            <h3 className="mt-3 text-3xl font-semibold lowercase tracking-tight md:text-5xl">essenciais femininos</h3>
             <p className="mt-4 max-w-md text-sm text-muted-foreground md:text-base">
-              peças com corte impecável e tecidos nobres para o homem contemporâneo. sofisticação em tons neutros.
+              peças versáteis, tecidos leves e modelagens que valorizam. do casual ao sofisticado, um look para cada momento.
             </p>
-            <Link to="/categoria/masculino" className="mt-6 inline-block rounded-full border border-foreground bg-foreground px-7 py-3 text-sm font-medium lowercase text-background transition-colors hover:bg-transparent hover:text-foreground">
-              explorar
+            <Link to="/categoria/novidades" className="mt-6 inline-block rounded-full border border-foreground bg-foreground px-7 py-3 text-sm font-medium lowercase text-background transition-colors hover:bg-transparent hover:text-foreground">
+              explorar coleção
             </Link>
           </div>
-          <img src={bannerImg} alt="Coleção masculina" loading="lazy" width={1200} height={700} className="h-64 w-full rounded-xl object-cover shadow-soft md:h-80" />
+          <img src={bannerImg} alt="Nova coleção feminina" loading="lazy" width={1200} height={700} className="h-64 w-full rounded-xl object-cover shadow-soft md:h-80" />
         </div>
       </section>
 

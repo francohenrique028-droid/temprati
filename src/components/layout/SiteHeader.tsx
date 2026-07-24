@@ -14,24 +14,24 @@ const nav: NavItem[] = [
     label: "novidades",
     to: "/categoria/novidades",
     mega: [
-      { title: "recém-chegados", links: ["lançamentos", "pré-venda", "edição limitada"] },
-      { title: "destaques", links: ["mais vendidos", "coleção atual", "looks completos"] },
+      { title: "recém-chegadas", links: ["lançamentos", "pré-venda", "edição limitada"] },
+      { title: "destaques", links: ["mais vendidas", "coleção atual", "looks completos"] },
     ],
   },
   {
-    label: "feminino",
+    label: "roupas",
     to: "/categoria/feminino",
     mega: [
-      { title: "roupas", links: ["vestidos", "blusas", "calças", "saias"] },
+      { title: "peças", links: ["vestidos", "blusas", "calças", "saias"] },
       { title: "outros", links: ["conjuntos", "alfaiataria", "tricot"] },
     ],
   },
   {
-    label: "masculino",
-    to: "/categoria/masculino",
+    label: "calçados",
+    to: "/categoria/calcados",
     mega: [
-      { title: "roupas", links: ["camisas", "camisetas", "calças", "bermudas"] },
-      { title: "outros", links: ["jaquetas", "moletons", "alfaiataria"] },
+      { title: "modelos", links: ["tênis", "scarpin", "sandálias", "botas"] },
+      { title: "estilos", links: ["casual", "festa", "dia a dia"] },
     ],
   },
   {
@@ -42,7 +42,7 @@ const nav: NavItem[] = [
       { title: "detalhes", links: ["bijoux", "cachecóis", "chapéus"] },
     ],
   },
-  { label: "calçados", to: "/categoria/calcados" },
+  { label: "coleções", to: "/categoria/novidades" },
   { label: "promoções", to: "/categoria/promocoes" },
 ];
 

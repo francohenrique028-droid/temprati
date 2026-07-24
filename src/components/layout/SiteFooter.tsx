@@ -20,7 +20,7 @@ export function SiteFooter() {
           </div>
           <FooterCol title="institucional" links={[["sobre","/sobre"],["contato","/contato"],["lojas","/contato"]]} />
           <FooterCol title="ajuda" links={[["trocas e devoluções","/politica-de-trocas"],["política de privacidade","/politica-de-privacidade"],["envio","/politica-de-trocas"]]} />
-          <FooterCol title="compre" links={[["feminino","/categoria/feminino"],["masculino","/categoria/masculino"],["acessórios","/categoria/acessorios"],["calçados","/categoria/calcados"]]} />
+          <FooterCol title="compre" links={[["vestidos","/categoria/vestidos"],["blusas","/categoria/blusas"],["calçados","/categoria/calcados"],["acessórios","/categoria/acessorios"]]} />
         </div>
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-white/50 md:flex-row">
           <p>© {new Date().getFullYear()} luxo. todos os direitos reservados.</p>
