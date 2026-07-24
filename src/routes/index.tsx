@@ -8,6 +8,7 @@ import catKits from "@/assets/cat-kits.jpg";
 import catPerfumes from "@/assets/cat-perfumes.jpg";
 import catSkincare from "@/assets/cat-skincare.jpg";
 import catBath from "@/assets/cat-bath.jpg";
+import catBolsas from "@/assets/cat-bolsas.jpg";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { bestsellers, newArrivals } from "@/lib/products";
@@ -31,6 +32,7 @@ const categories = [
   { name: "blusas", href: "/categoria/blusas", img: catPerfumes },
   { name: "calçados", href: "/categoria/calcados", img: catSkincare },
   { name: "acessórios", href: "/categoria/acessorios", img: catBath },
+  { name: "bolsas", href: "/categoria/bolsas", img: catBolsas },
 ];
 
 const testimonials = [
