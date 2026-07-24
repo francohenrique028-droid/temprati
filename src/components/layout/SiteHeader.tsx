@@ -104,8 +104,8 @@ export function SiteHeader() {
               <button onClick={() => setMobileOpen(true)} className="lg:hidden -ml-2 p-2" aria-label="Menu">
                 <Menu className="h-5 w-5" />
               </button>
-              <Link to="/" className="text-2xl font-semibold lowercase tracking-tight text-primary">
-                luxo<span className="italic font-normal text-foreground">.</span>
+              <Link to="/" className="flex items-center" aria-label="início">
+                <img src={logoAsset.url} alt="luxo" className="h-10 w-auto md:h-12" />
               </Link>
             </div>
 
