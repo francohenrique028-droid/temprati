@@ -84,14 +84,14 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           >
             {product.name}
           </Link>
-          <p className="text-[11px] lowercase text-muted-foreground">{installment(product.price)}</p>
+          <p className="min-h-[16px] text-[11px] leading-4 lowercase text-muted-foreground line-clamp-1">{installment(product.price)}</p>
 
-          <div className="mt-auto flex items-center justify-between gap-2">
-            <div className="flex flex-col">
+          <div className="mt-auto flex items-end justify-between gap-2">
+            <div className="flex min-w-0 flex-col">
               <span className="text-base font-semibold text-foreground">{formatPrice(product.price)}</span>
-              {product.oldPrice && (
-                <span className="text-xs text-muted-foreground line-through">{formatPrice(product.oldPrice)}</span>
-              )}
+              <span className="min-h-[16px] text-xs text-muted-foreground line-through">
+                {product.oldPrice ? formatPrice(product.oldPrice) : "\u00A0"}
+              </span>
             </div>
             <motion.button
               whileTap={{ scale: 0.95 }}
