@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import heroImg from "@/assets/hero.jpg";
+import { StaticBanner } from "@/components/layout/StaticBanner";
 import bannerImg from "@/assets/banner.jpg";
 import catMen from "@/assets/cat-men.jpg";
 import catWomen from "@/assets/cat-women.jpg";
