@@ -42,8 +42,9 @@ function HomePage() {
     <>
       {/* HERO — banner liso rosa */}
       <section className="w-full">
-        <div className="h-[60vh] min-h-[400px] w-full bg-secondary" />
+        <div className="h-[60vh] min-h-[400px] w-full bg-secondary md:h-auto md:min-h-0 md:aspect-[4000/1302]" />
       </section>
+
 
 
       {/* CATEGORIAS CIRCULARES */}
