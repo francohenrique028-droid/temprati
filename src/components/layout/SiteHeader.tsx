@@ -5,7 +5,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 
-const nav = [
+type MegaCol = { title: string; links: string[] };
+type NavItem = { label: string; to: string; mega?: MegaCol[] };
+
+const nav: NavItem[] = [
   {
     label: "Novidades",
     to: "/novidades",
@@ -35,7 +38,7 @@ const nav = [
   { label: "Acessórios", to: "/categoria/acessorios" },
   { label: "Promoções", to: "/categoria/promocoes" },
   { label: "Contato", to: "/contato" },
-] as const;
+];
 
 const announcements = [
   "Frete grátis acima de R$ 499",
