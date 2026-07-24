@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import logoAsset from "@/assets/logo.png.asset.json";
 
 type MegaCol = { title: string; links: string[] };
 type NavItem = { label: string; to: string; mega?: MegaCol[] };
