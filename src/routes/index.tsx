@@ -7,6 +7,7 @@ import catPerfumes from "@/assets/cat-perfumes.jpg";
 import catSkincare from "@/assets/cat-skincare.jpg";
 import catBath from "@/assets/cat-bath.jpg";
 import { ProductGrid } from "@/components/product/ProductGrid";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { bestsellers, newArrivals } from "@/lib/products";
 import { useState } from "react";
 import { toast } from "sonner";
