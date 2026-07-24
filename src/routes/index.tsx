@@ -44,7 +44,11 @@ function HomePage() {
     <>
       {/* HERO — mobile liso rosa, desktop com imagem */}
       <section className="w-full">
-        <div className="w-full bg-secondary aspect-[2496/3000] md:hidden" />
+        <img
+          src={bannerMobile.url}
+          alt="banner"
+          className="block w-full aspect-[2496/3000] object-cover md:hidden"
+        />
         <img
           src={bannerDesktop.url}
           alt="banner"
