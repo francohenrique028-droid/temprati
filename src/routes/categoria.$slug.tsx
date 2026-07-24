@@ -26,9 +26,9 @@ function CategoryPage() {
 
   const filtered = useMemo(() => {
     let list = [...products];
-    if (["masculino","feminino","acessorios","calcados"].includes(slug)) list = list.filter(p => p.category === slug);
+    if (["kits","perfumes","skincare","bath","masculino"].includes(slug)) list = list.filter(p => p.category === slug);
     else if (slug === "promocoes") list = list.filter(p => p.oldPrice);
-    else if (["verao","inverno","casual","social","esportivo"].includes(slug)) list = list.filter(p => p.collection === slug);
+    else if (["lancamentos","bestsellers"].includes(slug)) list = list.filter(p => p.collection === slug);
     list = list.filter(p => p.price <= maxPrice);
     if (sizes.length) list = list.filter(p => p.sizes.some(s => sizes.includes(s)));
     if (colors.length) list = list.filter(p => p.colors.some(c => colors.includes(c)));
@@ -42,7 +42,7 @@ function CategoryPage() {
 
   const allSizes = Array.from(new Set(products.flatMap(p => p.sizes)));
   const allColors = Array.from(new Set(products.flatMap(p => p.colors)));
-  const allCollections = ["verao","inverno","casual","social","esportivo"];
+  const allCollections = ["lancamentos","bestsellers"];
 
   return (
     <div className="container-x py-10">

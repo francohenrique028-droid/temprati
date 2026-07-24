@@ -10,41 +10,45 @@ type NavItem = { label: string; to: string; mega?: MegaCol[] };
 
 const nav: NavItem[] = [
   {
-    label: "Novidades",
-    to: "/novidades",
+    label: "kits",
+    to: "/categoria/kits",
     mega: [
-      { title: "Lançamentos", links: ["Coleção Outono 26", "Últimas peças", "Editorial"] },
-      { title: "Destaques", links: ["Mais desejados", "Voltou ao estoque", "Presentes"] },
+      { title: "por ocasião", links: ["presente", "dia a dia", "viagem"] },
+      { title: "destaques", links: ["mais vendidos", "lançamentos", "edição limitada"] },
     ],
   },
   {
-    label: "Masculino",
-    to: "/categoria/masculino",
+    label: "bath & body",
+    to: "/categoria/bath",
     mega: [
-      { title: "Vestuário", links: ["Camisas", "Camisetas", "Alfaiataria", "Tricôs", "Casacos"] },
-      { title: "Calçados", links: ["Tênis", "Sapatos", "Botas"] },
-      { title: "Acessórios", links: ["Cintos", "Bolsas", "Óculos"] },
+      { title: "corpo", links: ["hidratante", "óleo corporal", "esfoliante"] },
+      { title: "banho", links: ["sabonete líquido", "sais de banho", "bucha"] },
     ],
   },
   {
-    label: "Feminino",
-    to: "/categoria/feminino",
+    label: "skincare",
+    to: "/categoria/skincare",
     mega: [
-      { title: "Vestuário", links: ["Vestidos", "Blusas", "Alfaiataria", "Tricôs", "Casacos"] },
-      { title: "Calçados", links: ["Scarpins", "Botas", "Tênis"] },
-      { title: "Acessórios", links: ["Bolsas", "Cintos", "Joias"] },
+      { title: "rosto", links: ["sérum", "hidratante", "protetor solar"] },
+      { title: "cuidado", links: ["limpeza", "tônico", "máscara"] },
     ],
   },
-  { label: "Acessórios", to: "/categoria/acessorios" },
-  { label: "Promoções", to: "/categoria/promocoes" },
-  { label: "Contato", to: "/contato" },
+  {
+    label: "perfumes",
+    to: "/categoria/perfumes",
+    mega: [
+      { title: "eau de parfum", links: ["florais", "amadeirados", "cítricos"] },
+      { title: "coleções", links: ["clássicos", "lançamentos", "miniaturas"] },
+    ],
+  },
+  { label: "masculino", to: "/categoria/masculino" },
 ];
 
 const announcements = [
-  "Frete grátis acima de R$ 499",
-  "Trocas grátis em até 30 dias",
-  "Pagamento em até 10x sem juros",
-  "Nova coleção Outono 26 disponível",
+  "frete grátis acima de R$ 199",
+  "ganhe brinde nas compras acima de R$ 299",
+  "10% off no pix",
+  "novidades toda semana",
 ];
 
 export function SiteHeader() {
@@ -81,7 +85,7 @@ export function SiteHeader() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -10, opacity: 0 }}
               transition={{ duration: 0.35, ease: [0.2, 0.6, 0.2, 1] }}
-              className="text-[10.5px] font-medium uppercase tracking-[0.25em]"
+              className="text-[11px] font-medium lowercase tracking-wide"
             >
               {announcements[ann]}
             </motion.span>
@@ -91,45 +95,47 @@ export function SiteHeader() {
 
       <header
         onMouseLeave={() => setHovered(null)}
-        className={`sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_rgba(31,31,31,0.05)]" : ""}`}
+        className={`sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_rgba(236,72,153,0.06)]" : ""}`}
       >
         <div className="container-x">
-          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4">
-            <button onClick={() => setMobileOpen(true)} className="lg:hidden -ml-2 p-2" aria-label="Menu">
-              <Menu className="h-5 w-5" />
-            </button>
-            <div className="hidden lg:block" />
-            <Link to="/" className="justify-self-center text-[20px] font-semibold tracking-[0.4em] uppercase">
-              Ateliê
-            </Link>
-            <div className="flex items-center gap-0.5 justify-self-end">
-              <button onClick={() => setSearchOpen(v => !v)} aria-label="Pesquisar" className="p-2 hover:opacity-60 transition-opacity"><Search className="h-[18px] w-[18px]" /></button>
-              <Link to="/favoritos" aria-label="Favoritos" className="relative p-2 hover:opacity-60">
+          <div className="flex items-center justify-between gap-4 py-4">
+            <div className="flex items-center gap-4 flex-1">
+              <button onClick={() => setMobileOpen(true)} className="lg:hidden -ml-2 p-2" aria-label="Menu">
+                <Menu className="h-5 w-5" />
+              </button>
+              <Link to="/" className="text-2xl font-semibold lowercase tracking-tight text-primary">
+                luxo<span className="italic font-normal text-foreground">.</span>
+              </Link>
+            </div>
+
+            {/* main nav (center) */}
+            <nav className="hidden lg:flex items-center justify-center gap-8 text-sm font-medium lowercase">
+              {nav.map(n => (
+                <div key={n.to} onMouseEnter={() => setHovered(n.label)}>
+                  <Link
+                    to={n.to}
+                    className="relative py-1 transition-colors hover:text-primary after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-px after:origin-center after:scale-x-0 after:bg-primary after:transition-transform hover:after:scale-x-100"
+                    activeProps={{ className: "text-primary [&]:after:scale-x-100" }}
+                  >
+                    {n.label}
+                  </Link>
+                </div>
+              ))}
+            </nav>
+
+            <div className="flex items-center gap-0.5 justify-end flex-1">
+              <button onClick={() => setSearchOpen(v => !v)} aria-label="Pesquisar" className="p-2 hover:text-primary transition-colors"><Search className="h-[18px] w-[18px]" /></button>
+              <Link to="/favoritos" aria-label="Favoritos" className="relative p-2 hover:text-primary transition-colors">
                 <Heart className="h-[18px] w-[18px]" />
                 {ids.size > 0 && <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-primary" />}
               </Link>
-              <Link to="/conta" aria-label="Conta" className="p-2 hover:opacity-60 hidden sm:inline-flex"><User className="h-[18px] w-[18px]" /></Link>
-              <button onClick={() => openCart(true)} aria-label="Carrinho" className="relative p-2 hover:opacity-60">
+              <Link to="/conta" aria-label="Conta" className="p-2 hover:text-primary transition-colors hidden sm:inline-flex"><User className="h-[18px] w-[18px]" /></Link>
+              <button onClick={() => openCart(true)} aria-label="Carrinho" className="relative p-2 hover:text-primary transition-colors">
                 <ShoppingBag className="h-[18px] w-[18px]" />
-                {count > 0 && <span className="absolute -top-0 -right-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium text-primary-foreground">{count}</span>}
+                {count > 0 && <span className="absolute -top-0 -right-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">{count}</span>}
               </button>
             </div>
           </div>
-
-          {/* main nav */}
-          <nav className="hidden lg:flex justify-center gap-10 pb-4 text-[12px] font-medium tracking-[0.15em] uppercase">
-            {nav.map(n => (
-              <div key={n.to} onMouseEnter={() => setHovered(n.label)}>
-                <Link
-                  to={n.to}
-                  className="relative py-1 transition-colors hover:text-muted-foreground after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-px after:origin-center after:scale-x-0 after:bg-primary after:transition-transform hover:after:scale-x-100"
-                  activeProps={{ className: "text-primary [&]:after:scale-x-100" }}
-                >
-                  {n.label}
-                </Link>
-              </div>
-            ))}
-          </nav>
 
           {/* Mega menu */}
           <AnimatePresence>
@@ -144,10 +150,10 @@ export function SiteHeader() {
                 <div className="container-x grid grid-cols-4 gap-10 py-10">
                   {nav.find(n => n.label === hovered)?.mega?.map(col => (
                     <div key={col.title}>
-                      <p className="mb-4 text-[10.5px] font-medium uppercase tracking-[0.25em] text-muted-foreground">{col.title}</p>
+                      <p className="mb-4 text-[11px] font-medium lowercase tracking-wide text-primary">{col.title}</p>
                       <ul className="space-y-2.5">
                         {col.links.map(l => (
-                          <li key={l}><Link to={nav.find(n => n.label === hovered)!.to} className="text-sm text-foreground/80 transition-colors hover:text-foreground">{l}</Link></li>
+                          <li key={l}><Link to={nav.find(n => n.label === hovered)!.to} className="text-sm lowercase text-foreground/80 transition-colors hover:text-primary">{l}</Link></li>
                         ))}
                       </ul>
                     </div>
@@ -159,10 +165,10 @@ export function SiteHeader() {
 
           {searchOpen && (
             <div className="border-t border-border py-4">
-              <form onSubmit={(e) => { e.preventDefault(); window.location.href = `/busca?q=${encodeURIComponent(q)}`; }} className="mx-auto flex max-w-2xl items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3">
+              <form onSubmit={(e) => { e.preventDefault(); window.location.href = `/busca?q=${encodeURIComponent(q)}`; }} className="mx-auto flex max-w-2xl items-center gap-3 rounded-full border border-border bg-card px-5 py-3">
                 <Search className="h-4 w-4 text-muted-foreground" />
-                <input autoFocus value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar por peça, coleção..." className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
-                <button type="button" onClick={() => setSearchOpen(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+                <input autoFocus value={q} onChange={e => setQ(e.target.value)} placeholder="buscar por produto, categoria..." className="w-full bg-transparent text-sm lowercase outline-none placeholder:text-muted-foreground" />
+                <button type="button" onClick={() => setSearchOpen(false)} className="text-muted-foreground hover:text-primary"><X className="h-4 w-4" /></button>
               </form>
             </div>
           )}
@@ -174,15 +180,15 @@ export function SiteHeader() {
         <div onClick={() => setMobileOpen(false)} className={`absolute inset-0 bg-black/30 transition-opacity ${mobileOpen ? "opacity-100" : "opacity-0"}`} />
         <aside className={`absolute inset-y-0 left-0 w-[85%] max-w-sm bg-background p-6 shadow-2xl transition-transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
           <div className="flex items-center justify-between">
-            <span className="text-lg font-semibold tracking-[0.35em] uppercase">Ateliê</span>
+            <span className="text-2xl font-semibold lowercase text-primary">luxo<span className="italic font-normal text-foreground">.</span></span>
             <button onClick={() => setMobileOpen(false)}><X className="h-5 w-5" /></button>
           </div>
           <nav className="mt-8 flex flex-col gap-1">
             {nav.map(n => (
-              <Link key={n.to} to={n.to} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base hover:bg-secondary">{n.label}</Link>
+              <Link key={n.to} to={n.to} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">{n.label}</Link>
             ))}
-            <Link to="/conta" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base hover:bg-secondary">Minha Conta</Link>
-            <Link to="/favoritos" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base hover:bg-secondary">Favoritos</Link>
+            <Link to="/conta" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">minha conta</Link>
+            <Link to="/favoritos" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">favoritos</Link>
           </nav>
         </aside>
       </div>

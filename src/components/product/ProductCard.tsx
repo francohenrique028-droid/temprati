@@ -24,16 +24,16 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       <Link
         to="/produto/$slug"
         params={{ slug: product.slug }}
-        className="relative block overflow-hidden bg-card"
+        className="relative block overflow-hidden rounded-xl bg-secondary shadow-soft"
       >
-        <div className="relative aspect-[4/5] w-full">
+        <div className="relative aspect-square w-full">
           <img
             src={product.images[0]}
             alt={product.name}
             loading="lazy"
             width={800}
-            height={1000}
-            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700 group-hover:opacity-0"
+            height={800}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 group-hover:opacity-0"
           />
           <img
             src={product.images[1]}
@@ -41,19 +41,19 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             aria-hidden
             loading="lazy"
             width={800}
-            height={1000}
+            height={800}
             className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100"
           />
         </div>
 
         {product.badge && (
           <span
-            className={`absolute left-3 top-3 rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] ${
+            className={`absolute left-3 top-3 rounded-full px-3 py-1 text-[10px] font-medium lowercase tracking-wide ${
               product.badge === "Promoção"
                 ? "bg-primary text-primary-foreground"
                 : product.badge === "Novo"
                 ? "bg-background text-foreground border border-border"
-                : "bg-foreground/90 text-primary-foreground"
+                : "bg-primary text-primary-foreground"
             }`}
           >
             {product.badge}
@@ -64,43 +64,45 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           onClick={(e) => {
             e.preventDefault();
             toggle(product.id);
-            toast(isFav ? "Removido dos favoritos" : "Adicionado aos favoritos");
+            toast(isFav ? "removido dos favoritos" : "adicionado aos favoritos");
           }}
-          className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-background/90 backdrop-blur-sm opacity-0 shadow-soft transition-all duration-300 group-hover:opacity-100 hover:bg-background"
+          className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-background/95 backdrop-blur-sm shadow-soft transition-all duration-300 hover:bg-background"
           aria-label="Favoritar"
         >
-          <Heart className={`h-4 w-4 ${isFav ? "fill-primary text-primary" : ""}`} />
+          <Heart className={`h-4 w-4 ${isFav ? "fill-primary text-primary" : "text-foreground"}`} />
+        </button>
+
+        {/* Buy button on hover */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            add(product);
+          }}
+          className="absolute inset-x-3 bottom-3 translate-y-2 rounded-full bg-primary py-3 text-[11px] font-medium lowercase tracking-wide text-primary-foreground opacity-0 shadow-elevated transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 hover:bg-[color-mix(in_oklab,var(--primary)_88%,black)]"
+        >
+          comprar
         </button>
       </Link>
 
       {/* Info */}
-      <div className="pt-5 text-center">
+      <div className="pt-4">
         <Link
           to="/produto/$slug"
           params={{ slug: product.slug }}
-          className="block text-[13px] font-semibold tracking-wide text-foreground transition-colors hover:text-muted-foreground"
+          className="block text-sm font-medium lowercase text-foreground transition-colors hover:text-primary"
         >
           {product.name}
         </Link>
 
-        <div className="mx-auto my-3 h-px w-full bg-border" />
-
-        <div className="flex items-baseline justify-center gap-2">
+        <div className="mt-2 flex items-baseline gap-2">
           {product.oldPrice && (
             <span className="text-xs text-muted-foreground line-through">
               {formatPrice(product.oldPrice)}
             </span>
           )}
-          <span className="text-[15px] font-semibold">{formatPrice(product.price)}</span>
+          <span className="text-base font-semibold text-primary">{formatPrice(product.price)}</span>
         </div>
-        <p className="mt-1 text-[11.5px] text-muted-foreground">{installment(product.price)}</p>
-
-        <button
-          onClick={() => add(product)}
-          className="mt-4 block w-full rounded-md bg-primary py-3.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-foreground transition-colors hover:bg-[#333]"
-        >
-          Comprar
-        </button>
+        <p className="mt-1 text-[11px] text-muted-foreground">{installment(product.price)}</p>
       </div>
     </motion.div>
   );
