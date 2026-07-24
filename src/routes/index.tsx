@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import heroImg from "@/assets/hero.jpg";
+import { StaticBanner } from "@/components/layout/StaticBanner";
 import bannerImg from "@/assets/banner.jpg";
 import catMen from "@/assets/cat-men.jpg";
 import catWomen from "@/assets/cat-women.jpg";
@@ -121,20 +122,8 @@ function HomePage() {
         </div>
       </section>
 
-      {/* BANNER INTERMEDIÁRIO */}
-      <section className="relative">
-        <div className="relative h-[420px] w-full overflow-hidden md:h-[520px]">
-          <img src={bannerImg} alt="Coleção" loading="lazy" width={1920} height={700} className="absolute inset-0 h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-black/15" />
-          <div className="container-x relative flex h-full items-center">
-            <div className="max-w-md text-white">
-              <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.3em]">Editorial</p>
-              <h3 className="text-4xl font-light leading-tight md:text-5xl">O guarda-roupa essencial.</h3>
-              <Link to="/novidades" className="mt-6 inline-block rounded-2xl bg-white px-7 py-4 text-xs font-medium uppercase tracking-[0.2em] text-primary transition-colors hover:bg-white/90">Descobrir</Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* BANNER ESTÁTICO — troque src/assets/banner.jpg pela sua imagem */}
+      <StaticBanner href="/novidades" alt="Banner promocional" />
 
       {/* DEPOIMENTOS */}
       <section className="container-x py-24">
