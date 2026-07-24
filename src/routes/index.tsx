@@ -52,31 +52,36 @@ function HomePage() {
           <p className="text-xs font-medium lowercase tracking-wider text-primary">explore</p>
           <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">categorias em destaque</h2>
         </div>
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-10">
-          {categories.map((c, i) => (
-            <motion.div
-              key={c.name}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.06 }}
-            >
-              <Link to={c.href} className="group flex flex-col items-center gap-4">
-                <div className="relative aspect-square w-full max-w-[220px] overflow-hidden rounded-full bg-secondary shadow-soft">
-                  <img
-                    src={c.img}
-                    alt={c.name}
-                    loading="lazy"
-                    width={800}
-                    height={800}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                </div>
-                <span className="text-sm font-medium lowercase tracking-wide text-foreground transition-colors group-hover:text-primary">{c.name}</span>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+        <Carousel opts={{ align: "start", loop: true }} className="relative">
+          <CarouselContent className="-ml-4 md:-ml-6">
+            {categories.map((c, i) => (
+              <CarouselItem key={c.name} className="basis-1/2 pl-4 md:basis-1/3 md:pl-6 lg:basis-1/4">
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.06 }}
+                >
+                  <Link to={c.href} className="group flex flex-col items-center gap-4">
+                    <div className="relative aspect-square w-full max-w-[220px] overflow-hidden rounded-full bg-secondary shadow-soft">
+                      <img
+                        src={c.img}
+                        alt={c.name}
+                        loading="lazy"
+                        width={800}
+                        height={800}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                    </div>
+                    <span className="text-sm font-medium lowercase tracking-wide text-foreground transition-colors group-hover:text-primary">{c.name}</span>
+                  </Link>
+                </motion.div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden md:flex -left-4" />
+          <CarouselNext className="hidden md:flex -right-4" />
+        </Carousel>
       </section>
 
       {/* MAIS VENDIDOS */}
