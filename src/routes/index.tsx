@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 
 import bannerImg from "@/assets/banner.jpg";
+import bannerDesktop from "@/assets/banner-desktop.png.asset.json";
 import catKits from "@/assets/cat-kits.jpg";
 import catPerfumes from "@/assets/cat-perfumes.jpg";
 import catSkincare from "@/assets/cat-skincare.jpg";
