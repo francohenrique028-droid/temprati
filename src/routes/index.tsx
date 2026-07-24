@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 
 import bannerImg from "@/assets/banner.jpg";
+import bannerDesktop from "@/assets/banner-desktop.png.asset.json";
 import catKits from "@/assets/cat-kits.jpg";
 import catPerfumes from "@/assets/cat-perfumes.jpg";
 import catSkincare from "@/assets/cat-skincare.jpg";
@@ -40,10 +41,16 @@ const testimonials = [
 function HomePage() {
   return (
     <>
-      {/* HERO — banner liso rosa */}
+      {/* HERO — mobile liso rosa, desktop com imagem */}
       <section className="w-full">
-        <div className="w-full bg-secondary aspect-[2496/3000] md:aspect-[4000/1302]" />
+        <div className="w-full bg-secondary aspect-[2496/3000] md:hidden" />
+        <img
+          src={bannerDesktop.url}
+          alt="banner"
+          className="hidden md:block w-full aspect-[4000/1302] object-cover"
+        />
       </section>
+
 
 
 
