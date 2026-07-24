@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import heroImg from "@/assets/hero.jpg";
+
 import bannerImg from "@/assets/banner.jpg";
 import catKits from "@/assets/cat-kits.jpg";
 import catPerfumes from "@/assets/cat-perfumes.jpg";
