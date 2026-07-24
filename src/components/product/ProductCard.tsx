@@ -24,9 +24,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.3), ease: [0.2, 0.6, 0.2, 1] }}
-      className="group relative w-full"
+      className="group relative flex h-full w-full"
     >
-      <div className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground transition-all duration-300 hover:shadow-md">
+      <div className="flex h-full w-full flex-col justify-between overflow-hidden rounded-xl border border-border bg-card text-card-foreground transition-all duration-300 hover:shadow-md">
         {/* Image */}
         <Link
           to="/produto/$slug"
