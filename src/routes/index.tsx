@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 
 import bannerImg from "@/assets/banner.jpg";
 import bannerDesktop from "@/assets/banner-desktop.png.asset.json";
+import bannerMobile from "@/assets/banner-mobile.png.asset.json";
 import catKits from "@/assets/cat-kits.jpg";
 import catPerfumes from "@/assets/cat-perfumes.jpg";
 import catSkincare from "@/assets/cat-skincare.jpg";
@@ -43,7 +44,11 @@ function HomePage() {
     <>
       {/* HERO — mobile liso rosa, desktop com imagem */}
       <section className="w-full">
-        <div className="w-full bg-secondary aspect-[2496/3000] md:hidden" />
+        <img
+          src={bannerMobile.url}
+          alt="banner"
+          className="block w-full aspect-[2496/3000] object-cover md:hidden"
+        />
         <img
           src={bannerDesktop.url}
           alt="banner"
