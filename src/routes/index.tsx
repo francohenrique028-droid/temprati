@@ -54,27 +54,7 @@ function HomePage() {
       {/* HERO */}
       <section className="relative">
         <div className="relative h-[78vh] min-h-[560px] w-full overflow-hidden">
-          <img src={heroImg} alt="Nova coleção Ateliê" width={1920} height={1080} className="absolute inset-0 h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/50 via-background/10 to-transparent" />
-          <div className="container-x relative flex h-full items-center">
-            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.2, 0.6, 0.2, 1] }} className="max-w-xl">
-              <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.3em] text-foreground/70">Nova Coleção · Outono 26</p>
-              <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
-                Elegância<br />atemporal.
-              </h1>
-              <p className="mt-6 max-w-md text-base text-muted-foreground">
-                Peças criadas para durar. Tecidos nobres, silhuetas limpas e cuidado artesanal em cada costura.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link to="/novidades" className="rounded-2xl bg-primary px-7 py-4 text-xs font-medium uppercase tracking-[0.2em] text-primary-foreground transition-colors hover:bg-[#333]">
-                  Comprar Agora
-                </Link>
-                <Link to="/categoria/feminino" className="rounded-2xl border border-primary bg-transparent px-7 py-4 text-xs font-medium uppercase tracking-[0.2em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground">
-                  Nova Coleção
-                </Link>
-              </div>
-            </motion.div>
-          </div>
+          <img src={heroImg} alt="Nova coleção" width={1920} height={1080} className="absolute inset-0 h-full w-full object-cover" />
         </div>
       </section>
 
