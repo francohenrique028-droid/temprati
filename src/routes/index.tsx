@@ -5,7 +5,7 @@ import bannerImg from "@/assets/banner.jpg";
 import bannerDesktop from "@/assets/banner-desktop.png.asset.json";
 import bannerMobile from "@/assets/banner-mobile.png.asset.json";
 import catKits from "@/assets/cat-kits.jpg";
-import catPerfumes from "@/assets/cat-perfumes.jpg";
+import catBlusas from "@/assets/cat-blusas.jpg.asset.json";
 import catSkincare from "@/assets/cat-skincare.jpg";
 import catBath from "@/assets/cat-bath.jpg";
 import catBolsas from "@/assets/cat-bolsas.jpg";
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
 
 const categories = [
   { name: "vestidos", href: "/categoria/vestidos", img: catKits },
-  { name: "blusas", href: "/categoria/blusas", img: catPerfumes },
+  { name: "blusas", href: "/categoria/blusas", img: catBlusas.url },
   { name: "calçados", href: "/categoria/calcados", img: catSkincare },
   { name: "acessórios", href: "/categoria/acessorios", img: catBath },
   { name: "bolsas", href: "/categoria/bolsas", img: catBolsas },
