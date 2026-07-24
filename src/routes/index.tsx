@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
       { title: "#temprati — moda feminina premium" },
       { name: "description", content: "roupas, calçados e acessórios femininos com design atemporal, tecidos nobres e caimento impecável." },
       { property: "og:title", content: "#temprati — moda feminina premium" },
-      { property: "og:description", content: "roupas, calçados e acessórios femininos com design atemporal." },
+      { property: "og:description", content: "roupas, calçados e acessórios femininos com design atemporal, tecidos nobres e caimento impecável." },
     ],
   }),
   component: HomePage,
