@@ -8,7 +8,7 @@ import catVestidos from "@/assets/cat-vestidos.jpg.asset.json";
 import catBlusas from "@/assets/cat-blusas.jpg.asset.json";
 import catCalcas from "@/assets/cat-calcas.jpg.asset.json";
 import catCalcados from "@/assets/cat-calcados.jpg.asset.json";
-import catBath from "@/assets/cat-bath.jpg";
+import catAcessorios from "@/assets/cat-acessorios.jpg.asset.json";
 import catBolsas from "@/assets/cat-bolsas.jpg";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -33,7 +33,7 @@ const categories = [
   { name: "blusas", href: "/categoria/blusas", img: catBlusas.url },
   { name: "calças", href: "/categoria/calcas", img: catCalcas.url },
   { name: "calçados", href: "/categoria/calcados", img: catCalcados.url },
-  { name: "acessórios", href: "/categoria/acessorios", img: catBath },
+  { name: "acessórios", href: "/categoria/acessorios", img: catAcessorios.url },
   { name: "bolsas", href: "/categoria/bolsas", img: catBolsas },
 ];
 
