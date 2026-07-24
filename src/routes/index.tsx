@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import bannerImg from "@/assets/banner.jpg";
 import bannerDesktop from "@/assets/banner-desktop.png.asset.json";
 import bannerMobile from "@/assets/banner-mobile.png.asset.json";
-import catKits from "@/assets/cat-kits.jpg";
+import catVestidos from "@/assets/cat-vestidos.jpg.asset.json";
 import catBlusas from "@/assets/cat-blusas.jpg.asset.json";
 import catCalcas from "@/assets/cat-calcas.jpg.asset.json";
 import catSkincare from "@/assets/cat-skincare.jpg";
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
 });
 
 const categories = [
-  { name: "vestidos", href: "/categoria/vestidos", img: catKits },
+  { name: "vestidos", href: "/categoria/vestidos", img: catVestidos.url },
   { name: "blusas", href: "/categoria/blusas", img: catBlusas.url },
   { name: "calças", href: "/categoria/calcas", img: catCalcas.url },
   { name: "calçados", href: "/categoria/calcados", img: catSkincare },
