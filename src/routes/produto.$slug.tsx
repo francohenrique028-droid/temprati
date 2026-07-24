@@ -75,7 +75,7 @@ function ProductPage() {
               <p className="text-xs text-muted-foreground">{color}</p>
             </div>
             <div className="flex gap-2">
-              {product.colors.map(c => (
+              {product.colors.map((c: string) => (
                 <button key={c} onClick={() => setColor(c)} aria-label={c} className={`h-9 w-9 rounded-full border ${color === c ? "ring-2 ring-primary ring-offset-2 ring-offset-background border-border" : "border-border"}`} style={{ background: c }} />
               ))}
             </div>
@@ -87,7 +87,7 @@ function ProductPage() {
               <button className="text-xs text-muted-foreground underline underline-offset-2">Guia de medidas</button>
             </div>
             <div className="flex flex-wrap gap-2">
-              {product.sizes.map(s => (
+              {product.sizes.map((s: string) => (
                 <button key={s} onClick={() => setSize(s)} className={`min-w-12 rounded-xl border px-4 py-3 text-sm transition-colors ${size === s ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary"}`}>{s}</button>
               ))}
             </div>

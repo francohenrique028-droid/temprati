@@ -9,38 +9,268 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as PoliticaDeTrocasRouteImport } from './routes/politica-de-trocas'
+import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
+import { Route as NovidadesRouteImport } from './routes/novidades'
+import { Route as FavoritosRouteImport } from './routes/favoritos'
+import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as ContaRouteImport } from './routes/conta'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as CarrinhoRouteImport } from './routes/carrinho'
+import { Route as BuscaRouteImport } from './routes/busca'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
+import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaDeTrocasRoute = PoliticaDeTrocasRouteImport.update({
+  id: '/politica-de-trocas',
+  path: '/politica-de-trocas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
+  id: '/politica-de-privacidade',
+  path: '/politica-de-privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NovidadesRoute = NovidadesRouteImport.update({
+  id: '/novidades',
+  path: '/novidades',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritosRoute = FavoritosRouteImport.update({
+  id: '/favoritos',
+  path: '/favoritos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContaRoute = ContaRouteImport.update({
+  id: '/conta',
+  path: '/conta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarrinhoRoute = CarrinhoRouteImport.update({
+  id: '/carrinho',
+  path: '/carrinho',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuscaRoute = BuscaRouteImport.update({
+  id: '/busca',
+  path: '/busca',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
+  id: '/produto/$slug',
+  path: '/produto/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
+  id: '/categoria/$slug',
+  path: '/categoria/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/busca': typeof BuscaRoute
+  '/carrinho': typeof CarrinhoRoute
+  '/checkout': typeof CheckoutRoute
+  '/conta': typeof ContaRoute
+  '/contato': typeof ContatoRoute
+  '/favoritos': typeof FavoritosRoute
+  '/novidades': typeof NovidadesRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/politica-de-trocas': typeof PoliticaDeTrocasRoute
+  '/sobre': typeof SobreRoute
+  '/categoria/$slug': typeof CategoriaSlugRoute
+  '/produto/$slug': typeof ProdutoSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/busca': typeof BuscaRoute
+  '/carrinho': typeof CarrinhoRoute
+  '/checkout': typeof CheckoutRoute
+  '/conta': typeof ContaRoute
+  '/contato': typeof ContatoRoute
+  '/favoritos': typeof FavoritosRoute
+  '/novidades': typeof NovidadesRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/politica-de-trocas': typeof PoliticaDeTrocasRoute
+  '/sobre': typeof SobreRoute
+  '/categoria/$slug': typeof CategoriaSlugRoute
+  '/produto/$slug': typeof ProdutoSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/busca': typeof BuscaRoute
+  '/carrinho': typeof CarrinhoRoute
+  '/checkout': typeof CheckoutRoute
+  '/conta': typeof ContaRoute
+  '/contato': typeof ContatoRoute
+  '/favoritos': typeof FavoritosRoute
+  '/novidades': typeof NovidadesRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/politica-de-trocas': typeof PoliticaDeTrocasRoute
+  '/sobre': typeof SobreRoute
+  '/categoria/$slug': typeof CategoriaSlugRoute
+  '/produto/$slug': typeof ProdutoSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/busca'
+    | '/carrinho'
+    | '/checkout'
+    | '/conta'
+    | '/contato'
+    | '/favoritos'
+    | '/novidades'
+    | '/politica-de-privacidade'
+    | '/politica-de-trocas'
+    | '/sobre'
+    | '/categoria/$slug'
+    | '/produto/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/busca'
+    | '/carrinho'
+    | '/checkout'
+    | '/conta'
+    | '/contato'
+    | '/favoritos'
+    | '/novidades'
+    | '/politica-de-privacidade'
+    | '/politica-de-trocas'
+    | '/sobre'
+    | '/categoria/$slug'
+    | '/produto/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/busca'
+    | '/carrinho'
+    | '/checkout'
+    | '/conta'
+    | '/contato'
+    | '/favoritos'
+    | '/novidades'
+    | '/politica-de-privacidade'
+    | '/politica-de-trocas'
+    | '/sobre'
+    | '/categoria/$slug'
+    | '/produto/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BuscaRoute: typeof BuscaRoute
+  CarrinhoRoute: typeof CarrinhoRoute
+  CheckoutRoute: typeof CheckoutRoute
+  ContaRoute: typeof ContaRoute
+  ContatoRoute: typeof ContatoRoute
+  FavoritosRoute: typeof FavoritosRoute
+  NovidadesRoute: typeof NovidadesRoute
+  PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
+  PoliticaDeTrocasRoute: typeof PoliticaDeTrocasRoute
+  SobreRoute: typeof SobreRoute
+  CategoriaSlugRoute: typeof CategoriaSlugRoute
+  ProdutoSlugRoute: typeof ProdutoSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-de-trocas': {
+      id: '/politica-de-trocas'
+      path: '/politica-de-trocas'
+      fullPath: '/politica-de-trocas'
+      preLoaderRoute: typeof PoliticaDeTrocasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-de-privacidade': {
+      id: '/politica-de-privacidade'
+      path: '/politica-de-privacidade'
+      fullPath: '/politica-de-privacidade'
+      preLoaderRoute: typeof PoliticaDePrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/novidades': {
+      id: '/novidades'
+      path: '/novidades'
+      fullPath: '/novidades'
+      preLoaderRoute: typeof NovidadesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favoritos': {
+      id: '/favoritos'
+      path: '/favoritos'
+      fullPath: '/favoritos'
+      preLoaderRoute: typeof FavoritosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conta': {
+      id: '/conta'
+      path: '/conta'
+      fullPath: '/conta'
+      preLoaderRoute: typeof ContaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carrinho': {
+      id: '/carrinho'
+      path: '/carrinho'
+      fullPath: '/carrinho'
+      preLoaderRoute: typeof CarrinhoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/busca': {
+      id: '/busca'
+      path: '/busca'
+      fullPath: '/busca'
+      preLoaderRoute: typeof BuscaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +278,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/produto/$slug': {
+      id: '/produto/$slug'
+      path: '/produto/$slug'
+      fullPath: '/produto/$slug'
+      preLoaderRoute: typeof ProdutoSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categoria/$slug': {
+      id: '/categoria/$slug'
+      path: '/categoria/$slug'
+      fullPath: '/categoria/$slug'
+      preLoaderRoute: typeof CategoriaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BuscaRoute: BuscaRoute,
+  CarrinhoRoute: CarrinhoRoute,
+  CheckoutRoute: CheckoutRoute,
+  ContaRoute: ContaRoute,
+  ContatoRoute: ContatoRoute,
+  FavoritosRoute: FavoritosRoute,
+  NovidadesRoute: NovidadesRoute,
+  PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
+  PoliticaDeTrocasRoute: PoliticaDeTrocasRoute,
+  SobreRoute: SobreRoute,
+  CategoriaSlugRoute: CategoriaSlugRoute,
+  ProdutoSlugRoute: ProdutoSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
