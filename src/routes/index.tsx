@@ -39,41 +39,11 @@ const testimonials = [
 function HomePage() {
   return (
     <>
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-secondary">
-        <div className="container-x grid items-center gap-10 py-16 md:grid-cols-2 md:py-24">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.2, 0.6, 0.2, 1] }}
-            className="max-w-lg"
-          >
-            <p className="text-xs font-medium lowercase tracking-wider text-primary">nova coleção</p>
-            <h1 className="mt-4 text-5xl font-semibold lowercase leading-[1.05] tracking-tight text-foreground md:text-7xl">
-              <span className="italic font-normal text-primary">luxo</span> sem igual
-            </h1>
-            <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
-              elegância e sofisticação contemporânea. descubra a nossa seleção premium de perfumes, skincare e beleza.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/categoria/perfumes" className="rounded-full bg-primary px-7 py-3.5 text-sm font-medium lowercase text-primary-foreground shadow-soft transition-colors hover:bg-[color-mix(in_oklab,var(--primary)_88%,black)]">
-                ver coleção
-              </Link>
-              <Link to="/novidades" className="rounded-full border border-foreground/15 bg-background px-7 py-3.5 text-sm font-medium lowercase text-foreground transition-colors hover:border-primary hover:text-primary">
-                lançamentos
-              </Link>
-            </div>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, ease: [0.2, 0.6, 0.2, 1], delay: 0.1 }}
-            className="relative"
-          >
-            <img src={heroImg} alt="Perfumes e skincare luxo" width={1920} height={1080} className="w-full rounded-2xl object-cover shadow-elevated" />
-          </motion.div>
-        </div>
+      {/* HERO — banner liso rosa */}
+      <section className="w-full">
+        <div className="h-[60vh] min-h-[400px] w-full bg-secondary" />
       </section>
+
 
       {/* CATEGORIAS CIRCULARES */}
       <section className="container-x py-20">
