@@ -11,45 +11,46 @@ type NavItem = { label: string; to: string; mega?: MegaCol[] };
 
 const nav: NavItem[] = [
   {
-    label: "kits",
-    to: "/categoria/kits",
+    label: "novidades",
+    to: "/categoria/novidades",
     mega: [
-      { title: "por ocasião", links: ["presente", "dia a dia", "viagem"] },
-      { title: "destaques", links: ["mais vendidos", "lançamentos", "edição limitada"] },
+      { title: "recém-chegados", links: ["lançamentos", "pré-venda", "edição limitada"] },
+      { title: "destaques", links: ["mais vendidos", "coleção atual", "looks completos"] },
     ],
   },
   {
-    label: "bath & body",
-    to: "/categoria/bath",
+    label: "feminino",
+    to: "/categoria/feminino",
     mega: [
-      { title: "corpo", links: ["hidratante", "óleo corporal", "esfoliante"] },
-      { title: "banho", links: ["sabonete líquido", "sais de banho", "bucha"] },
+      { title: "roupas", links: ["vestidos", "blusas", "calças", "saias"] },
+      { title: "outros", links: ["conjuntos", "alfaiataria", "tricot"] },
     ],
   },
   {
-    label: "skincare",
-    to: "/categoria/skincare",
+    label: "masculino",
+    to: "/categoria/masculino",
     mega: [
-      { title: "rosto", links: ["sérum", "hidratante", "protetor solar"] },
-      { title: "cuidado", links: ["limpeza", "tônico", "máscara"] },
+      { title: "roupas", links: ["camisas", "camisetas", "calças", "bermudas"] },
+      { title: "outros", links: ["jaquetas", "moletons", "alfaiataria"] },
     ],
   },
   {
-    label: "perfumes",
-    to: "/categoria/perfumes",
+    label: "acessórios",
+    to: "/categoria/acessorios",
     mega: [
-      { title: "eau de parfum", links: ["florais", "amadeirados", "cítricos"] },
-      { title: "coleções", links: ["clássicos", "lançamentos", "miniaturas"] },
+      { title: "essenciais", links: ["bolsas", "cintos", "óculos"] },
+      { title: "detalhes", links: ["bijoux", "cachecóis", "chapéus"] },
     ],
   },
-  { label: "masculino", to: "/categoria/masculino" },
+  { label: "calçados", to: "/categoria/calcados" },
+  { label: "promoções", to: "/categoria/promocoes" },
 ];
 
 const announcements = [
-  "frete grátis acima de R$ 199",
-  "ganhe brinde nas compras acima de R$ 299",
+  "frete grátis acima de R$ 299",
+  "ganhe brinde nas compras acima de R$ 499",
   "10% off no pix",
-  "novidades toda semana",
+  "novas peças toda semana",
 ];
 
 export function SiteHeader() {

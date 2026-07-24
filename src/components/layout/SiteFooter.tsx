@@ -9,7 +9,7 @@ export function SiteFooter() {
           <div>
             <div className="text-2xl font-semibold lowercase text-primary">luxo<span className="italic font-normal text-white">.</span></div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60 italic">
-              luxo sem igual — elegância e sofisticação contemporânea.
+              luxo sem igual — moda premium para quem valoriza design e caimento.
             </p>
             <div className="mt-6 flex gap-3">
               <a href="#" aria-label="Instagram" className="rounded-full border border-white/15 p-2.5 hover:bg-primary hover:border-primary transition"><Instagram className="h-4 w-4" /></a>
@@ -20,7 +20,7 @@ export function SiteFooter() {
           </div>
           <FooterCol title="institucional" links={[["sobre","/sobre"],["contato","/contato"],["lojas","/contato"]]} />
           <FooterCol title="ajuda" links={[["trocas e devoluções","/politica-de-trocas"],["política de privacidade","/politica-de-privacidade"],["envio","/politica-de-trocas"]]} />
-          <FooterCol title="compre" links={[["perfumes","/categoria/perfumes"],["skincare","/categoria/skincare"],["kits","/categoria/kits"],["masculino","/categoria/masculino"]]} />
+          <FooterCol title="compre" links={[["feminino","/categoria/feminino"],["masculino","/categoria/masculino"],["acessórios","/categoria/acessorios"],["calçados","/categoria/calcados"]]} />
         </div>
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-white/50 md:flex-row">
           <p>© {new Date().getFullYear()} luxo. todos os direitos reservados.</p>

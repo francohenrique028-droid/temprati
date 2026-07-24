@@ -17,26 +17,26 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "luxo — cosméticos e perfumaria premium" },
-      { name: "description", content: "luxo sem igual: perfumes, skincare, bath & body e kits exclusivos. elegância e sofisticação contemporânea." },
-      { property: "og:title", content: "luxo — cosméticos e perfumaria premium" },
-      { property: "og:description", content: "luxo sem igual: perfumes, skincare, bath & body e kits exclusivos." },
+      { title: "luxo — moda premium feminina e masculina" },
+      { name: "description", content: "luxo sem igual: roupas, calçados e acessórios com design atemporal, tecidos nobres e caimento impecável." },
+      { property: "og:title", content: "luxo — moda premium" },
+      { property: "og:description", content: "luxo sem igual: roupas, calçados e acessórios com design atemporal." },
     ],
   }),
   component: HomePage,
 });
 
 const categories = [
-  { name: "kits", href: "/categoria/kits", img: catKits },
-  { name: "perfumes", href: "/categoria/perfumes", img: catPerfumes },
-  { name: "skincare", href: "/categoria/skincare", img: catSkincare },
-  { name: "bath & body", href: "/categoria/bath", img: catBath },
+  { name: "feminino", href: "/categoria/feminino", img: catKits },
+  { name: "masculino", href: "/categoria/masculino", img: catPerfumes },
+  { name: "acessórios", href: "/categoria/acessorios", img: catSkincare },
+  { name: "calçados", href: "/categoria/calcados", img: catBath },
 ];
 
 const testimonials = [
-  { name: "marina c.", text: "os perfumes são incríveis, fixação perfeita e embalagem digna de presente." },
-  { name: "rafael l.", text: "skincare que realmente funciona. minha pele nunca esteve tão bem." },
-  { name: "beatriz s.", text: "kit de presente lindo, chegou rápido e super bem embalado. amei!" },
+  { name: "marina c.", text: "as peças têm um caimento impecável, tecido de qualidade e acabamento digno de marca de luxo." },
+  { name: "rafael l.", text: "camisas que vestem muito bem, tecido nobre e corte perfeito. virei cliente fiel." },
+  { name: "beatriz s.", text: "meu vestido chegou rápido, super bem embalado e ainda mais bonito do que na foto!" },
 ];
 
 function HomePage() {
@@ -104,7 +104,7 @@ function HomePage() {
             <p className="text-xs font-medium lowercase tracking-wider text-primary">best sellers</p>
             <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">mais vendidos</h2>
           </div>
-          <Link to="/categoria/perfumes" className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
+          <Link to="/categoria/feminino" className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
         </div>
         <ProductGrid items={bestsellers()} />
       </section>
@@ -123,9 +123,9 @@ function HomePage() {
               até 30% off <span className="italic font-normal">na coleção</span>
             </h3>
             <p className="mx-auto mt-4 max-w-xl text-sm text-white/85 md:text-base">
-              seleção especial de perfumes e skincare por tempo limitado. luxo sem igual, agora com preços especiais.
+              seleção especial de peças por tempo limitado. luxo sem igual, agora com preços especiais.
             </p>
-            <Link to="/categoria/perfumes" className="mt-8 inline-block rounded-full bg-white px-8 py-3.5 text-sm font-medium lowercase text-primary shadow-soft transition-transform hover:scale-[1.02]">
+            <Link to="/categoria/promocoes" className="mt-8 inline-block rounded-full bg-white px-8 py-3.5 text-sm font-medium lowercase text-primary shadow-soft transition-transform hover:scale-[1.02]">
               aproveitar oferta
             </Link>
           </motion.div>
@@ -137,9 +137,9 @@ function HomePage() {
         <div className="mb-10 flex items-end justify-between">
           <div>
             <p className="text-xs font-medium lowercase tracking-wider text-primary">recém-chegados</p>
-            <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">lançamentos</h2>
+            <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">novidades</h2>
           </div>
-          <Link to="/novidades" className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
+          <Link to="/categoria/novidades" className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
         </div>
         <ProductGrid items={newArrivals()} />
       </section>
@@ -151,7 +151,7 @@ function HomePage() {
             <p className="text-xs font-medium lowercase tracking-wider text-primary">para eles</p>
             <h3 className="mt-3 text-3xl font-semibold lowercase tracking-tight md:text-5xl">masculino</h3>
             <p className="mt-4 max-w-md text-sm text-muted-foreground md:text-base">
-              fragrâncias marcantes e cuidados essenciais para o homem contemporâneo. mesma sofisticação, tons neutros.
+              peças com corte impecável e tecidos nobres para o homem contemporâneo. sofisticação em tons neutros.
             </p>
             <Link to="/categoria/masculino" className="mt-6 inline-block rounded-full border border-foreground bg-foreground px-7 py-3 text-sm font-medium lowercase text-background transition-colors hover:bg-transparent hover:text-foreground">
               explorar
@@ -190,7 +190,7 @@ function Newsletter() {
       <div className="mx-auto max-w-3xl rounded-2xl bg-secondary p-10 text-center md:p-16">
         <p className="mb-3 text-[11px] font-medium lowercase tracking-wider text-primary">newsletter</p>
         <h3 className="text-3xl font-semibold lowercase md:text-4xl">receba nossas <span className="italic font-normal text-primary">novidades</span></h3>
-        <p className="mt-3 text-sm text-muted-foreground">lançamentos, ofertas exclusivas e dicas de beleza.</p>
+        <p className="mt-3 text-sm text-muted-foreground">lançamentos, ofertas exclusivas e novas coleções em primeira mão.</p>
         <form onSubmit={(e) => { e.preventDefault(); if (!email) return; toast("cadastro realizado com sucesso"); setEmail(""); }} className="mx-auto mt-8 flex max-w-md flex-col gap-2 sm:flex-row">
           <input value={email} onChange={e => setEmail(e.target.value)} type="email" required placeholder="seu@email.com" className="flex-1 rounded-full border border-border bg-background px-5 py-4 text-sm lowercase outline-none placeholder:text-muted-foreground focus:border-primary transition-colors" />
           <button className="rounded-full bg-primary px-6 py-4 text-xs font-medium lowercase tracking-wide text-primary-foreground hover:bg-[color-mix(in_oklab,var(--primary)_88%,black)] transition-colors">cadastrar</button>
