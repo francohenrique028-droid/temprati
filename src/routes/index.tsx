@@ -42,7 +42,7 @@ function HomePage() {
     <>
       {/* HERO — banner liso rosa */}
       <section className="w-full">
-        <div className="h-[60vh] min-h-[400px] w-full bg-secondary md:h-auto md:min-h-0 md:aspect-[4000/1302]" />
+        <div className="w-full bg-secondary aspect-[2496/3000] md:aspect-[4000/1302]" />
       </section>
 
 
