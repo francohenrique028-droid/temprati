@@ -21,7 +21,7 @@ interface Props {
 }
 
 export function StoriesCarousel({ cards }: Props) {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(() => Math.floor(cards.length / 2));
   const [isMobile, setIsMobile] = useState(false);
   const total = cards.length;
 
@@ -144,20 +144,6 @@ export function StoriesCarousel({ cards }: Props) {
         </button>
       </div>
 
-      {/* dots */}
-      <div className="mt-6 flex items-center justify-center gap-2">
-        {cards.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => setActive(i)}
-            aria-label={`ir para ${i + 1}`}
-            className={`h-1.5 rounded-full transition-all ${
-              i === active ? "w-8 bg-foreground" : "w-1.5 bg-foreground/30"
-            }`}
-          />
-        ))}
-      </div>
     </div>
   );
 }
