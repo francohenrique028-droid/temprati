@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { findBySlug, formatPrice, installment, products } from "@/lib/products";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { useState } from "react";
-import { ChevronRight, Heart, ShoppingBag, Minus, Plus, Truck, RotateCcw, ShieldCheck } from "lucide-react";
+import { ChevronRight, Heart, ShoppingBag, Minus, Plus, Truck, RotateCcw, ShieldCheck, Play } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
