@@ -21,7 +21,7 @@ interface Props {
 }
 
 export function StoriesCarousel({ cards }: Props) {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(() => Math.floor(cards.length / 2));
   const [isMobile, setIsMobile] = useState(false);
   const total = cards.length;
 
