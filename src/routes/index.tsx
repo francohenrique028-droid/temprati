@@ -118,7 +118,12 @@ function HomePage() {
           cards={products.slice(0, 5).map((p, idx, arr) => ({
             id: p.id,
             image: p.images[0],
-            video: idx === Math.floor(arr.length / 2) ? "https://i.imgur.com/NoM4yk1.mp4" : undefined,
+            video:
+              idx === Math.floor(arr.length / 2)
+                ? "https://i.imgur.com/NoM4yk1.mp4"
+                : idx === 1
+                ? "https://i.imgur.com/q25ep9M.mp4"
+                : undefined,
             thumb: p.images[0],
             name: p.name,
             price: p.price,
