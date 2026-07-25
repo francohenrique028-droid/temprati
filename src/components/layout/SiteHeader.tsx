@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import { useTheme } from "@/lib/theme/ThemeProvider";
 
 
 type MegaCol = { title: string; links: string[] };
@@ -46,14 +47,14 @@ const nav: NavItem[] = [
   { label: "promoções", to: "/categoria/promocoes" },
 ];
 
-const announcements = [
+const announcementsFallback = [
   "frete grátis acima de R$ 299",
-  "ganhe brinde nas compras acima de R$ 499",
-  "10% off no pix",
-  "novas peças toda semana",
 ];
 
 export function SiteHeader() {
+  const { theme } = useTheme();
+  const announcements = theme.header.announcements?.length ? theme.header.announcements : announcementsFallback;
+  const logoText = theme.header.logoText || "#temprati";
   const { setOpen: openCart, count } = useCart();
   const { ids } = useFavorites();
   const [scrolled, setScrolled] = useState(false);
@@ -73,7 +74,7 @@ export function SiteHeader() {
   useEffect(() => {
     const t = setInterval(() => setAnn((v) => (v + 1) % announcements.length), 3500);
     return () => clearInterval(t);
-  }, []);
+  }, [announcements.length]);
 
   return (
     <>
@@ -97,7 +98,7 @@ export function SiteHeader() {
 
       <header
         onMouseLeave={() => setHovered(null)}
-        className={`sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_rgba(236,72,153,0.06)]" : ""}`}
+        className={`${theme.header.sticky ? "sticky top-0" : ""} z-40 border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_rgba(236,72,153,0.06)]" : ""}`}
       >
         <div className="container-x">
           <div className="flex items-center justify-between gap-4 py-4">
@@ -106,7 +107,7 @@ export function SiteHeader() {
                 <Menu className="h-5 w-5" />
               </button>
               <Link to="/" className="flex items-center" aria-label="início">
-                <span className="text-xl md:text-2xl font-bold tracking-tight lowercase text-primary">#temprati</span>
+                <span className="text-xl md:text-2xl font-bold tracking-tight lowercase text-primary">{logoText}</span>
               </Link>
             </div>
 
@@ -126,16 +127,20 @@ export function SiteHeader() {
             </nav>
 
             <div className="flex items-center gap-0.5 justify-end flex-1">
-              <button onClick={() => setSearchOpen(v => !v)} aria-label="Pesquisar" className="p-2 hover:text-primary transition-colors"><Search className="h-[18px] w-[18px]" /></button>
-              <Link to="/favoritos" aria-label="Favoritos" className="relative p-2 hover:text-primary transition-colors">
-                <Heart className="h-[18px] w-[18px]" />
-                {ids.size > 0 && <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-primary" />}
-              </Link>
-              <Link to="/conta" aria-label="Conta" className="p-2 hover:text-primary transition-colors hidden sm:inline-flex"><User className="h-[18px] w-[18px]" /></Link>
-              <button onClick={() => openCart(true)} aria-label="Carrinho" className="relative p-2 hover:text-primary transition-colors">
-                <ShoppingBag className="h-[18px] w-[18px]" />
-                {count > 0 && <span className="absolute -top-0 -right-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">{count}</span>}
-              </button>
+              {theme.header.showSearch && <button onClick={() => setSearchOpen(v => !v)} aria-label="Pesquisar" className="p-2 hover:text-primary transition-colors"><Search className="h-[18px] w-[18px]" /></button>}
+              {theme.header.showFavorites && (
+                <Link to="/favoritos" aria-label="Favoritos" className="relative p-2 hover:text-primary transition-colors">
+                  <Heart className="h-[18px] w-[18px]" />
+                  {ids.size > 0 && <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-primary" />}
+                </Link>
+              )}
+              {theme.header.showAccount && <Link to="/conta" aria-label="Conta" className="p-2 hover:text-primary transition-colors hidden sm:inline-flex"><User className="h-[18px] w-[18px]" /></Link>}
+              {theme.header.showCart && (
+                <button onClick={() => openCart(true)} aria-label="Carrinho" className="relative p-2 hover:text-primary transition-colors">
+                  <ShoppingBag className="h-[18px] w-[18px]" />
+                  {count > 0 && <span className="absolute -top-0 -right-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">{count}</span>}
+                </button>
+              )}
             </div>
           </div>
 
@@ -182,7 +187,7 @@ export function SiteHeader() {
         <div onClick={() => setMobileOpen(false)} className={`absolute inset-0 bg-black/30 transition-opacity ${mobileOpen ? "opacity-100" : "opacity-0"}`} />
         <aside className={`absolute inset-y-0 left-0 w-[85%] max-w-sm bg-background p-6 shadow-2xl transition-transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
           <div className="flex items-center justify-between">
-            <span className="text-lg font-bold tracking-tight lowercase text-primary">#temprati</span>
+            <span className="text-lg font-bold tracking-tight lowercase text-primary">{logoText}</span>
             <button onClick={() => setMobileOpen(false)}><X className="h-5 w-5" /></button>
           </div>
           <nav className="mt-8 flex flex-col gap-1">

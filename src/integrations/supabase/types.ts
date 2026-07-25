@@ -92,6 +92,30 @@ export type Database = {
         }
         Relationships: []
       }
+      theme_settings: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          singleton: boolean
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          singleton?: boolean
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          singleton?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
