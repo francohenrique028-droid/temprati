@@ -24,7 +24,6 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
-import { Route as AdminPlaceholderRouteImport } from './routes/admin.placeholder'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminProdutosIdRouteImport } from './routes/admin.produtos.$id'
@@ -104,11 +103,6 @@ const AdminProdutosRoute = AdminProdutosRouteImport.update({
   path: '/admin/produtos',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminPlaceholderRoute = AdminPlaceholderRouteImport.update({
-  id: '/admin/placeholder',
-  path: '/admin/placeholder',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
@@ -139,7 +133,6 @@ export interface FileRoutesByFullPath {
   '/sobre': typeof SobreRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
-  '/admin/placeholder': typeof AdminPlaceholderRoute
   '/admin/produtos': typeof AdminProdutosRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
@@ -160,7 +153,6 @@ export interface FileRoutesByTo {
   '/sobre': typeof SobreRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
-  '/admin/placeholder': typeof AdminPlaceholderRoute
   '/admin/produtos': typeof AdminProdutosRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
@@ -182,7 +174,6 @@ export interface FileRoutesById {
   '/sobre': typeof SobreRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
-  '/admin/placeholder': typeof AdminPlaceholderRoute
   '/admin/produtos': typeof AdminProdutosRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
@@ -205,7 +196,6 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/admin/dashboard'
     | '/admin/login'
-    | '/admin/placeholder'
     | '/admin/produtos'
     | '/categoria/$slug'
     | '/produto/$slug'
@@ -226,7 +216,6 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/admin/dashboard'
     | '/admin/login'
-    | '/admin/placeholder'
     | '/admin/produtos'
     | '/categoria/$slug'
     | '/produto/$slug'
@@ -247,7 +236,6 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/admin/dashboard'
     | '/admin/login'
-    | '/admin/placeholder'
     | '/admin/produtos'
     | '/categoria/$slug'
     | '/produto/$slug'
@@ -269,7 +257,6 @@ export interface RootRouteChildren {
   SobreRoute: typeof SobreRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminLoginRoute: typeof AdminLoginRoute
-  AdminPlaceholderRoute: typeof AdminPlaceholderRoute
   AdminProdutosRoute: typeof AdminProdutosRouteWithChildren
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
@@ -383,13 +370,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProdutosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/placeholder': {
-      id: '/admin/placeholder'
-      path: '/admin/placeholder'
-      fullPath: '/admin/placeholder'
-      preLoaderRoute: typeof AdminPlaceholderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/login': {
       id: '/admin/login'
       path: '/admin/login'
@@ -440,7 +420,6 @@ const rootRouteChildren: RootRouteChildren = {
   SobreRoute: SobreRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminLoginRoute: AdminLoginRoute,
-  AdminPlaceholderRoute: AdminPlaceholderRoute,
   AdminProdutosRoute: AdminProdutosRouteWithChildren,
   CategoriaSlugRoute: CategoriaSlugRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
@@ -449,3 +428,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
