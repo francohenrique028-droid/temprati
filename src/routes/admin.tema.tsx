@@ -1,14 +1,15 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  ChevronDown, ChevronRight, Monitor, Tablet, Smartphone, Loader2, Save, RotateCcw,
-  ExternalLink, LogOut, Image as ImageIcon, Palette, Type, LayoutGrid, PanelTop,
+  ChevronDown, ChevronRight, Loader2, X,
+  Image as ImageIcon, Palette, Type, LayoutGrid, PanelTop,
   Home as HomeIcon, Images, Layers, Package, Tag, ShoppingCart, CreditCard,
-  PanelBottom, Share2, Search, Code2, FileCode2, Plug, Settings, ZoomIn, ZoomOut,
+  PanelBottom, Search, Code2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/lib/admin/useAdminAuth";
 import { defaultTheme, THEME_MESSAGE, THEME_READY, THEME_SELECT, type ThemeConfig } from "@/lib/theme/types";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +22,7 @@ type SectionKey =
   | "brand-logo" | "brand-colors" | "brand-typography"
   | "layout" | "header" | "home-banner" | "home-categories" | "home-collections"
   | "home-featured" | "product-page" | "cart" | "checkout"
-  | "footer" | "social" | "seo" | "css" | "scripts" | "integrations" | "general";
+  | "footer" | "seo" | "css";
 
 type MenuItem = { key: SectionKey; label: string; icon: React.ComponentType<{ className?: string }> };
 type MenuGroup = { title: string; items: MenuItem[] };
@@ -47,16 +48,12 @@ const MENU: MenuGroup[] = [
     { key: "cart", label: "Carrinho", icon: ShoppingCart },
     { key: "checkout", label: "Checkout", icon: CreditCard },
   ]},
-  { title: "Rodapé & Social", items: [
+  { title: "Rodapé", items: [
     { key: "footer", label: "Rodapé", icon: PanelBottom },
-    { key: "social", label: "Redes Sociais", icon: Share2 },
   ]},
   { title: "Avançado", items: [
     { key: "seo", label: "SEO", icon: Search },
     { key: "css", label: "CSS Personalizado", icon: Code2 },
-    { key: "scripts", label: "Scripts", icon: FileCode2 },
-    { key: "integrations", label: "Integrações", icon: Plug },
-    { key: "general", label: "Configurações", icon: Settings },
   ]},
 ];
 
@@ -68,9 +65,6 @@ const BLOCK_TO_SECTION: Record<string, SectionKey> = {
   "footer": "footer",
 };
 
-const DEVICE_WIDTHS = { desktop: 1280, tablet: 820, mobile: 390 } as const;
-type Device = keyof typeof DEVICE_WIDTHS;
-
 function ThemeBuilderPage() {
   const { loading: authLoading, user, isAdmin } = useAdminAuth();
   const navigate = useNavigate();
@@ -78,10 +72,7 @@ function ThemeBuilderPage() {
   const [savedTheme, setSavedTheme] = useState<ThemeConfig>(defaultTheme);
   const [draft, setDraft] = useState<ThemeConfig>(defaultTheme);
   const [loading, setLoading] = useState(true);
-  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
-  const [device, setDevice] = useState<Device>("desktop");
-  const [zoom, setZoom] = useState(1);
-  const [active, setActive] = useState<SectionKey>("brand-colors");
+  const [active, setActive] = useState<SectionKey | null>(null);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(
     Object.fromEntries(MENU.map((g) => [g.title, true]))
   );
@@ -91,12 +82,10 @@ function ThemeBuilderPage() {
   const draftRef = useRef(draft);
   draftRef.current = draft;
 
-  // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/admin/login" });
   }, [authLoading, user, navigate]);
 
-  // Load saved theme
   useEffect(() => {
     (async () => {
       const { data, error } = await (supabase as any)
@@ -110,7 +99,6 @@ function ThemeBuilderPage() {
     })();
   }, []);
 
-  // Post draft to iframe (debounced)
   useEffect(() => {
     const t = setTimeout(() => {
       if (iframeReady.current) {
@@ -120,7 +108,6 @@ function ThemeBuilderPage() {
     return () => clearTimeout(t);
   }, [draft]);
 
-  // Listen to iframe messages (ready + selection)
   useEffect(() => {
     const onMsg = (e: MessageEvent) => {
       const data = e.data;
@@ -145,34 +132,23 @@ function ThemeBuilderPage() {
   }, []);
 
   const doSave = useCallback(async (currentDraft: ThemeConfig) => {
-    setSaveState("saving");
     const { error } = await (supabase as any)
       .from("theme_settings").update({ config: currentDraft }).eq("singleton", true);
     if (error) {
-      setSaveState("idle");
       toast.error("Erro ao salvar: " + error.message);
       return;
     }
     setSavedTheme(currentDraft);
-    setSaveState("saved");
-    setTimeout(() => setSaveState((s) => (s === "saved" ? "idle" : s)), 1600);
   }, []);
 
-  // Autosave (debounced) whenever draft differs from saved
   useEffect(() => {
     if (!dirty || loading) return;
     const t = setTimeout(() => { doSave(draftRef.current); }, 1200);
     return () => clearTimeout(t);
   }, [draft, dirty, loading, doSave]);
 
-  async function handleManualSave() { await doSave(draft); toast.success("Alterações publicadas"); }
-  function handleDiscard() { setDraft(savedTheme); toast("Alterações descartadas"); }
-  async function handleSignOut() {
-    await supabase.auth.signOut();
-    navigate({ to: "/admin/login", replace: true });
-  }
-
   const activeItem = useMemo(() => {
+    if (!active) return null;
     for (const g of MENU) for (const it of g.items) if (it.key === active) return it;
     return null;
   }, [active]);
@@ -187,153 +163,84 @@ function ThemeBuilderPage() {
         <div className="max-w-md rounded-2xl border border-neutral-200 bg-white p-8 text-center">
           <h1 className="text-lg font-semibold">Acesso restrito</h1>
           <p className="mt-2 text-sm text-neutral-500">Sua conta não tem permissão de administrador.</p>
-          <button onClick={handleSignOut} className="mt-6 rounded-lg bg-neutral-900 px-4 py-2 text-sm text-white hover:bg-neutral-800">Sair</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-neutral-100 text-neutral-900">
-      {/* TOP HEADER */}
-      <header className="h-14 shrink-0 flex items-center justify-between border-b border-neutral-200 bg-white px-4">
-        <div className="flex items-center gap-3 min-w-0">
-          <Link to="/admin/tema" className="text-lg font-bold tracking-tight lowercase text-primary">#temprati</Link>
-          <span className="h-5 w-px bg-neutral-200" />
-          <div className="min-w-0">
-            <div className="text-xs uppercase tracking-wider text-neutral-500">Editor de Tema</div>
-            <div className="truncate text-sm font-medium">Tema padrão</div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-1 rounded-lg border border-neutral-200 p-0.5">
-          {(["desktop", "tablet", "mobile"] as Device[]).map((d) => {
-            const Icon = d === "desktop" ? Monitor : d === "tablet" ? Tablet : Smartphone;
-            return (
-              <button key={d} onClick={() => setDevice(d)}
-                className={cn("flex items-center justify-center rounded-md px-2.5 py-1.5", device === d ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100")}
-                title={d}
-              ><Icon className="h-4 w-4" /></button>
-            );
-          })}
-          <span className="mx-1 h-5 w-px bg-neutral-200" />
-          <button onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))} className="rounded-md p-1.5 text-neutral-600 hover:bg-neutral-100" title="Zoom out"><ZoomOut className="h-4 w-4" /></button>
-          <span className="min-w-[40px] text-center text-xs tabular-nums text-neutral-600">{Math.round(zoom * 100)}%</span>
-          <button onClick={() => setZoom((z) => Math.min(1.5, +(z + 0.1).toFixed(2)))} className="rounded-md p-1.5 text-neutral-600 hover:bg-neutral-100" title="Zoom in"><ZoomIn className="h-4 w-4" /></button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <SaveIndicator state={saveState} dirty={dirty} />
-          <a href="/" target="_blank" rel="noreferrer"
-            className="hidden md:flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs text-neutral-700 hover:bg-neutral-50"
-          ><ExternalLink className="h-3.5 w-3.5" /> Ver Loja</a>
-          <button onClick={handleDiscard} disabled={!dirty}
-            className="hidden md:flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs text-neutral-700 disabled:opacity-40 hover:bg-neutral-50"
-            title="Descartar"
-          ><RotateCcw className="h-3.5 w-3.5" /> Descartar</button>
-          <button onClick={handleManualSave} disabled={!dirty || saveState === "saving"}
-            className="flex items-center gap-1.5 rounded-md bg-neutral-900 px-3.5 py-1.5 text-xs font-medium text-white disabled:opacity-40 hover:bg-neutral-800"
-          >{saveState === "saving" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />} Publicar</button>
-          <div className="ml-2 flex items-center gap-2 border-l border-neutral-200 pl-2">
-            <div className="h-7 w-7 rounded-full bg-neutral-900 text-white text-xs font-medium flex items-center justify-center">
-              {(user.email?.[0] ?? "A").toUpperCase()}
-            </div>
-            <button onClick={handleSignOut} title="Sair" className="rounded-md p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900">
-              <LogOut className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* BODY: 3 columns */}
-      <div className="flex-1 flex min-h-0">
-        {/* COL 1 — SIDEBAR */}
-        <aside className="w-[320px] shrink-0 overflow-y-auto border-r border-neutral-200 bg-white">
-          <div className="p-3 space-y-3">
-            {MENU.map((group) => (
-              <div key={group.title}>
-                <button
-                  onClick={() => setOpenGroups((g) => ({ ...g, [group.title]: !g[group.title] }))}
-                  className="flex w-full items-center justify-between px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 hover:text-neutral-800"
-                >
-                  {group.title}
-                  <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", !openGroups[group.title] && "-rotate-90")} />
-                </button>
-                {openGroups[group.title] && (
-                  <div className="mt-1 space-y-0.5">
-                    {group.items.map((it) => {
-                      const isActive = active === it.key;
-                      return (
-                        <button key={it.key} onClick={() => setActive(it.key)}
-                          className={cn(
-                            "flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm transition-colors",
-                            isActive ? "bg-neutral-900 text-white" : "text-neutral-700 hover:bg-neutral-100"
-                          )}
-                        >
-                          <it.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white" : "text-neutral-500")} />
-                          <span className="flex-1 truncate">{it.label}</span>
-                          <ChevronRight className={cn("h-3.5 w-3.5 shrink-0", isActive ? "text-white/70" : "text-neutral-400")} />
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </aside>
-
-        {/* COL 2 — PREVIEW */}
-        <div className="flex-1 flex flex-col min-w-0 bg-neutral-100">
-          <div className="flex-1 overflow-auto p-6 flex items-start justify-center">
-            <div
-              style={{
-                width: DEVICE_WIDTHS[device],
-                transform: `scale(${zoom})`,
-                transformOrigin: "top center",
-              }}
-              className="max-w-full h-full min-h-[600px] bg-white shadow-xl rounded-lg overflow-hidden transition-[width] duration-200"
-            >
-              {loading ? (
-                <div className="flex h-[80vh] items-center justify-center text-sm text-neutral-500">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando preview…
+    <div className="fixed inset-0 flex bg-neutral-100 text-neutral-900">
+      {/* SIDEBAR */}
+      <aside className="w-[280px] shrink-0 overflow-y-auto border-r border-neutral-200 bg-white">
+        <div className="p-3 space-y-3">
+          {MENU.map((group) => (
+            <div key={group.title}>
+              <button
+                onClick={() => setOpenGroups((g) => ({ ...g, [group.title]: !g[group.title] }))}
+                className="flex w-full items-center justify-between px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 hover:text-neutral-800"
+              >
+                {group.title}
+                <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", !openGroups[group.title] && "-rotate-90")} />
+              </button>
+              {openGroups[group.title] && (
+                <div className="mt-1 space-y-0.5">
+                  {group.items.map((it) => {
+                    const isActive = active === it.key;
+                    return (
+                      <button key={it.key} onClick={() => setActive(it.key)}
+                        className={cn(
+                          "flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm transition-colors",
+                          isActive ? "bg-neutral-900 text-white" : "text-neutral-700 hover:bg-neutral-100"
+                        )}
+                      >
+                        <it.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white" : "text-neutral-500")} />
+                        <span className="flex-1 truncate">{it.label}</span>
+                        <ChevronRight className={cn("h-3.5 w-3.5 shrink-0", isActive ? "text-white/70" : "text-neutral-400")} />
+                      </button>
+                    );
+                  })}
                 </div>
-              ) : (
-                <iframe
-                  ref={iframeRef}
-                  src="/?editor=1"
-                  title="Preview da loja"
-                  className="h-[calc(100vh-6rem)] w-full border-0"
-                />
               )}
             </div>
-          </div>
+          ))}
         </div>
+      </aside>
 
-        {/* COL 3 — PROPERTIES */}
-        <aside className="w-[340px] shrink-0 overflow-y-auto border-l border-neutral-200 bg-white">
-          <div className="sticky top-0 z-10 border-b border-neutral-100 bg-white/95 backdrop-blur px-5 py-4">
+      {/* PREVIEW */}
+      <div className="flex-1 min-w-0 bg-neutral-100">
+        {loading ? (
+          <div className="flex h-full items-center justify-center text-sm text-neutral-500">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando preview…
+          </div>
+        ) : (
+          <iframe
+            ref={iframeRef}
+            src="/?editor=1"
+            title="Preview da loja"
+            className="h-full w-full border-0 bg-white"
+          />
+        )}
+      </div>
+
+      {/* PROPERTIES DRAWER */}
+      <Sheet open={!!active} onOpenChange={(o) => { if (!o) setActive(null); }}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto p-0">
+          <SheetHeader className="sticky top-0 z-10 border-b border-neutral-100 bg-white/95 backdrop-blur px-6 py-4">
             <div className="flex items-center gap-2">
               {activeItem?.icon && <activeItem.icon className="h-4 w-4 text-neutral-500" />}
-              <h2 className="text-sm font-semibold text-neutral-900">{activeItem?.label ?? "Propriedades"}</h2>
+              <SheetTitle className="text-sm font-semibold">{activeItem?.label ?? "Propriedades"}</SheetTitle>
             </div>
-            <p className="mt-1 text-xs text-neutral-500">Alterações aparecem em tempo real no preview.</p>
+            <SheetDescription className="text-xs text-neutral-500">
+              Alterações aparecem em tempo real no preview.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="p-6">
+            {active && <PropertiesPanel active={active} draft={draft} update={update} />}
           </div>
-          <div className="p-5">
-            <PropertiesPanel active={active} draft={draft} update={update} />
-          </div>
-        </aside>
-      </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
-}
-
-/* ---------- Save indicator ---------- */
-function SaveIndicator({ state, dirty }: { state: "idle" | "saving" | "saved"; dirty: boolean }) {
-  if (state === "saving") return <span className="text-xs text-neutral-500 flex items-center gap-1.5"><Loader2 className="h-3 w-3 animate-spin" /> Salvando…</span>;
-  if (state === "saved") return <span className="text-xs text-emerald-600">✓ Salvo</span>;
-  if (dirty) return <span className="text-xs text-amber-600">Alterações não publicadas</span>;
-  return <span className="text-xs text-neutral-400">Tudo salvo</span>;
 }
 
 /* ---------- Property panels ---------- */
@@ -467,18 +374,13 @@ function PropertiesPanel({ active, draft, update }: PP) {
         </div>
       );
     }
-    case "footer":
-    case "social": {
+    case "footer": {
       const f = draft.footer;
       const setF = (patch: Partial<typeof f>) => update((d) => { d.footer = { ...d.footer, ...patch }; return d; });
       return (
         <div>
-          {active === "footer" && (
-            <>
-              <Field label="Texto sobre a loja"><TextArea rows={3} value={f.aboutText} onChange={(e) => setF({ aboutText: e.target.value })} /></Field>
-              <Field label="Copyright"><TextInput value={f.copyright} onChange={(e) => setF({ copyright: e.target.value })} /></Field>
-            </>
-          )}
+          <Field label="Texto sobre a loja"><TextArea rows={3} value={f.aboutText} onChange={(e) => setF({ aboutText: e.target.value })} /></Field>
+          <Field label="Copyright"><TextInput value={f.copyright} onChange={(e) => setF({ copyright: e.target.value })} /></Field>
           <Field label="Instagram (URL)"><TextInput value={f.instagram} onChange={(e) => setF({ instagram: e.target.value })} /></Field>
           <Field label="Facebook (URL)"><TextInput value={f.facebook} onChange={(e) => setF({ facebook: e.target.value })} /></Field>
           <Field label="WhatsApp (URL wa.me/...)"><TextInput value={f.whatsapp} onChange={(e) => setF({ whatsapp: e.target.value })} /></Field>
