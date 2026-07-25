@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 
@@ -22,7 +22,16 @@ interface Props {
 
 export function StoriesCarousel({ cards }: Props) {
   const [active, setActive] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const total = cards.length;
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const go = (dir: number) => setActive((i) => (i + dir + total) % total);
 
@@ -32,8 +41,8 @@ export function StoriesCarousel({ cards }: Props) {
   };
 
   return (
-    <div className="relative w-full overflow-hidden py-10 md:py-14">
-      <div className="relative mx-auto h-[560px] w-full max-w-6xl md:h-[640px]">
+    <div className="relative w-full overflow-hidden py-8 md:py-14">
+      <div className="relative mx-auto h-[480px] w-full max-w-6xl md:h-[640px]">
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           drag="x"
@@ -46,7 +55,7 @@ export function StoriesCarousel({ cards }: Props) {
             const abs = Math.abs(offset);
             if (abs > 2) return null;
             const isActive = offset === 0;
-            const translateX = offset * 78; // % of card width — side cards fully visible
+            const translateX = offset * (isMobile ? 85 : 78); // % of card width
             const scale = isActive ? 1 : 0.9;
             const opacity = abs > 1 ? 0 : 1;
             const zIndex = isActive ? 10 : 10 - abs - 1;
