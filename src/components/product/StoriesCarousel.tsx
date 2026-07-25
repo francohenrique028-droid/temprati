@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 export type StoryCard = {
   id: string | number;
   image: string;
+  video?: string;
   thumb?: string;
   name: string;
   price: number;
