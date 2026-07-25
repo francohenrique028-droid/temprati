@@ -21,7 +21,7 @@ export type Product = {
   price: number;
   oldPrice?: number;
   badge?: "Novo" | "Promoção" | "Best Seller";
-  images: [string, string];
+  images: string[];
   colors: string[];
   sizes: string[];
   bestseller?: boolean;
