@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -72,7 +72,18 @@ function LoginPage() {
               <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="rounded" />
               Lembrar acesso
             </label>
-            <button type="button" onClick={() => toast.info("Recuperação de senha em breve")} className="text-neutral-500 hover:text-neutral-900">
+            <button
+              type="button"
+              onClick={async () => {
+                if (!emailValid) { toast.error("Informe seu e-mail acima para recuperar a senha."); return; }
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                  redirectTo: `${window.location.origin}/reset-password`,
+                });
+                if (error) toast.error(error.message);
+                else toast.success("Enviamos um e-mail de recuperação para " + email);
+              }}
+              className="text-neutral-500 hover:text-neutral-900"
+            >
               Esqueceu a senha?
             </button>
           </div>
@@ -84,6 +95,11 @@ function LoginPage() {
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             Entrar
           </button>
+
+          <p className="mt-4 text-center text-xs text-neutral-600">
+            Ainda não possui uma conta?{" "}
+            <Link to="/register" className="font-medium text-neutral-900 hover:underline">Criar conta</Link>
+          </p>
         </form>
         <p className="mt-4 text-center text-xs text-neutral-500">
           Acesso restrito. Solicite acesso ao administrador da loja.
