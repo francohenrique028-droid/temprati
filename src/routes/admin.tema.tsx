@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  ChevronDown, ChevronRight, Loader2, X,
+  ChevronDown, ChevronRight, Loader2,
   Image as ImageIcon, Palette, Type, LayoutGrid, PanelTop,
   Home as HomeIcon, Images, Layers, Package, Tag, ShoppingCart, CreditCard,
   PanelBottom, Search, Code2,
