@@ -18,7 +18,12 @@ function deepMerge<T>(base: T, patch: any): T {
 function applyCssVars(theme: ThemeConfig) {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
-  const c = theme.colors;
+  const c = {
+    ...theme.colors,
+    primary: theme.colors.primary.toLowerCase() === "#ec4899" ? "hsl(28 67% 80%)" : theme.colors.primary,
+    primaryForeground: theme.colors.primary.toLowerCase() === "#ec4899" ? "#1F1F1F" : theme.colors.primaryForeground,
+    secondary: theme.colors.secondary.toLowerCase() === "#fff0f6" ? "hsl(28 67% 96%)" : theme.colors.secondary,
+  };
   root.style.setProperty("--background", c.background);
   root.style.setProperty("--foreground", c.foreground);
   root.style.setProperty("--card", c.background);

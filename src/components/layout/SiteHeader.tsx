@@ -102,7 +102,7 @@ export function SiteHeader() {
       <header
         data-editor-block="header"
         onMouseLeave={() => setHovered(null)}
-        className={`${theme.header.sticky ? "sticky top-0" : ""} z-40 border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_rgba(236,72,153,0.06)]" : ""}`}
+        className={`${theme.header.sticky ? "sticky top-0" : ""} z-40 border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_hsl(28_67%_80%_/_0.12)]" : ""}`}
       >
         <div className="container-x">
           <div className="flex items-center justify-between gap-4 py-4">
