@@ -19,6 +19,7 @@ const items = [
   { to: "/admin/menu", label: "Menu", icon: ListTree },
   { to: "/admin/paginas", label: "Páginas", icon: FileText },
   { to: "/admin/estoque", label: "Estoque", icon: Boxes },
+  { to: "/admin/tema", label: "Editor de Tema", icon: Palette },
   { to: "/admin/aparencia", label: "Aparência", icon: Palette },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
   { to: "/admin/usuarios", label: "Usuários", icon: UserCog },
