@@ -12,7 +12,7 @@ import catAcessorios from "@/assets/cat-acessorios.jpg.asset.json";
 import catBolsas from "@/assets/cat-bolsas.jpg";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { CardCarousel } from "@/components/ui/card-carousel";
+import { StoriesCarousel } from "@/components/product/StoriesCarousel";
 import { bestsellers, newArrivals, products } from "@/lib/products";
 import { useState } from "react";
 import { toast } from "sonner";
