@@ -138,7 +138,7 @@ export function SiteHeader() {
                   {ids.size > 0 && <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-primary" />}
                 </Link>
               )}
-              {theme.header.showAccount && <Link to="/conta" aria-label="Conta" className="p-2 hover:text-primary transition-colors hidden sm:inline-flex"><User className="h-[18px] w-[18px]" /></Link>}
+              {theme.header.showAccount && <AccountMenu />}
               {theme.header.showCart && (
                 <button onClick={() => openCart(true)} aria-label="Carrinho" className="relative p-2 hover:text-primary transition-colors">
                   <ShoppingBag className="h-[18px] w-[18px]" />
@@ -198,7 +198,7 @@ export function SiteHeader() {
             {nav.map(n => (
               <Link key={n.to} to={n.to} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">{n.label}</Link>
             ))}
-            <Link to="/conta" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">minha conta</Link>
+            <MobileAccountLink onNavigate={() => setMobileOpen(false)} />
             <Link to="/favoritos" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">favoritos</Link>
           </nav>
         </aside>
@@ -206,3 +206,113 @@ export function SiteHeader() {
     </>
   );
 }
+
+function AccountMenu() {
+  const { loading, user, isAdmin } = useAdminAuth();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [open]);
+
+  async function signOut() {
+    setOpen(false);
+    await supabase.auth.signOut();
+    navigate({ to: "/", replace: true });
+  }
+
+  if (loading) {
+    return <span className="p-2 hidden sm:inline-flex opacity-50"><User className="h-[18px] w-[18px]" /></span>;
+  }
+
+  if (!user) {
+    return (
+      <Link to="/login" aria-label="Entrar" className="p-2 hover:text-primary transition-colors hidden sm:inline-flex">
+        <User className="h-[18px] w-[18px]" />
+      </Link>
+    );
+  }
+
+  const items = isAdmin
+    ? [
+        { to: "/admin", label: "theme builder", icon: LayoutDashboard },
+        { to: "/admin/produtos", label: "produtos", icon: Package },
+        { to: "/admin", label: "configurações", icon: Settings },
+        { to: "/", label: "ver loja", icon: Store },
+      ]
+    : [
+        { to: "/conta", label: "minha conta", icon: User },
+        { to: "/conta", label: "pedidos", icon: Package },
+        { to: "/favoritos", label: "favoritos", icon: Heart },
+        { to: "/conta", label: "endereços", icon: MapPin },
+      ];
+
+  return (
+    <div ref={wrapRef} className="relative hidden sm:inline-flex">
+      <button
+        onClick={() => setOpen(v => !v)}
+        aria-label="Conta"
+        className="p-2 hover:text-primary transition-colors"
+      >
+        <User className="h-[18px] w-[18px]" />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.15 }}
+            className="absolute right-0 top-full mt-2 w-60 rounded-2xl border border-border bg-card shadow-lg overflow-hidden z-50"
+          >
+            <div className="px-4 py-3 border-b border-border">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                {isAdmin ? "administrador" : "cliente"}
+              </p>
+              <p className="mt-0.5 truncate text-sm font-medium">{user.email}</p>
+            </div>
+            <div className="p-1">
+              {items.map((it, i) => (
+                <Link
+                  key={i}
+                  to={it.to}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm lowercase hover:bg-secondary hover:text-primary"
+                >
+                  <it.icon className="h-4 w-4" /> {it.label}
+                </Link>
+              ))}
+              <button
+                onClick={signOut}
+                className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm lowercase text-muted-foreground hover:bg-secondary hover:text-foreground"
+              >
+                <LogOut className="h-4 w-4" /> sair
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function MobileAccountLink({ onNavigate }: { onNavigate: () => void }) {
+  const { loading, user, isAdmin } = useAdminAuth();
+  if (loading) return null;
+  if (!user) {
+    return <Link to="/login" onClick={onNavigate} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">entrar / criar conta</Link>;
+  }
+  return (
+    <Link to={isAdmin ? "/admin" : "/conta"} onClick={onNavigate} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">
+      {isAdmin ? "painel admin" : "minha conta"}
+    </Link>
+  );
+}
+
