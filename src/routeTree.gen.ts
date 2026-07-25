@@ -15,6 +15,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PoliticaDeTrocasRouteImport } from './routes/politica-de-trocas'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as NovidadesRouteImport } from './routes/novidades'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as ContaRouteImport } from './routes/conta'
@@ -59,6 +60,11 @@ const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
 const NovidadesRoute = NovidadesRouteImport.update({
   id: '/novidades',
   path: '/novidades',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FavoritosRoute = FavoritosRouteImport.update({
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/conta': typeof ContaRoute
   '/contato': typeof ContatoRoute
   '/favoritos': typeof FavoritosRoute
+  '/login': typeof LoginRoute
   '/novidades': typeof NovidadesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/politica-de-trocas': typeof PoliticaDeTrocasRoute
@@ -168,6 +175,7 @@ export interface FileRoutesByTo {
   '/conta': typeof ContaRoute
   '/contato': typeof ContatoRoute
   '/favoritos': typeof FavoritosRoute
+  '/login': typeof LoginRoute
   '/novidades': typeof NovidadesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/politica-de-trocas': typeof PoliticaDeTrocasRoute
@@ -192,6 +200,7 @@ export interface FileRoutesById {
   '/conta': typeof ContaRoute
   '/contato': typeof ContatoRoute
   '/favoritos': typeof FavoritosRoute
+  '/login': typeof LoginRoute
   '/novidades': typeof NovidadesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/politica-de-trocas': typeof PoliticaDeTrocasRoute
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
     | '/conta'
     | '/contato'
     | '/favoritos'
+    | '/login'
     | '/novidades'
     | '/politica-de-privacidade'
     | '/politica-de-trocas'
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/conta'
     | '/contato'
     | '/favoritos'
+    | '/login'
     | '/novidades'
     | '/politica-de-privacidade'
     | '/politica-de-trocas'
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/conta'
     | '/contato'
     | '/favoritos'
+    | '/login'
     | '/novidades'
     | '/politica-de-privacidade'
     | '/politica-de-trocas'
@@ -287,6 +299,7 @@ export interface RootRouteChildren {
   ContaRoute: typeof ContaRoute
   ContatoRoute: typeof ContatoRoute
   FavoritosRoute: typeof FavoritosRoute
+  LoginRoute: typeof LoginRoute
   NovidadesRoute: typeof NovidadesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   PoliticaDeTrocasRoute: typeof PoliticaDeTrocasRoute
@@ -344,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/novidades'
       fullPath: '/novidades'
       preLoaderRoute: typeof NovidadesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/favoritos': {
@@ -474,6 +494,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContaRoute: ContaRoute,
   ContatoRoute: ContatoRoute,
   FavoritosRoute: FavoritosRoute,
+  LoginRoute: LoginRoute,
   NovidadesRoute: NovidadesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   PoliticaDeTrocasRoute: PoliticaDeTrocasRoute,

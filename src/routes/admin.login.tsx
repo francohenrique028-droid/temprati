@@ -18,10 +18,13 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/admin/dashboard" });
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!data.user) return;
+      const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: data.user.id, _role: "admin" });
+      navigate({ to: isAdmin ? "/admin" : "/conta", replace: true });
     });
   }, [navigate]);
+
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const passwordValid = password.length >= 6;
@@ -34,8 +37,11 @@ function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) { toast.error(error.message); return; }
-    if (!remember) { /* session still persists; browser tab lifetime is fine for MVP */ }
-    navigate({ to: "/admin/dashboard" });
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) { toast.error("Erro ao carregar sessão."); return; }
+    const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: userData.user.id, _role: "admin" });
+    navigate({ to: isAdmin ? "/admin" : "/conta", replace: true });
+
   }
 
   return (

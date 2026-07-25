@@ -1,14 +1,17 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Package, Heart, MapPin, User } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Package, Heart, MapPin, User, Loader2 } from "lucide-react";
 import { formatPrice, products } from "@/lib/products";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import { useAdminAuth } from "@/lib/admin/useAdminAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/conta")({
-  head: () => ({ meta: [{ title: "Minha Conta — Ateliê" }] }),
+  head: () => ({ meta: [{ title: "Minha Conta — #temprati" }, { name: "robots", content: "noindex" }] }),
   component: AccountPage,
 });
+
 
 const tabs = [
   { id: "orders", label: "Pedidos", icon: Package },
@@ -18,14 +21,29 @@ const tabs = [
 ] as const;
 
 function AccountPage() {
+  const navigate = useNavigate();
+  const { loading, user, isAdmin } = useAdminAuth();
   const [tab, setTab] = useState<(typeof tabs)[number]["id"]>("orders");
   const { ids } = useFavorites();
   const favs = products.filter(p => ids.has(p.id));
 
+  useEffect(() => {
+    if (loading) return;
+    if (!user) navigate({ to: "/login", replace: true });
+    else if (isAdmin) navigate({ to: "/admin", replace: true });
+  }, [loading, user, isAdmin, navigate]);
+
+  if (loading || !user || isAdmin) {
+    return <div className="container-x flex min-h-[60vh] items-center justify-center"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>;
+  }
+
+  const displayName = (user.user_metadata?.nome as string) || user.email?.split("@")[0] || "cliente";
+
   return (
     <div className="container-x py-14">
       <h1 className="text-3xl font-light tracking-tight md:text-4xl">Minha Conta</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Olá, visitante. Bem-vindo(a).</p>
+      <p className="mt-2 text-sm text-muted-foreground">Olá, {displayName}. Bem-vindo(a).</p>
+
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[240px_1fr]">
         <aside className="space-y-1">
@@ -34,7 +52,11 @@ function AccountPage() {
               <t.icon className="h-4 w-4" /> {t.label}
             </button>
           ))}
-          <Link to="/" className="mt-6 block px-4 py-3 text-xs text-muted-foreground hover:text-foreground">Sair</Link>
+          <button
+            onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/", replace: true }); }}
+            className="mt-6 block w-full px-4 py-3 text-left text-xs text-muted-foreground hover:text-foreground"
+          >Sair</button>
+
         </aside>
         <section className="rounded-2xl border border-border bg-card p-8">
           {tab === "orders" && (
