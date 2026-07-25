@@ -71,11 +71,24 @@ function ProductPage() {
         </div>
         <div className="relative overflow-hidden rounded-2xl bg-card" onMouseEnter={() => setZoom(true)} onMouseLeave={() => setZoom(false)}>
           {current.type === "video" ? (
-            <video src={current.src} poster={current.poster} controls autoPlay muted loop playsInline className="w-full aspect-[4/5] object-cover" />
+            <video key={current.src} src={current.src} poster={current.poster} controls autoPlay muted loop playsInline className="w-full aspect-[4/5] object-cover" />
           ) : (
             <img src={current.src} alt={product.name} width={1000} height={1250} className={`w-full object-cover transition-transform duration-500 ${zoom ? "scale-[1.15]" : "scale-100"}`} />
           )}
+          <div className="flex gap-2 p-3 lg:hidden">
+            {gallery.map((g, i) => (
+              <button key={i} onClick={() => setMain(i)} className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border ${main === i ? "border-primary" : "border-border"}`}>
+                <img src={g.type === "video" ? (g.poster ?? "") : g.src} alt="" className="h-full w-full object-cover" />
+                {g.type === "video" && (
+                  <span className="absolute inset-0 flex items-center justify-center bg-black/20">
+                    <Play className="h-3 w-3 fill-white text-white" />
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
+
 
         <div className="lg:sticky lg:top-32 lg:self-start">
           {product.badge && <span className="mb-4 inline-block rounded-full bg-secondary px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em]">{product.badge}</span>}
