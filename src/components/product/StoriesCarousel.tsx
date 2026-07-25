@@ -31,7 +31,7 @@ export function StoriesCarousel({ cards }: Props) {
   };
 
   return (
-    <div className="relative w-full overflow-hidden rounded-3xl bg-[#0a0a0a] py-10 md:py-14">
+    <div className="relative w-full overflow-hidden py-10 md:py-14">
       <div className="relative mx-auto h-[560px] w-full max-w-6xl md:h-[640px]">
         {/* Cards */}
         <motion.div
@@ -46,23 +46,27 @@ export function StoriesCarousel({ cards }: Props) {
             const abs = Math.abs(offset);
             if (abs > 2) return null;
             const isActive = offset === 0;
-            const translateX = offset * 70; // % of card width — side cards peek ~30%
-            const scale = isActive ? 1 : 0.88;
-            const opacity = isActive ? 1 : 0.75;
-            const zIndex = 10 - abs;
+            // overlap: side cards sit behind and are partially covered by the center
+            const translateX = offset * 55; // % of card width
+            const scale = isActive ? 1 : 0.85;
+            const opacity = isActive ? 1 : 0.8;
+            const zIndex = isActive ? 10 : 10 - abs - 1;
 
             return (
               <motion.button
                 key={card.id}
                 type="button"
                 onClick={() => (isActive ? undefined : setActive(i))}
-                className="absolute top-1/2 left-1/2 aspect-[9/16] h-full max-h-[600px] overflow-hidden rounded-2xl shadow-2xl"
+                className="absolute top-1/2 left-1/2 aspect-[9/16] h-full max-h-[600px] overflow-hidden rounded-2xl"
                 animate={{
                   x: `calc(-50% + ${translateX}%)`,
                   y: "-50%",
                   scale,
                   opacity,
                   zIndex,
+                  boxShadow: isActive
+                    ? "0 20px 60px rgba(0,0,0,0.3)"
+                    : "0 8px 24px rgba(0,0,0,0.15)",
                 }}
                 transition={{ type: "spring", stiffness: 260, damping: 30 }}
                 style={{ pointerEvents: abs > 1 ? "none" : "auto" }}
