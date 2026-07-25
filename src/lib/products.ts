@@ -26,6 +26,7 @@ export type Product = {
   bestseller?: boolean;
   isNew?: boolean;
   description: string;
+  video?: string;
 };
 
 export const products: Product[] = [
