@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { defaultTheme, THEME_MESSAGE, THEME_READY, THEME_SELECT, type ThemeConfig } from "./types";
+import { defaultTheme, type ThemeConfig } from "./types";
 
 type Ctx = { theme: ThemeConfig; isEditorPreview: boolean };
 const ThemeCtx = createContext<Ctx>({ theme: defaultTheme, isEditorPreview: false });
@@ -41,16 +41,7 @@ function applyCssVars(theme: ThemeConfig) {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<ThemeConfig>(defaultTheme);
-  const isEditorPreview = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      const inIframe = window.self !== window.top;
-      const flagged = new URLSearchParams(window.location.search).get("editor") === "1";
-      return inIframe || flagged;
-    } catch { return true; }
-  }, []);
 
-  // Load from DB
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -65,64 +56,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return () => { cancelled = true; };
   }, []);
 
-  // Apply CSS vars on change
   useEffect(() => { applyCssVars(theme); }, [theme]);
 
-  // Listen to editor postMessage + enable click-to-select overlay
-  useEffect(() => {
-    if (!isEditorPreview) return;
-    const onMsg = (e: MessageEvent) => {
-      if (!e.data || typeof e.data !== "object") return;
-      if (e.data.type === THEME_MESSAGE && e.data.theme) {
-        setTheme(deepMerge(defaultTheme, e.data.theme));
-      }
-    };
-    window.addEventListener("message", onMsg);
-
-    // Inject hover/selected outline styles
-    const styleEl = document.createElement("style");
-    styleEl.setAttribute("data-editor-styles", "true");
-    styleEl.textContent = `
-      [data-editor-block] { position: relative; cursor: pointer; }
-      [data-editor-block]:hover { outline: 2px dashed #3b82f6; outline-offset: -2px; }
-      [data-editor-block][data-editor-selected="true"] { outline: 2px solid #2563eb; outline-offset: -2px; }
-      [data-editor-block][data-editor-selected="true"]::before {
-        content: attr(data-editor-label);
-        position: absolute; top: 0; left: 0; z-index: 9999;
-        background: #2563eb; color: #fff; font: 500 10px/1 ui-sans-serif, system-ui, sans-serif;
-        padding: 4px 8px; border-radius: 0 0 6px 0; letter-spacing: .04em; text-transform: uppercase;
-      }
-    `;
-    document.head.appendChild(styleEl);
-
-    const onClick = (ev: MouseEvent) => {
-      const target = ev.target as HTMLElement | null;
-      const block = target?.closest?.("[data-editor-block]") as HTMLElement | null;
-      if (!block) return;
-      const key = block.getAttribute("data-editor-block");
-      if (!key) return;
-      ev.preventDefault();
-      ev.stopPropagation();
-      document.querySelectorAll('[data-editor-block][data-editor-selected="true"]').forEach((el) => {
-        el.removeAttribute("data-editor-selected");
-      });
-      block.setAttribute("data-editor-selected", "true");
-      block.setAttribute("data-editor-label", key);
-      try { window.parent?.postMessage({ type: THEME_SELECT, key }, "*"); } catch {}
-    };
-    document.addEventListener("click", onClick, true);
-
-    // Announce ready
-    try { window.parent?.postMessage({ type: THEME_READY }, "*"); } catch {}
-
-    return () => {
-      window.removeEventListener("message", onMsg);
-      document.removeEventListener("click", onClick, true);
-      styleEl.remove();
-    };
-  }, [isEditorPreview]);
-
-  return <ThemeCtx.Provider value={{ theme, isEditorPreview }}>{children}</ThemeCtx.Provider>;
+  return <ThemeCtx.Provider value={{ theme, isEditorPreview: false }}>{children}</ThemeCtx.Provider>;
 }
 
 export function useTheme() { return useContext(ThemeCtx); }
