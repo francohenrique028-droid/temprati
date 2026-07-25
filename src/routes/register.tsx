@@ -20,8 +20,10 @@ function RegisterPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/admin/dashboard" });
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!data.user) return;
+      const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: data.user.id, _role: "admin" });
+      navigate({ to: isAdmin ? "/admin" : "/conta", replace: true });
     });
   }, [navigate]);
 
@@ -39,7 +41,7 @@ function RegisterPage() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/admin/dashboard`,
+        emailRedirectTo: `${window.location.origin}/conta`,
         data: { nome: nome.trim() },
       },
     });
@@ -55,21 +57,21 @@ function RegisterPage() {
       return;
     }
 
-    // If email confirmation is disabled, session is returned; otherwise sign in.
     if (!data.session) {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) {
         setLoading(false);
         toast.success("Conta criada. Verifique seu e-mail para confirmar antes de entrar.");
-        navigate({ to: "/admin/login" });
+        navigate({ to: "/login" });
         return;
       }
     }
 
     setLoading(false);
     toast.success("Conta criada com sucesso!");
-    navigate({ to: "/admin/dashboard" });
+    navigate({ to: "/conta", replace: true });
   }
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-50 px-4 py-10">
@@ -131,8 +133,9 @@ function RegisterPage() {
 
           <p className="mt-4 text-center text-xs text-neutral-600">
             Já possui uma conta?{" "}
-            <Link to="/admin/login" className="font-medium text-neutral-900 hover:underline">Entrar</Link>
+            <Link to="/login" className="font-medium text-neutral-900 hover:underline">Entrar</Link>
           </p>
+
         </form>
       </div>
     </div>
