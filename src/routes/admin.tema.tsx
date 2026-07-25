@@ -1,66 +1,102 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, Monitor, Tablet, Smartphone, Loader2, Save, RotateCcw, ExternalLink } from "lucide-react";
-import { AdminShell } from "@/components/admin/AdminShell";
+import {
+  ChevronDown, ChevronRight, Monitor, Tablet, Smartphone, Loader2, Save, RotateCcw,
+  ExternalLink, LogOut, Image as ImageIcon, Palette, Type, LayoutGrid, PanelTop,
+  Home as HomeIcon, Images, Layers, Package, Tag, ShoppingCart, CreditCard,
+  PanelBottom, Share2, Search, Code2, FileCode2, Plug, Settings, ZoomIn, ZoomOut,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { defaultTheme, THEME_MESSAGE, THEME_READY, type ThemeConfig } from "@/lib/theme/types";
+import { useAdminAuth } from "@/lib/admin/useAdminAuth";
+import { defaultTheme, THEME_MESSAGE, THEME_READY, THEME_SELECT, type ThemeConfig } from "@/lib/theme/types";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/tema")({
   head: () => ({ meta: [{ title: "Editor de Tema · Admin" }, { name: "robots", content: "noindex" }] }),
-  component: ThemeEditorPage,
+  component: ThemeBuilderPage,
 });
 
 type SectionKey =
-  | "brand-logo" | "brand-colors" | "brand-typography" | "brand-buttons"
-  | "brand-spacing" | "brand-design" | "brand-advanced"
-  | "header" | "home-banner" | "home-categories" | "home-featured"
-  | "home-collections" | "home-list" | "product-page" | "cart" | "checkout"
+  | "brand-logo" | "brand-colors" | "brand-typography"
+  | "layout" | "header" | "home-banner" | "home-categories" | "home-collections"
+  | "home-featured" | "product-page" | "cart" | "checkout"
   | "footer" | "social" | "seo" | "css" | "scripts" | "integrations" | "general";
 
-type MenuItem = { key: SectionKey; label: string; group: string };
-const MENU: MenuItem[] = [
-  { key: "brand-logo", label: "Imagem da marca", group: "Marca" },
-  { key: "brand-colors", label: "Cores da marca", group: "Marca" },
-  { key: "brand-typography", label: "Tipografia", group: "Marca" },
-  { key: "brand-buttons", label: "Botões", group: "Marca" },
-  { key: "brand-spacing", label: "Espaçamentos", group: "Marca" },
-  { key: "brand-design", label: "Opções de design", group: "Marca" },
-  { key: "brand-advanced", label: "Configurações avançadas", group: "Marca" },
-  { key: "header", label: "Cabeçalho", group: "Layout" },
-  { key: "home-banner", label: "Banner", group: "Página Inicial" },
-  { key: "home-categories", label: "Categorias", group: "Página Inicial" },
-  { key: "home-featured", label: "Produtos em destaque", group: "Página Inicial" },
-  { key: "home-collections", label: "Coleções", group: "Página Inicial" },
-  { key: "home-list", label: "Lista de produtos", group: "Página Inicial" },
-  { key: "product-page", label: "Página do Produto", group: "Loja" },
-  { key: "cart", label: "Carrinho", group: "Loja" },
-  { key: "checkout", label: "Checkout", group: "Loja" },
-  { key: "footer", label: "Rodapé", group: "Layout" },
-  { key: "social", label: "Redes Sociais", group: "Layout" },
-  { key: "seo", label: "SEO", group: "Avançado" },
-  { key: "css", label: "CSS Personalizado", group: "Avançado" },
-  { key: "scripts", label: "Scripts", group: "Avançado" },
-  { key: "integrations", label: "Integrações", group: "Avançado" },
-  { key: "general", label: "Configurações Gerais", group: "Avançado" },
+type MenuItem = { key: SectionKey; label: string; icon: React.ComponentType<{ className?: string }> };
+type MenuGroup = { title: string; items: MenuItem[] };
+
+const MENU: MenuGroup[] = [
+  { title: "Marca", items: [
+    { key: "brand-logo", label: "Imagem da marca", icon: ImageIcon },
+    { key: "brand-colors", label: "Cores", icon: Palette },
+    { key: "brand-typography", label: "Tipografia", icon: Type },
+  ]},
+  { title: "Layout", items: [
+    { key: "layout", label: "Layout", icon: LayoutGrid },
+    { key: "header", label: "Cabeçalho", icon: PanelTop },
+  ]},
+  { title: "Página Inicial", items: [
+    { key: "home-banner", label: "Banner", icon: HomeIcon },
+    { key: "home-categories", label: "Categorias", icon: Images },
+    { key: "home-collections", label: "Coleções", icon: Layers },
+    { key: "home-featured", label: "Produtos", icon: Package },
+  ]},
+  { title: "Loja", items: [
+    { key: "product-page", label: "Página Produto", icon: Tag },
+    { key: "cart", label: "Carrinho", icon: ShoppingCart },
+    { key: "checkout", label: "Checkout", icon: CreditCard },
+  ]},
+  { title: "Rodapé & Social", items: [
+    { key: "footer", label: "Rodapé", icon: PanelBottom },
+    { key: "social", label: "Redes Sociais", icon: Share2 },
+  ]},
+  { title: "Avançado", items: [
+    { key: "seo", label: "SEO", icon: Search },
+    { key: "css", label: "CSS Personalizado", icon: Code2 },
+    { key: "scripts", label: "Scripts", icon: FileCode2 },
+    { key: "integrations", label: "Integrações", icon: Plug },
+    { key: "general", label: "Configurações", icon: Settings },
+  ]},
 ];
 
-const DEVICE_WIDTHS = { desktop: "100%", tablet: "820px", mobile: "390px" } as const;
+const BLOCK_TO_SECTION: Record<string, SectionKey> = {
+  "header": "header",
+  "home-banner": "home-banner",
+  "home-categories": "home-categories",
+  "home-featured": "home-featured",
+  "footer": "footer",
+};
+
+const DEVICE_WIDTHS = { desktop: 1280, tablet: 820, mobile: 390 } as const;
 type Device = keyof typeof DEVICE_WIDTHS;
 
-function ThemeEditorPage() {
+function ThemeBuilderPage() {
+  const { loading: authLoading, user, isAdmin } = useAdminAuth();
+  const navigate = useNavigate();
+
   const [savedTheme, setSavedTheme] = useState<ThemeConfig>(defaultTheme);
   const [draft, setDraft] = useState<ThemeConfig>(defaultTheme);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
   const [device, setDevice] = useState<Device>("desktop");
+  const [zoom, setZoom] = useState(1);
   const [active, setActive] = useState<SectionKey>("brand-colors");
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({ Marca: true, "Página Inicial": true, Layout: true });
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(
+    Object.fromEntries(MENU.map((g) => [g.title, true]))
+  );
+
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const iframeReady = useRef(false);
+  const draftRef = useRef(draft);
+  draftRef.current = draft;
 
-  // Load
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) navigate({ to: "/admin/login" });
+  }, [authLoading, user, navigate]);
+
+  // Load saved theme
   useEffect(() => {
     (async () => {
       const { data, error } = await (supabase as any)
@@ -74,7 +110,7 @@ function ThemeEditorPage() {
     })();
   }, []);
 
-  // Post draft to iframe (debounced) whenever it changes
+  // Post draft to iframe (debounced)
   useEffect(() => {
     const t = setTimeout(() => {
       if (iframeReady.current) {
@@ -84,17 +120,22 @@ function ThemeEditorPage() {
     return () => clearTimeout(t);
   }, [draft]);
 
-  // Listen for iframe ready
+  // Listen to iframe messages (ready + selection)
   useEffect(() => {
     const onMsg = (e: MessageEvent) => {
-      if (e.data?.type === THEME_READY) {
+      const data = e.data;
+      if (!data || typeof data !== "object") return;
+      if (data.type === THEME_READY) {
         iframeReady.current = true;
-        iframeRef.current?.contentWindow?.postMessage({ type: THEME_MESSAGE, theme: draft }, "*");
+        iframeRef.current?.contentWindow?.postMessage({ type: THEME_MESSAGE, theme: draftRef.current }, "*");
+      }
+      if (data.type === THEME_SELECT && typeof data.key === "string") {
+        const target = BLOCK_TO_SECTION[data.key];
+        if (target) setActive(target);
       }
     };
     window.addEventListener("message", onMsg);
     return () => window.removeEventListener("message", onMsg);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const dirty = useMemo(() => JSON.stringify(savedTheme) !== JSON.stringify(draft), [savedTheme, draft]);
@@ -103,56 +144,138 @@ function ThemeEditorPage() {
     setDraft((d) => patch({ ...d }));
   }, []);
 
-  async function handleSave() {
-    setSaving(true);
+  const doSave = useCallback(async (currentDraft: ThemeConfig) => {
+    setSaveState("saving");
     const { error } = await (supabase as any)
-      .from("theme_settings").update({ config: draft }).eq("singleton", true);
-    setSaving(false);
-    if (error) { toast.error("Erro ao salvar: " + error.message); return; }
-    setSavedTheme(draft);
-    toast.success("Alterações publicadas");
-  }
-
-  function handleDiscard() {
-    setDraft(savedTheme);
-    toast("Alterações descartadas");
-  }
-
-  const grouped = useMemo(() => {
-    const m: Record<string, MenuItem[]> = {};
-    for (const it of MENU) { (m[it.group] ??= []).push(it); }
-    return m;
+      .from("theme_settings").update({ config: currentDraft }).eq("singleton", true);
+    if (error) {
+      setSaveState("idle");
+      toast.error("Erro ao salvar: " + error.message);
+      return;
+    }
+    setSavedTheme(currentDraft);
+    setSaveState("saved");
+    setTimeout(() => setSaveState((s) => (s === "saved" ? "idle" : s)), 1600);
   }, []);
 
+  // Autosave (debounced) whenever draft differs from saved
+  useEffect(() => {
+    if (!dirty || loading) return;
+    const t = setTimeout(() => { doSave(draftRef.current); }, 1200);
+    return () => clearTimeout(t);
+  }, [draft, dirty, loading, doSave]);
+
+  async function handleManualSave() { await doSave(draft); toast.success("Alterações publicadas"); }
+  function handleDiscard() { setDraft(savedTheme); toast("Alterações descartadas"); }
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/admin/login", replace: true });
+  }
+
+  const activeItem = useMemo(() => {
+    for (const g of MENU) for (const it of g.items) if (it.key === active) return it;
+    return null;
+  }, [active]);
+
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center bg-neutral-50 text-sm text-neutral-500">Carregando…</div>;
+  }
+  if (!user) return null;
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50 px-4">
+        <div className="max-w-md rounded-2xl border border-neutral-200 bg-white p-8 text-center">
+          <h1 className="text-lg font-semibold">Acesso restrito</h1>
+          <p className="mt-2 text-sm text-neutral-500">Sua conta não tem permissão de administrador.</p>
+          <button onClick={handleSignOut} className="mt-6 rounded-lg bg-neutral-900 px-4 py-2 text-sm text-white hover:bg-neutral-800">Sair</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <AdminShell title="Editor de Tema">
-      <div className="fixed inset-0 top-14 md:left-60 flex bg-neutral-50">
-        {/* SIDEBAR */}
-        <aside className="w-64 shrink-0 overflow-y-auto border-r border-neutral-200 bg-white">
-          <div className="p-3 space-y-1">
-            {Object.entries(grouped).map(([group, items]) => (
-              <div key={group}>
+    <div className="fixed inset-0 flex flex-col bg-neutral-100 text-neutral-900">
+      {/* TOP HEADER */}
+      <header className="h-14 shrink-0 flex items-center justify-between border-b border-neutral-200 bg-white px-4">
+        <div className="flex items-center gap-3 min-w-0">
+          <Link to="/admin/tema" className="text-lg font-bold tracking-tight lowercase text-primary">#temprati</Link>
+          <span className="h-5 w-px bg-neutral-200" />
+          <div className="min-w-0">
+            <div className="text-xs uppercase tracking-wider text-neutral-500">Editor de Tema</div>
+            <div className="truncate text-sm font-medium">Tema padrão</div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1 rounded-lg border border-neutral-200 p-0.5">
+          {(["desktop", "tablet", "mobile"] as Device[]).map((d) => {
+            const Icon = d === "desktop" ? Monitor : d === "tablet" ? Tablet : Smartphone;
+            return (
+              <button key={d} onClick={() => setDevice(d)}
+                className={cn("flex items-center justify-center rounded-md px-2.5 py-1.5", device === d ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100")}
+                title={d}
+              ><Icon className="h-4 w-4" /></button>
+            );
+          })}
+          <span className="mx-1 h-5 w-px bg-neutral-200" />
+          <button onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))} className="rounded-md p-1.5 text-neutral-600 hover:bg-neutral-100" title="Zoom out"><ZoomOut className="h-4 w-4" /></button>
+          <span className="min-w-[40px] text-center text-xs tabular-nums text-neutral-600">{Math.round(zoom * 100)}%</span>
+          <button onClick={() => setZoom((z) => Math.min(1.5, +(z + 0.1).toFixed(2)))} className="rounded-md p-1.5 text-neutral-600 hover:bg-neutral-100" title="Zoom in"><ZoomIn className="h-4 w-4" /></button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <SaveIndicator state={saveState} dirty={dirty} />
+          <a href="/" target="_blank" rel="noreferrer"
+            className="hidden md:flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs text-neutral-700 hover:bg-neutral-50"
+          ><ExternalLink className="h-3.5 w-3.5" /> Ver Loja</a>
+          <button onClick={handleDiscard} disabled={!dirty}
+            className="hidden md:flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs text-neutral-700 disabled:opacity-40 hover:bg-neutral-50"
+            title="Descartar"
+          ><RotateCcw className="h-3.5 w-3.5" /> Descartar</button>
+          <button onClick={handleManualSave} disabled={!dirty || saveState === "saving"}
+            className="flex items-center gap-1.5 rounded-md bg-neutral-900 px-3.5 py-1.5 text-xs font-medium text-white disabled:opacity-40 hover:bg-neutral-800"
+          >{saveState === "saving" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />} Publicar</button>
+          <div className="ml-2 flex items-center gap-2 border-l border-neutral-200 pl-2">
+            <div className="h-7 w-7 rounded-full bg-neutral-900 text-white text-xs font-medium flex items-center justify-center">
+              {(user.email?.[0] ?? "A").toUpperCase()}
+            </div>
+            <button onClick={handleSignOut} title="Sair" className="rounded-md p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900">
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* BODY: 3 columns */}
+      <div className="flex-1 flex min-h-0">
+        {/* COL 1 — SIDEBAR */}
+        <aside className="w-[320px] shrink-0 overflow-y-auto border-r border-neutral-200 bg-white">
+          <div className="p-3 space-y-3">
+            {MENU.map((group) => (
+              <div key={group.title}>
                 <button
-                  onClick={() => setOpenGroups((g) => ({ ...g, [group]: !g[group] }))}
+                  onClick={() => setOpenGroups((g) => ({ ...g, [group.title]: !g[group.title] }))}
                   className="flex w-full items-center justify-between px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 hover:text-neutral-800"
                 >
-                  {group}
-                  <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", !openGroups[group] && "-rotate-90")} />
+                  {group.title}
+                  <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", !openGroups[group.title] && "-rotate-90")} />
                 </button>
-                {openGroups[group] && (
-                  <div className="mb-2">
-                    {items.map((it) => (
-                      <button
-                        key={it.key}
-                        onClick={() => setActive(it.key)}
-                        className={cn(
-                          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-neutral-700 hover:bg-neutral-100",
-                          active === it.key && "bg-neutral-900 text-white hover:bg-neutral-900",
-                        )}
-                      >
-                        {it.label}
-                      </button>
-                    ))}
+                {openGroups[group.title] && (
+                  <div className="mt-1 space-y-0.5">
+                    {group.items.map((it) => {
+                      const isActive = active === it.key;
+                      return (
+                        <button key={it.key} onClick={() => setActive(it.key)}
+                          className={cn(
+                            "flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm transition-colors",
+                            isActive ? "bg-neutral-900 text-white" : "text-neutral-700 hover:bg-neutral-100"
+                          )}
+                        >
+                          <it.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white" : "text-neutral-500")} />
+                          <span className="flex-1 truncate">{it.label}</span>
+                          <ChevronRight className={cn("h-3.5 w-3.5 shrink-0", isActive ? "text-white/70" : "text-neutral-400")} />
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -160,65 +283,60 @@ function ThemeEditorPage() {
           </div>
         </aside>
 
-        {/* PREVIEW */}
-        <div className="flex-1 flex flex-col min-w-0">
-          <div className="h-12 shrink-0 border-b border-neutral-200 bg-white flex items-center justify-between px-4">
-            <div className="flex items-center gap-1 rounded-lg border border-neutral-200 p-0.5">
-              {(["desktop", "tablet", "mobile"] as Device[]).map((d) => {
-                const Icon = d === "desktop" ? Monitor : d === "tablet" ? Tablet : Smartphone;
-                return (
-                  <button
-                    key={d}
-                    onClick={() => setDevice(d)}
-                    className={cn("flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs", device === d ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100")}
-                    title={d}
-                  ><Icon className="h-3.5 w-3.5" />{d}</button>
-                );
-              })}
-            </div>
-            <div className="flex items-center gap-2">
-              {dirty && <span className="text-xs text-amber-600">Alterações não publicadas</span>}
-              <button onClick={handleDiscard} disabled={!dirty || saving} className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs text-neutral-700 disabled:opacity-50 hover:bg-neutral-50">
-                <RotateCcw className="h-3.5 w-3.5" /> Descartar
-              </button>
-              <button onClick={handleSave} disabled={!dirty || saving} className="flex items-center gap-1.5 rounded-md bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50 hover:bg-neutral-800">
-                {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />} Publicar
-              </button>
-              <a href="/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-2 py-1.5 text-xs text-neutral-600 hover:bg-neutral-50" title="Abrir loja"><ExternalLink className="h-3.5 w-3.5" /></a>
-            </div>
-          </div>
+        {/* COL 2 — PREVIEW */}
+        <div className="flex-1 flex flex-col min-w-0 bg-neutral-100">
           <div className="flex-1 overflow-auto p-6 flex items-start justify-center">
-            <div style={{ width: DEVICE_WIDTHS[device] }} className="max-w-full h-full min-h-[600px] bg-white shadow-lg rounded-lg overflow-hidden transition-all">
+            <div
+              style={{
+                width: DEVICE_WIDTHS[device],
+                transform: `scale(${zoom})`,
+                transformOrigin: "top center",
+              }}
+              className="max-w-full h-full min-h-[600px] bg-white shadow-xl rounded-lg overflow-hidden transition-[width] duration-200"
+            >
               {loading ? (
-                <div className="flex h-full items-center justify-center text-sm text-neutral-500"><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando…</div>
+                <div className="flex h-[80vh] items-center justify-center text-sm text-neutral-500">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando preview…
+                </div>
               ) : (
                 <iframe
                   ref={iframeRef}
                   src="/?editor=1"
-                  title="Preview"
-                  className="h-[calc(100vh-8rem)] w-full border-0"
+                  title="Preview da loja"
+                  className="h-[calc(100vh-6rem)] w-full border-0"
                 />
               )}
             </div>
           </div>
         </div>
 
-        {/* PROPERTIES PANEL */}
-        <aside className="w-80 shrink-0 overflow-y-auto border-l border-neutral-200 bg-white">
-          <div className="p-5">
-            <h2 className="text-sm font-semibold text-neutral-900">{MENU.find(m => m.key === active)?.label}</h2>
+        {/* COL 3 — PROPERTIES */}
+        <aside className="w-[340px] shrink-0 overflow-y-auto border-l border-neutral-200 bg-white">
+          <div className="sticky top-0 z-10 border-b border-neutral-100 bg-white/95 backdrop-blur px-5 py-4">
+            <div className="flex items-center gap-2">
+              {activeItem?.icon && <activeItem.icon className="h-4 w-4 text-neutral-500" />}
+              <h2 className="text-sm font-semibold text-neutral-900">{activeItem?.label ?? "Propriedades"}</h2>
+            </div>
             <p className="mt-1 text-xs text-neutral-500">Alterações aparecem em tempo real no preview.</p>
           </div>
-          <div className="border-t border-neutral-100 p-5">
+          <div className="p-5">
             <PropertiesPanel active={active} draft={draft} update={update} />
           </div>
         </aside>
       </div>
-    </AdminShell>
+    </div>
   );
 }
 
-/* -------- Property panels -------- */
+/* ---------- Save indicator ---------- */
+function SaveIndicator({ state, dirty }: { state: "idle" | "saving" | "saved"; dirty: boolean }) {
+  if (state === "saving") return <span className="text-xs text-neutral-500 flex items-center gap-1.5"><Loader2 className="h-3 w-3 animate-spin" /> Salvando…</span>;
+  if (state === "saved") return <span className="text-xs text-emerald-600">✓ Salvo</span>;
+  if (dirty) return <span className="text-xs text-amber-600">Alterações não publicadas</span>;
+  return <span className="text-xs text-neutral-400">Tudo salvo</span>;
+}
+
+/* ---------- Property panels ---------- */
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -245,7 +363,7 @@ function ColorInput({ value, onChange }: { value: string; onChange: (v: string) 
 function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <label className="flex items-center justify-between py-2 text-sm text-neutral-700">
-      {label}
+      <span>{label}</span>
       <button type="button" onClick={() => onChange(!checked)} className={cn("h-5 w-9 rounded-full transition-colors", checked ? "bg-neutral-900" : "bg-neutral-300")}>
         <span className={cn("block h-4 w-4 rounded-full bg-white shadow transition-transform mx-0.5", checked ? "translate-x-4" : "translate-x-0")} />
       </button>
@@ -330,8 +448,7 @@ function PropertiesPanel({ active, draft, update }: PP) {
         </div>
       );
     }
-    case "home-featured":
-    case "home-list": {
+    case "home-featured": {
       const p = draft.products;
       const setP = (patch: Partial<typeof p>) => update((d) => { d.products = { ...d.products, ...patch }; return d; });
       return (
@@ -350,27 +467,21 @@ function PropertiesPanel({ active, draft, update }: PP) {
         </div>
       );
     }
-    case "footer": {
-      const f = draft.footer;
-      const setF = (patch: Partial<typeof f>) => update((d) => { d.footer = { ...d.footer, ...patch }; return d; });
-      return (
-        <div>
-          <Field label="Texto sobre a loja"><TextArea rows={3} value={f.aboutText} onChange={(e) => setF({ aboutText: e.target.value })} /></Field>
-          <Field label="Copyright"><TextInput value={f.copyright} onChange={(e) => setF({ copyright: e.target.value })} /></Field>
-          <Field label="Instagram (URL)"><TextInput value={f.instagram} onChange={(e) => setF({ instagram: e.target.value })} /></Field>
-          <Field label="Facebook (URL)"><TextInput value={f.facebook} onChange={(e) => setF({ facebook: e.target.value })} /></Field>
-          <Field label="WhatsApp (URL wa.me/...)"><TextInput value={f.whatsapp} onChange={(e) => setF({ whatsapp: e.target.value })} /></Field>
-        </div>
-      );
-    }
+    case "footer":
     case "social": {
       const f = draft.footer;
       const setF = (patch: Partial<typeof f>) => update((d) => { d.footer = { ...d.footer, ...patch }; return d; });
       return (
         <div>
-          <Field label="Instagram"><TextInput value={f.instagram} onChange={(e) => setF({ instagram: e.target.value })} /></Field>
-          <Field label="Facebook"><TextInput value={f.facebook} onChange={(e) => setF({ facebook: e.target.value })} /></Field>
-          <Field label="WhatsApp"><TextInput value={f.whatsapp} onChange={(e) => setF({ whatsapp: e.target.value })} /></Field>
+          {active === "footer" && (
+            <>
+              <Field label="Texto sobre a loja"><TextArea rows={3} value={f.aboutText} onChange={(e) => setF({ aboutText: e.target.value })} /></Field>
+              <Field label="Copyright"><TextInput value={f.copyright} onChange={(e) => setF({ copyright: e.target.value })} /></Field>
+            </>
+          )}
+          <Field label="Instagram (URL)"><TextInput value={f.instagram} onChange={(e) => setF({ instagram: e.target.value })} /></Field>
+          <Field label="Facebook (URL)"><TextInput value={f.facebook} onChange={(e) => setF({ facebook: e.target.value })} /></Field>
+          <Field label="WhatsApp (URL wa.me/...)"><TextInput value={f.whatsapp} onChange={(e) => setF({ whatsapp: e.target.value })} /></Field>
         </div>
       );
     }

@@ -52,7 +52,7 @@ function HomePage() {
     <>
       {/* HERO */}
       {theme.banner.visible !== false && (
-        <section className="w-full" data-editor-block="banner">
+        <section className="w-full" data-editor-block="home-banner">
           <img src={mob} alt="banner" className="block w-full aspect-[2496/3000] object-cover md:hidden" />
           <img src={desk} alt="banner" className="hidden md:block w-full aspect-[4000/1302] object-cover" />
         </section>
@@ -62,7 +62,7 @@ function HomePage() {
 
 
       {/* CATEGORIAS CIRCULARES */}
-      <section className="container-x py-20">
+      <section data-editor-block="home-categories" className="container-x py-20">
         <div className="mb-10 text-center">
           <p className="text-xs font-medium lowercase tracking-wider text-primary">explore</p>
           <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">categorias em destaque</h2>
@@ -100,7 +100,7 @@ function HomePage() {
       </section>
 
       {/* MAIS VENDIDOS */}
-      <section className="container-x py-14">
+      <section data-editor-block="home-featured" className="container-x py-14">
         <div className="mb-10 flex items-end justify-between">
           <div>
             <p className="text-xs font-medium lowercase tracking-wider text-primary">best sellers</p>

@@ -127,3 +127,4 @@ export const defaultTheme: ThemeConfig = {
 
 export const THEME_MESSAGE = "temprati:theme:update";
 export const THEME_READY = "temprati:theme:ready";
+export const THEME_SELECT = "temprati:theme:select";

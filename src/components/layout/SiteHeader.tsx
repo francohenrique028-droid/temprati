@@ -97,6 +97,7 @@ export function SiteHeader() {
       </div>
 
       <header
+        data-editor-block="header"
         onMouseLeave={() => setHovered(null)}
         className={`${theme.header.sticky ? "sticky top-0" : ""} z-40 border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_rgba(236,72,153,0.06)]" : ""}`}
       >
