@@ -122,7 +122,7 @@ export function StoriesCarousel({ cards }: Props) {
           type="button"
           onClick={() => go(-1)}
           aria-label="anterior"
-          className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white backdrop-blur transition hover:bg-white/20 md:left-6"
+          className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/70 p-2 text-white backdrop-blur transition hover:bg-black md:left-6"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -130,7 +130,7 @@ export function StoriesCarousel({ cards }: Props) {
           type="button"
           onClick={() => go(1)}
           aria-label="próximo"
-          className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white backdrop-blur transition hover:bg-white/20 md:right-6"
+          className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/70 p-2 text-white backdrop-blur transition hover:bg-black md:right-6"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
@@ -145,7 +145,7 @@ export function StoriesCarousel({ cards }: Props) {
             onClick={() => setActive(i)}
             aria-label={`ir para ${i + 1}`}
             className={`h-1.5 rounded-full transition-all ${
-              i === active ? "w-8 bg-white" : "w-1.5 bg-white/40"
+              i === active ? "w-8 bg-foreground" : "w-1.5 bg-foreground/30"
             }`}
           />
         ))}
