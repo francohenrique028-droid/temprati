@@ -87,11 +87,6 @@ export function StoriesCarousel({ cards }: Props) {
                   draggable={false}
                 />
 
-                {/* rating badge */}
-                <div className="absolute left-3 top-3 flex items-center gap-1 rounded-md bg-white/85 px-2 py-1 text-[11px] font-semibold text-black backdrop-blur">
-                  <Star className="h-3 w-3 fill-black text-black" />
-                  {(card.rating ?? 5).toFixed(2)}
-                </div>
 
                 {/* bottom info card */}
                 <a
