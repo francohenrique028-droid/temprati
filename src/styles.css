@@ -46,23 +46,23 @@
   --card-foreground: oklch(0.18 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0 0);
-  /* Hot pink primary #EC4899 */
-  --primary: oklch(0.66 0.24 355);
-  --primary-foreground: oklch(1 0 0);
-  /* Soft pink #FFF0F6 */
-  --secondary: oklch(0.97 0.02 350);
+  /* Warm peach primary hsl(28, 67%, 80%) */
+  --primary: oklch(0.85 0.07 55);
+  --primary-foreground: oklch(0.18 0 0);
+  /* Soft peach */
+  --secondary: oklch(0.96 0.025 60);
   --secondary-foreground: oklch(0.18 0 0);
   --muted: oklch(0.96 0.005 0);
   --muted-foreground: oklch(0.5 0 0);
-  --accent: oklch(0.97 0.02 350);
+  --accent: oklch(0.96 0.025 60);
   --accent-foreground: oklch(0.18 0 0);
   --destructive: oklch(0.55 0.19 25);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.95 0.005 0);
   --input: oklch(0.95 0.005 0);
-  --ring: oklch(0.66 0.24 355);
-  --pink-soft: oklch(0.97 0.02 350);
-  --pink-accent: oklch(0.7 0.2 355);
+  --ring: oklch(0.85 0.07 55);
+  --pink-soft: oklch(0.96 0.025 60);
+  --pink-accent: oklch(0.85 0.07 55);
 }
 
 html, body { font-family: "Plus Jakarta Sans", "DM Sans", ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
