@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 export type StoryCard = {
   id: string | number;
   image: string;
+  video?: string;
   thumb?: string;
   name: string;
   price: number;
@@ -80,12 +81,23 @@ export function StoriesCarousel({ cards }: Props) {
                 transition={{ type: "spring", stiffness: 260, damping: 30 }}
                 style={{ pointerEvents: abs > 1 ? "none" : "auto" }}
               >
-                <img
-                  src={card.image}
-                  alt={card.name}
-                  className="h-full w-full object-contain"
-                  draggable={false}
-                />
+                {card.video && isActive ? (
+                  <video
+                    src={card.video}
+                    className="h-full w-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={card.image}
+                    alt={card.name}
+                    className="h-full w-full object-contain"
+                    draggable={false}
+                  />
+                )}
 
 
                 {/* bottom info card */}
