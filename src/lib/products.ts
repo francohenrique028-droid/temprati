@@ -6,6 +6,7 @@ import prod5 from "@/assets/prod-5.jpg";
 import prod6 from "@/assets/prod-6.jpg";
 import prod7 from "@/assets/prod-7.jpg";
 import prod8 from "@/assets/prod-8.jpg";
+import vestidoMidiRose from "@/assets/vestido-midi-rose.jpg.asset.json";
 
 export type Product = {
   id: string;
