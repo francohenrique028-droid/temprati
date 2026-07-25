@@ -7,7 +7,7 @@ export function SiteFooter() {
   const f = theme.footer;
   const logo = theme.header.logoText;
   return (
-    <footer className="mt-24" style={{ background: "var(--tp-footer-bg)", color: "var(--tp-footer-text)" }}>
+    <footer data-editor-block="footer" className="mt-24" style={{ background: "var(--tp-footer-bg)", color: "var(--tp-footer-text)" }}>
       <div className="container-x py-16">
         <div className="grid gap-12 md:grid-cols-4">
           <div>
