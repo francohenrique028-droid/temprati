@@ -31,7 +31,7 @@ export function StoriesCarousel({ cards }: Props) {
   };
 
   return (
-    <div className="relative w-full overflow-hidden py-10 md:py-14">
+    <div className="relative w-full overflow-hidden rounded-3xl bg-[#0a0a0a] py-10 md:py-14">
       <div className="relative mx-auto h-[560px] w-full max-w-6xl md:h-[640px]">
         {/* Cards */}
         <motion.div
@@ -46,9 +46,9 @@ export function StoriesCarousel({ cards }: Props) {
             const abs = Math.abs(offset);
             if (abs > 2) return null;
             const isActive = offset === 0;
-            const translateX = offset * 62; // % of card width
-            const scale = isActive ? 1.05 : 0.82;
-            const opacity = isActive ? 1 : 0.55;
+            const translateX = offset * 70; // % of card width — side cards peek ~30%
+            const scale = isActive ? 1 : 0.88;
+            const opacity = isActive ? 1 : 0.75;
             const zIndex = 10 - abs;
 
             return (
