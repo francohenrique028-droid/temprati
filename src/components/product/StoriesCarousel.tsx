@@ -31,7 +31,7 @@ export function StoriesCarousel({ cards }: Props) {
   };
 
   return (
-    <div className="relative w-full overflow-hidden rounded-3xl bg-[#0a0a0a] py-10 md:py-14">
+    <div className="relative w-full overflow-hidden py-10 md:py-14">
       <div className="relative mx-auto h-[560px] w-full max-w-6xl md:h-[640px]">
         {/* Cards */}
         <motion.div
