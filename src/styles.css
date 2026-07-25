@@ -31,10 +31,10 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-pink-soft: var(--pink-soft);
-  --color-pink-accent: var(--pink-accent);
-  --shadow-soft: 0 1px 2px rgba(236,72,153,0.04), 0 4px 20px rgba(236,72,153,0.06);
-  --shadow-elevated: 0 2px 8px rgba(236,72,153,0.06), 0 24px 60px -20px rgba(236,72,153,0.15);
+  --color-peach-soft: var(--peach-soft);
+  --color-peach-accent: var(--peach-accent);
+  --shadow-soft: 0 1px 2px hsl(28 67% 80% / 0.04), 0 4px 20px hsl(28 67% 80% / 0.06);
+  --shadow-elevated: 0 2px 8px hsl(28 67% 80% / 0.06), 0 24px 60px -20px hsl(28 67% 80% / 0.15);
 }
 
 :root {
@@ -61,8 +61,8 @@
   --border: oklch(0.95 0.005 0);
   --input: oklch(0.95 0.005 0);
   --ring: oklch(0.85 0.07 55);
-  --pink-soft: oklch(0.96 0.025 60);
-  --pink-accent: oklch(0.85 0.07 55);
+  --peach-soft: hsl(28 67% 96%);
+  --peach-accent: hsl(28 67% 80%);
 }
 
 html, body { font-family: "Plus Jakarta Sans", "DM Sans", ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
