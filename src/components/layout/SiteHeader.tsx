@@ -187,7 +187,7 @@ export function SiteHeader() {
         <div onClick={() => setMobileOpen(false)} className={`absolute inset-0 bg-black/30 transition-opacity ${mobileOpen ? "opacity-100" : "opacity-0"}`} />
         <aside className={`absolute inset-y-0 left-0 w-[85%] max-w-sm bg-background p-6 shadow-2xl transition-transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
           <div className="flex items-center justify-between">
-            <span className="text-lg font-bold tracking-tight lowercase text-primary">#temprati</span>
+            <span className="text-lg font-bold tracking-tight lowercase text-primary">{logoText}</span>
             <button onClick={() => setMobileOpen(false)}><X className="h-5 w-5" /></button>
           </div>
           <nav className="mt-8 flex flex-col gap-1">
