@@ -14,6 +14,7 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 import { CartProvider } from "@/contexts/CartContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/lib/theme/ThemeProvider";
 
 function NotFoundComponent() {
   return (
@@ -84,14 +85,16 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <FavoritesProvider>
-        <CartProvider>
-          <SiteLayout>
-            <Outlet />
-          </SiteLayout>
-          <Toaster position="top-center" />
-        </CartProvider>
-      </FavoritesProvider>
+      <ThemeProvider>
+        <FavoritesProvider>
+          <CartProvider>
+            <SiteLayout>
+              <Outlet />
+            </SiteLayout>
+            <Toaster position="top-center" />
+          </CartProvider>
+        </FavoritesProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
