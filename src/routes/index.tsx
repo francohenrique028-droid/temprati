@@ -12,7 +12,7 @@ import catAcessorios from "@/assets/cat-acessorios.jpg.asset.json";
 import catBolsas from "@/assets/cat-bolsas.jpg";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { CardCarousel } from "@/components/ui/card-carousel";
+import { StoriesCarousel } from "@/components/product/StoriesCarousel";
 import { bestsellers, newArrivals, products } from "@/lib/products";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -112,16 +112,18 @@ function HomePage() {
         <ProductGrid items={bestsellers()} />
       </section>
 
-      {/* CARD CAROUSEL — destaques */}
+      {/* STORIES CAROUSEL — destaques */}
       <section className="container-x py-16">
-        <CardCarousel
-          images={products.slice(0, 6).map((p) => ({ src: p.images[0], alt: p.name }))}
-          autoplayDelay={2000}
-          showPagination={true}
-          showNavigation={true}
-          badgeLabel="destaques"
-          title="peças em destaque"
-          subtitle="uma seleção especial das nossas favoritas."
+        <StoriesCarousel
+          cards={products.slice(0, 5).map((p) => ({
+            id: p.id,
+            image: p.images[0],
+            name: p.name,
+            price: p.price,
+            username: "temprati",
+            avatar: p.images[0],
+            href: `/produto/${p.slug}`,
+          }))}
         />
       </section>
 
