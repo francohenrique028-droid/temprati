@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PoliticaDeTrocasRouteImport } from './routes/politica-de-trocas'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as NovidadesRouteImport } from './routes/novidades'
@@ -32,6 +34,16 @@ import { Route as AdminProdutosIdRouteImport } from './routes/admin.produtos.$id
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
   path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PoliticaDeTrocasRoute = PoliticaDeTrocasRouteImport.update({
@@ -136,6 +148,8 @@ export interface FileRoutesByFullPath {
   '/novidades': typeof NovidadesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/politica-de-trocas': typeof PoliticaDeTrocasRoute
+  '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
@@ -157,6 +171,8 @@ export interface FileRoutesByTo {
   '/novidades': typeof NovidadesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/politica-de-trocas': typeof PoliticaDeTrocasRoute
+  '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
@@ -179,6 +195,8 @@ export interface FileRoutesById {
   '/novidades': typeof NovidadesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/politica-de-trocas': typeof PoliticaDeTrocasRoute
+  '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
@@ -202,6 +220,8 @@ export interface FileRouteTypes {
     | '/novidades'
     | '/politica-de-privacidade'
     | '/politica-de-trocas'
+    | '/register'
+    | '/reset-password'
     | '/sobre'
     | '/admin/dashboard'
     | '/admin/login'
@@ -223,6 +243,8 @@ export interface FileRouteTypes {
     | '/novidades'
     | '/politica-de-privacidade'
     | '/politica-de-trocas'
+    | '/register'
+    | '/reset-password'
     | '/sobre'
     | '/admin/dashboard'
     | '/admin/login'
@@ -244,6 +266,8 @@ export interface FileRouteTypes {
     | '/novidades'
     | '/politica-de-privacidade'
     | '/politica-de-trocas'
+    | '/register'
+    | '/reset-password'
     | '/sobre'
     | '/admin/dashboard'
     | '/admin/login'
@@ -266,6 +290,8 @@ export interface RootRouteChildren {
   NovidadesRoute: typeof NovidadesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   PoliticaDeTrocasRoute: typeof PoliticaDeTrocasRoute
+  RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SobreRoute: typeof SobreRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminLoginRoute: typeof AdminLoginRoute
@@ -283,6 +309,20 @@ declare module '@tanstack/react-router' {
       path: '/sobre'
       fullPath: '/sobre'
       preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/politica-de-trocas': {
@@ -437,6 +477,8 @@ const rootRouteChildren: RootRouteChildren = {
   NovidadesRoute: NovidadesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   PoliticaDeTrocasRoute: PoliticaDeTrocasRoute,
+  RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SobreRoute: SobreRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminLoginRoute: AdminLoginRoute,
@@ -449,3 +491,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
