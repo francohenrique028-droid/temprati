@@ -1,5 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/admin/dashboard")({
-  component: () => <Navigate to="/admin/tema" replace />,
+  component: () => <Navigate to="/admin/produtos" replace />,
 });
