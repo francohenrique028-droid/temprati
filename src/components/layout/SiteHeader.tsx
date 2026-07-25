@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import { useTheme } from "@/lib/theme/ThemeProvider";
 
 
 type MegaCol = { title: string; links: string[] };
@@ -46,14 +47,14 @@ const nav: NavItem[] = [
   { label: "promoções", to: "/categoria/promocoes" },
 ];
 
-const announcements = [
+const announcementsFallback = [
   "frete grátis acima de R$ 299",
-  "ganhe brinde nas compras acima de R$ 499",
-  "10% off no pix",
-  "novas peças toda semana",
 ];
 
 export function SiteHeader() {
+  const { theme } = useTheme();
+  const announcements = theme.header.announcements?.length ? theme.header.announcements : announcementsFallback;
+  const logoText = theme.header.logoText || "#temprati";
   const { setOpen: openCart, count } = useCart();
   const { ids } = useFavorites();
   const [scrolled, setScrolled] = useState(false);
