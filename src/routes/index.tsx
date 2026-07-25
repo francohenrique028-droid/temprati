@@ -15,6 +15,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { bestsellers, newArrivals } from "@/lib/products";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTheme } from "@/lib/theme/ThemeProvider";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -44,21 +45,18 @@ const testimonials = [
 ];
 
 function HomePage() {
+  const { theme } = useTheme();
+  const desk = theme.banner.desktopImage || bannerDesktop.url;
+  const mob = theme.banner.mobileImage || bannerMobile.url;
   return (
     <>
-      {/* HERO — mobile liso rosa, desktop com imagem */}
-      <section className="w-full">
-        <img
-          src={bannerMobile.url}
-          alt="banner"
-          className="block w-full aspect-[2496/3000] object-cover md:hidden"
-        />
-        <img
-          src={bannerDesktop.url}
-          alt="banner"
-          className="hidden md:block w-full aspect-[4000/1302] object-cover"
-        />
-      </section>
+      {/* HERO */}
+      {theme.banner.visible !== false && (
+        <section className="w-full" data-editor-block="banner">
+          <img src={mob} alt="banner" className="block w-full aspect-[2496/3000] object-cover md:hidden" />
+          <img src={desk} alt="banner" className="hidden md:block w-full aspect-[4000/1302] object-cover" />
+        </section>
+      )}
 
 
 
