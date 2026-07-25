@@ -7,6 +7,7 @@ import prod6 from "@/assets/prod-6.jpg";
 import prod7 from "@/assets/prod-7.jpg";
 import prod8 from "@/assets/prod-8.jpg";
 import vestidoMidiRose from "@/assets/vestido-midi-rose.jpg.asset.json";
+import croppedTricotRosa from "@/assets/cropped-tricot-rosa.jpg.asset.json";
 
 export type Product = {
   id: string;
@@ -29,7 +30,7 @@ export type Product = {
 export const products: Product[] = [
   { id:"1", slug:"vestido-midi-rose", name:"vestido midi rose", category:"vestidos", collection:"lancamentos", brand:"temprati", price:289, oldPrice:349, badge:"Best Seller", images:[vestidoMidiRose.url, vestidoMidiRose.url], colors:["#F472B6"], sizes:["PP","P","M","G"], bestseller:true, description:"Vestido midi em tecido fluido, corte alinhado e caimento impecável." },
   { id:"2", slug:"blusa-manga-longa-off-white", name:"blusa manga longa off white", category:"blusas", collection:"lancamentos", brand:"temprati", price:159, images:[prod2, prod4], colors:["#FFFFFF"], sizes:["P","M","G","GG"], isNew:true, badge:"Novo", description:"Blusa em tecido leve, gola redonda e modelagem soltinha, perfeita para o dia a dia." },
-  { id:"3", slug:"blusa-cropped-tricot", name:"cropped tricot rosa", category:"blusas", collection:"bestsellers", brand:"temprati", price:89, oldPrice:119, badge:"Promoção", images:[prod3, prod1], colors:["#EC4899"], sizes:["Único"], bestseller:true, description:"Cropped em tricot leve, modelagem soltinha e acabamento delicado." },
+  { id:"3", slug:"blusa-cropped-tricot", name:"cropped tricot rosa", category:"blusas", collection:"bestsellers", brand:"temprati", price:89, oldPrice:119, badge:"Promoção", images:[croppedTricotRosa.url, croppedTricotRosa.url], colors:["#EC4899"], sizes:["Único"], bestseller:true, description:"Cropped em tricot leve, modelagem soltinha e acabamento delicado." },
   { id:"4", slug:"calca-alfaiataria-wide", name:"calça alfaiataria wide", category:"feminino", collection:"bestsellers", brand:"temprati", price:129, images:[prod4, prod5], colors:["#FFE4EC"], sizes:["36","38","40","42"], bestseller:true, description:"Calça de alfaiataria com pernas amplas, cintura alta e caimento estruturado." },
   { id:"5", slug:"saia-plissada-rose", name:"saia plissada rose", category:"feminino", collection:"lancamentos", brand:"temprati", price:79, images:[prod5, prod8], colors:["#F472B6"], sizes:["P","M","G"], isNew:true, badge:"Novo", description:"Saia plissada em tecido leve, movimento fluido e look feminino." },
   { id:"6", slug:"conjunto-blazer-calca", name:"conjunto blazer + calça", category:"conjuntos", collection:"bestsellers", brand:"temprati", price:459, oldPrice:589, badge:"Promoção", images:[prod6, prod1], colors:["#F472B6"], sizes:["PP","P","M","G"], bestseller:true, description:"Conjunto alfaiataria com blazer estruturado e calça reta. Look completo pronto para usar." },
