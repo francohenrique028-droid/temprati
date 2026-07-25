@@ -112,27 +112,17 @@ function HomePage() {
         <ProductGrid items={bestsellers()} />
       </section>
 
-      {/* BANNER DE OFERTA — rosa sólido */}
+      {/* CARD CAROUSEL — destaques */}
       <section className="container-x py-16">
-        <div className="relative overflow-hidden rounded-2xl bg-primary px-8 py-16 text-center text-primary-foreground md:px-16 md:py-24">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <p className="text-xs font-medium lowercase tracking-wider text-white/80">oferta exclusiva</p>
-            <h3 className="mt-3 text-4xl font-semibold lowercase leading-tight tracking-tight md:text-6xl">
-              até 30% off <span className="italic font-normal">na coleção</span>
-            </h3>
-            <p className="mx-auto mt-4 max-w-xl text-sm text-white/85 md:text-base">
-              seleção especial de peças por tempo limitado. luxo sem igual, agora com preços especiais.
-            </p>
-            <Link to="/categoria/promocoes" className="mt-8 inline-block rounded-full bg-white px-8 py-3.5 text-sm font-medium lowercase text-primary shadow-soft transition-transform hover:scale-[1.02]">
-              aproveitar oferta
-            </Link>
-          </motion.div>
-        </div>
+        <CardCarousel
+          images={products.slice(0, 6).map((p) => ({ src: p.images[0], alt: p.name }))}
+          autoplayDelay={2000}
+          showPagination={true}
+          showNavigation={true}
+          badgeLabel="destaques"
+          title="peças em destaque"
+          subtitle="uma seleção especial das nossas favoritas."
+        />
       </section>
 
       {/* NOVIDADES / LANÇAMENTOS */}
