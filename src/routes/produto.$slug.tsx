@@ -38,11 +38,10 @@ function ProductPage() {
   const related = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
 
   type Media = { type: "video" | "image"; src: string; poster?: string };
+  const uniqueImages = product.images.filter((src, index, list) => Boolean(src) && list.indexOf(src) === index);
   const gallery: Media[] = [
-    ...(product.video ? [{ type: "video" as const, src: product.video, poster: product.images[0] }] : []),
-    { type: "image", src: product.images[0] },
-    { type: "image", src: product.images[1] },
-    { type: "image", src: product.images[0] },
+    ...(product.video ? [{ type: "video" as const, src: product.video, poster: uniqueImages[0] }] : []),
+    ...uniqueImages.map((src) => ({ type: "image" as const, src })),
   ];
   const current = gallery[main] ?? gallery[0];
 
