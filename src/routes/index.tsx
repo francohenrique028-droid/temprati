@@ -118,10 +118,11 @@ function HomePage() {
           cards={products.slice(0, 5).map((p) => ({
             id: p.id,
             image: p.images[0],
+            thumb: p.images[0],
             name: p.name,
             price: p.price,
-            username: "temprati",
-            avatar: p.images[0],
+            oldPrice: p.oldPrice,
+            rating: 5,
             href: `/produto/${p.slug}`,
           }))}
         />

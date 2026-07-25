@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 
 export type StoryCard = {
   id: string | number;
   image: string;
+  thumb?: string;
   name: string;
   price: number;
-  username: string;
-  avatar: string;
+  oldPrice?: number;
+  rating?: number;
   href?: string;
 };
 
@@ -33,7 +34,6 @@ export function StoriesCarousel({ cards }: Props) {
   return (
     <div className="relative w-full overflow-hidden py-10 md:py-14">
       <div className="relative mx-auto h-[560px] w-full max-w-6xl md:h-[640px]">
-        {/* Cards */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           drag="x"
@@ -46,10 +46,9 @@ export function StoriesCarousel({ cards }: Props) {
             const abs = Math.abs(offset);
             if (abs > 2) return null;
             const isActive = offset === 0;
-            // overlap: side cards sit behind and are partially covered by the center
-            const translateX = offset * 55; // % of card width
-            const scale = isActive ? 1 : 0.85;
-            const opacity = isActive ? 1 : 0.8;
+            const translateX = offset * 78; // % of card width — side cards fully visible
+            const scale = isActive ? 1 : 0.9;
+            const opacity = abs > 1 ? 0 : 1;
             const zIndex = isActive ? 10 : 10 - abs - 1;
 
             return (
@@ -57,7 +56,7 @@ export function StoriesCarousel({ cards }: Props) {
                 key={card.id}
                 type="button"
                 onClick={() => (isActive ? undefined : setActive(i))}
-                className="absolute top-1/2 left-1/2 aspect-[9/16] h-full max-h-[600px] overflow-hidden rounded-2xl"
+                className="absolute top-1/2 left-1/2 aspect-[9/16] h-full max-h-[600px] overflow-hidden rounded-3xl bg-white"
                 animate={{
                   x: `calc(-50% + ${translateX}%)`,
                   y: "-50%",
@@ -65,8 +64,8 @@ export function StoriesCarousel({ cards }: Props) {
                   opacity,
                   zIndex,
                   boxShadow: isActive
-                    ? "0 20px 60px rgba(0,0,0,0.3)"
-                    : "0 8px 24px rgba(0,0,0,0.15)",
+                    ? "0 24px 60px rgba(0,0,0,0.18)"
+                    : "0 10px 28px rgba(0,0,0,0.10)",
                 }}
                 transition={{ type: "spring", stiffness: 260, damping: 30 }}
                 style={{ pointerEvents: abs > 1 ? "none" : "auto" }}
@@ -77,41 +76,40 @@ export function StoriesCarousel({ cards }: Props) {
                   className="h-full w-full object-cover"
                   draggable={false}
                 />
-                {/* gradient */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/40" />
 
-                {/* top: avatar + username */}
-                <div className="absolute left-3 top-3 flex items-center gap-2">
-                  <div className="rounded-full bg-gradient-to-tr from-pink-500 via-fuchsia-500 to-yellow-400 p-[2px]">
-                    <img
-                      src={card.avatar}
-                      alt={card.username}
-                      className="h-8 w-8 rounded-full border-2 border-black object-cover"
-                    />
-                  </div>
-                  <span className="text-xs font-semibold text-white drop-shadow">
-                    @{card.username}
-                  </span>
+                {/* rating badge */}
+                <div className="absolute left-3 top-3 flex items-center gap-1 rounded-md bg-white/85 px-2 py-1 text-[11px] font-semibold text-black backdrop-blur">
+                  <Star className="h-3 w-3 fill-black text-black" />
+                  {(card.rating ?? 5).toFixed(2)}
                 </div>
 
-                {/* bottom: name + price + cta */}
-                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
-                  <div className="min-w-0 text-left">
-                    <h4 className="truncate text-base font-bold leading-tight text-white md:text-lg">
+                {/* bottom info card */}
+                <a
+                  href={card.href ?? "#"}
+                  onClick={(e) => e.stopPropagation()}
+                  className="absolute inset-x-3 bottom-3 flex items-center gap-3 rounded-2xl bg-white/95 p-2.5 shadow-sm backdrop-blur transition hover:bg-white"
+                >
+                  <img
+                    src={card.thumb ?? card.image}
+                    alt=""
+                    className="h-12 w-12 shrink-0 rounded-lg object-cover"
+                  />
+                  <div className="min-w-0 flex-1 text-left">
+                    <h4 className="line-clamp-2 text-[13px] font-medium leading-tight text-neutral-800">
                       {card.name}
                     </h4>
-                    <p className="mt-1 text-sm font-semibold text-emerald-400 md:text-base">
-                      {brl(card.price)}
-                    </p>
+                    <div className="mt-1 flex items-baseline gap-1.5">
+                      <span className="text-sm font-bold text-black">
+                        {brl(card.price)}
+                      </span>
+                      {card.oldPrice && (
+                        <span className="text-[11px] text-neutral-400 line-through">
+                          {brl(card.oldPrice)}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <a
-                    href={card.href ?? "#"}
-                    onClick={(e) => e.stopPropagation()}
-                    className="shrink-0 rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-semibold text-black backdrop-blur transition hover:bg-white md:text-xs"
-                  >
-                    Ver produto
-                  </a>
-                </div>
+                </a>
               </motion.button>
             );
           })}
@@ -122,7 +120,7 @@ export function StoriesCarousel({ cards }: Props) {
           type="button"
           onClick={() => go(-1)}
           aria-label="anterior"
-          className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/70 p-2 text-white backdrop-blur transition hover:bg-black md:left-6"
+          className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/90 p-2 text-black shadow-md backdrop-blur transition hover:bg-white md:left-6"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -130,7 +128,7 @@ export function StoriesCarousel({ cards }: Props) {
           type="button"
           onClick={() => go(1)}
           aria-label="próximo"
-          className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/70 p-2 text-white backdrop-blur transition hover:bg-black md:right-6"
+          className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/90 p-2 text-black shadow-md backdrop-blur transition hover:bg-white md:right-6"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
