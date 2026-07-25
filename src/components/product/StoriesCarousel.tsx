@@ -42,7 +42,7 @@ export function StoriesCarousel({ cards }: Props) {
 
   return (
     <div className="relative w-full overflow-hidden py-8 md:py-14">
-      <div className="relative mx-auto h-[480px] w-full max-w-6xl md:h-[640px]">
+      <div className="relative mx-auto h-[420px] w-full max-w-5xl md:h-[560px]">
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           drag="x"
@@ -55,8 +55,8 @@ export function StoriesCarousel({ cards }: Props) {
             const abs = Math.abs(offset);
             if (abs > 2) return null;
             const isActive = offset === 0;
-            const translateX = offset * (isMobile ? 85 : 78); // % of card width
-            const scale = isActive ? 1 : 0.9;
+            const translateX = offset * (isMobile ? 78 : 72); // % of card width
+            const scale = isActive ? 1 : 0.82;
             const opacity = abs > 1 ? 0 : 1;
             const zIndex = isActive ? 10 : 10 - abs - 1;
 
@@ -65,15 +65,16 @@ export function StoriesCarousel({ cards }: Props) {
                 key={card.id}
                 type="button"
                 onClick={() => (isActive ? undefined : setActive(i))}
-                className="absolute top-1/2 left-1/2 aspect-[9/16] h-full max-h-[600px] overflow-hidden rounded-3xl bg-white"
+                className="absolute top-1/2 left-1/2 aspect-[9/16] h-full max-h-[540px] overflow-hidden rounded-3xl bg-white"
                 animate={{
                   x: `calc(-50% + ${translateX}%)`,
                   y: "-50%",
                   scale,
                   opacity,
                   zIndex,
+                  filter: isActive ? "blur(0px)" : "blur(4px)",
                   boxShadow: isActive
-                    ? "0 24px 60px rgba(0,0,0,0.18)"
+                    ? "0 24px 60px rgba(0,0,0,0.22)"
                     : "0 10px 28px rgba(0,0,0,0.10)",
                 }}
                 transition={{ type: "spring", stiffness: 260, damping: 30 }}
