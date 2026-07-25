@@ -1,10 +1,13 @@
-import { Link } from "@tanstack/react-router";
-import { Search, Heart, User, ShoppingBag, Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Search, Heart, User, ShoppingBag, Menu, X, Package, MapPin, LogOut, LayoutDashboard, Store, Settings } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useTheme } from "@/lib/theme/ThemeProvider";
+import { useAdminAuth } from "@/lib/admin/useAdminAuth";
+import { supabase } from "@/integrations/supabase/client";
+
 
 
 type MegaCol = { title: string; links: string[] };
