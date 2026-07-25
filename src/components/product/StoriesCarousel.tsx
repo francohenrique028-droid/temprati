@@ -55,7 +55,7 @@ export function StoriesCarousel({ cards }: Props) {
             const abs = Math.abs(offset);
             if (abs > 2) return null;
             const isActive = offset === 0;
-            const translateX = offset * 78; // % of card width — side cards fully visible
+            const translateX = offset * (isMobile ? 85 : 78); // % of card width
             const scale = isActive ? 1 : 0.9;
             const opacity = abs > 1 ? 0 : 1;
             const zIndex = isActive ? 10 : 10 - abs - 1;
