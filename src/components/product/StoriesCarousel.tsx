@@ -141,7 +141,7 @@ export function StoriesCarousel({ cards }: Props) {
             onClick={() => setActive(i)}
             aria-label={`ir para ${i + 1}`}
             className={`h-1.5 rounded-full transition-all ${
-              i === active ? "w-8 bg-foreground" : "w-1.5 bg-foreground/30"
+              i === active ? "w-8 bg-white" : "w-1.5 bg-white/40"
             }`}
           />
         ))}
