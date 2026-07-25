@@ -9,6 +9,7 @@ import prod8 from "@/assets/prod-8.jpg";
 import vestidoMidiRose from "@/assets/vestido-midi-rose.jpg.asset.json";
 import croppedTricotRosa from "@/assets/cropped-tricot-rosa.jpg.asset.json";
 import croppedTricotRosaVideo from "@/assets/cropped-tricot-rosa.mp4.asset.json";
+import calcaAlfaiatariaWide from "@/assets/calca-alfaiataria-wide.jpg.asset.json";
 
 export type Product = {
   id: string;
