@@ -37,7 +37,14 @@ function ProductPage() {
   const { has, toggle } = useFavorites();
   const related = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
 
-  const gallery = [product.images[0], product.images[1], product.images[0], product.images[1]];
+  type Media = { type: "video" | "image"; src: string; poster?: string };
+  const gallery: Media[] = [
+    ...(product.video ? [{ type: "video" as const, src: product.video, poster: product.images[0] }] : []),
+    { type: "image", src: product.images[0] },
+    { type: "image", src: product.images[1] },
+    { type: "image", src: product.images[0] },
+  ];
+  const current = gallery[main] ?? gallery[0];
 
   return (
     <div className="container-x py-8">
@@ -52,14 +59,24 @@ function ProductPage() {
       <div className="mt-8 grid gap-10 lg:grid-cols-[100px_1fr_460px]">
         <div className="hidden lg:flex flex-col gap-3">
           {gallery.map((g, i) => (
-            <button key={i} onClick={() => setMain(i)} className={`overflow-hidden rounded-xl border ${main === i ? "border-primary" : "border-border"}`}>
-              <img src={g} alt="" className="aspect-[4/5] w-full object-cover" />
+            <button key={i} onClick={() => setMain(i)} className={`relative overflow-hidden rounded-xl border ${main === i ? "border-primary" : "border-border"}`}>
+              <img src={g.type === "video" ? (g.poster ?? "") : g.src} alt="" className="aspect-[4/5] w-full object-cover" />
+              {g.type === "video" && (
+                <span className="absolute inset-0 flex items-center justify-center bg-black/20">
+                  <span className="rounded-full bg-white/90 p-2"><Play className="h-4 w-4 fill-primary text-primary" /></span>
+                </span>
+              )}
             </button>
           ))}
         </div>
         <div className="relative overflow-hidden rounded-2xl bg-card" onMouseEnter={() => setZoom(true)} onMouseLeave={() => setZoom(false)}>
-          <img src={gallery[main]} alt={product.name} width={1000} height={1250} className={`w-full object-cover transition-transform duration-500 ${zoom ? "scale-[1.15]" : "scale-100"}`} />
+          {current.type === "video" ? (
+            <video src={current.src} poster={current.poster} controls autoPlay muted loop playsInline className="w-full aspect-[4/5] object-cover" />
+          ) : (
+            <img src={current.src} alt={product.name} width={1000} height={1250} className={`w-full object-cover transition-transform duration-500 ${zoom ? "scale-[1.15]" : "scale-100"}`} />
+          )}
         </div>
+
         <div className="lg:sticky lg:top-32 lg:self-start">
           {product.badge && <span className="mb-4 inline-block rounded-full bg-secondary px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em]">{product.badge}</span>}
           <h1 className="text-3xl font-light tracking-tight md:text-4xl">{product.name}</h1>
