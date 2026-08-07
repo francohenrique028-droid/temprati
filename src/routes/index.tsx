@@ -79,7 +79,7 @@ function HomePage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.06 }}
                 >
-                  <Link to={c.href} className="group flex flex-col items-center gap-4">
+                  <Link to={c.href} params={"params" in c ? c.params : undefined} className="group flex flex-col items-center gap-4">
                     <div className="relative aspect-square w-full max-w-[220px] overflow-hidden rounded-full bg-secondary shadow-soft">
                       <img
                         src={c.img}
