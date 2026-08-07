@@ -108,7 +108,7 @@ function HomePage() {
             <p className="text-xs font-medium lowercase tracking-wider text-primary">best sellers</p>
             <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">mais vendidos</h2>
           </div>
-          <Link to="/categoria/feminino" className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
+          <Link to="/categoria/$slug" params={{ slug: "feminino" }} className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
         </div>
         <ProductGrid items={bestsellers()} />
       </section>
