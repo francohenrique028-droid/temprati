@@ -13,6 +13,10 @@ import calcaAlfaiatariaWide from "@/assets/calca-alfaiataria-wide.jpg.asset.json
 import conjuntoBlazerCalca from "@/assets/conjunto-blazer-calca.jpg.asset.json";
 import tenisBrancoMinimal from "@/assets/tenis-branco-minimal.jpg.asset.json";
 import saiaPlissadaRoseNova from "@/assets/saia-plissada-rose-nova.jpg.asset.json";
+import novidade1 from "@/assets/novidade-1.jpg.asset.json";
+import novidade2 from "@/assets/novidade-2.jpg.asset.json";
+import novidade3 from "@/assets/novidade-3.jpg.asset.json";
+
 
 
 export type Product = {
