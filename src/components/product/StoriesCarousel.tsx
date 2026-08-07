@@ -43,7 +43,7 @@ export function StoriesCarousel({ cards }: Props) {
 
   return (
     <div className="relative w-full overflow-hidden py-8 md:py-14">
-      <div className="relative mx-auto h-[420px] w-full max-w-5xl md:h-[560px]">
+      <div className="relative mx-auto h-[500px] w-full max-w-5xl md:h-[620px]">
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           drag="x"
@@ -94,39 +94,49 @@ export function StoriesCarousel({ cards }: Props) {
                   <img
                     src={card.image}
                     alt={card.name}
-                    className="h-full w-full object-contain"
+                    className="h-full w-full object-cover"
                     draggable={false}
                   />
                 )}
 
 
                 {/* bottom info card */}
-                <a
-                  href={card.href ?? "#"}
-                  onClick={(e) => e.stopPropagation()}
-                  className="absolute inset-x-3 bottom-3 flex items-center gap-3 rounded-2xl bg-white/95 p-2.5 shadow-sm backdrop-blur transition hover:bg-white"
-                >
-                  <img
-                    src={card.thumb ?? card.image}
-                    alt=""
-                    className="h-12 w-12 shrink-0 rounded-lg object-cover"
-                  />
-                  <div className="min-w-0 flex-1 text-left">
-                    <h4 className="line-clamp-2 text-[13px] font-medium leading-tight text-neutral-800">
-                      {card.name}
-                    </h4>
-                    <div className="mt-1 flex items-baseline gap-1.5">
-                      <span className="text-sm font-bold text-black">
-                        {brl(card.price)}
-                      </span>
-                      {card.oldPrice && (
-                        <span className="text-[11px] text-neutral-400 line-through">
-                          {brl(card.oldPrice)}
+                <div className="absolute inset-x-3 bottom-3 flex flex-col gap-2">
+                  <a
+                    href={card.href ?? "#"}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-3 rounded-2xl bg-white/95 p-2.5 shadow-sm backdrop-blur transition hover:bg-white"
+                  >
+                    <img
+                      src={card.thumb ?? card.image}
+                      alt=""
+                      className="h-12 w-12 shrink-0 rounded-lg object-cover"
+                    />
+                    <div className="min-w-0 flex-1 text-left">
+                      <h4 className="line-clamp-2 text-[13px] font-medium leading-tight text-neutral-800">
+                        {card.name}
+                      </h4>
+                      <div className="mt-1 flex items-baseline gap-1.5">
+                        <span className="text-sm font-bold text-black">
+                          {brl(card.price)}
                         </span>
-                      )}
+                        {card.oldPrice && (
+                          <span className="text-[11px] text-neutral-400 line-through">
+                            {brl(card.oldPrice)}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </a>
+                  </a>
+                  
+                  <a
+                    href={card.href ?? "#"}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex h-11 items-center justify-center rounded-xl bg-black text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-neutral-800"
+                  >
+                    comprar
+                  </a>
+                </div>
               </motion.button>
             );
           })}
