@@ -12,6 +12,8 @@ import croppedTricotRosaVideo from "@/assets/cropped-tricot-rosa.mp4.asset.json"
 import calcaAlfaiatariaWide from "@/assets/calca-alfaiataria-wide.jpg.asset.json";
 import conjuntoBlazerCalca from "@/assets/conjunto-blazer-calca.jpg.asset.json";
 import tenisBrancoMinimal from "@/assets/tenis-branco-minimal.jpg.asset.json";
+import saiaPlissadaRoseNova from "@/assets/saia-plissada-rose-nova.jpg.asset.json";
+
 
 export type Product = {
   id: string;
