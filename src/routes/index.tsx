@@ -31,12 +31,13 @@ export const Route = createFileRoute("/")({
 });
 
 const categories = [
-  { name: "vestidos", href: "/categoria/vestidos", img: catVestidos.url },
-  { name: "blusas", href: "/categoria/blusas", img: catBlusas.url },
-  { name: "calças", href: "/categoria/calcas", img: catCalcas.url },
-  { name: "calçados", href: "/categoria/calcados", img: catCalcados.url },
-  { name: "acessórios", href: "/categoria/acessorios", img: catAcessorios.url },
-  { name: "bolsas", href: "/categoria/bolsas", img: catBolsas },
+  { name: "vestidos", href: "/categoria/$slug", params: { slug: "vestidos" }, img: catVestidos.url },
+  { name: "blusas", href: "/categoria/$slug", params: { slug: "blusas" }, img: catBlusas.url },
+  { name: "calças", href: "/categoria/$slug", params: { slug: "calcas" }, img: catCalcas.url },
+  { name: "calçados", href: "/categoria/$slug", params: { slug: "calcados" }, img: catCalcados.url },
+  { name: "acessórios", href: "/categoria/$slug", params: { slug: "acessorios" }, img: catAcessorios.url },
+  { name: "bolsas", href: "/categoria/$slug", params: { slug: "bolsas" }, img: catBolsas },
+
 ];
 
 const testimonials = [
@@ -78,7 +79,7 @@ function HomePage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.06 }}
                 >
-                  <Link to={c.href} className="group flex flex-col items-center gap-4">
+                  <Link to={c.href} params={"params" in c ? c.params : undefined} className="group flex flex-col items-center gap-4">
                     <div className="relative aspect-square w-full max-w-[220px] overflow-hidden rounded-full bg-secondary shadow-soft">
                       <img
                         src={c.img}
@@ -107,7 +108,7 @@ function HomePage() {
             <p className="text-xs font-medium lowercase tracking-wider text-primary">best sellers</p>
             <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">mais vendidos</h2>
           </div>
-          <Link to="/categoria/feminino" className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
+          <Link to="/categoria/$slug" params={{ slug: "feminino" }} className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
         </div>
         <ProductGrid items={bestsellers()} />
       </section>
@@ -141,7 +142,7 @@ function HomePage() {
             <p className="text-xs font-medium lowercase tracking-wider text-primary">recém-chegados</p>
             <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">novidades</h2>
           </div>
-          <Link to="/categoria/novidades" className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
+          <Link to="/categoria/$slug" params={{ slug: "novidades" }} className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
         </div>
         <ProductGrid items={newArrivals()} />
       </section>
@@ -155,7 +156,7 @@ function HomePage() {
             <p className="mt-4 max-w-md text-sm text-muted-foreground md:text-base">
               peças versáteis, tecidos leves e modelagens que valorizam. do casual ao sofisticado, um look para cada momento.
             </p>
-            <Link to="/categoria/novidades" className="mt-6 inline-block rounded-full border border-foreground bg-foreground px-7 py-3 text-sm font-medium lowercase text-background transition-colors hover:bg-transparent hover:text-foreground">
+            <Link to="/categoria/$slug" params={{ slug: "novidades" }} className="mt-6 inline-block rounded-full border border-foreground bg-foreground px-7 py-3 text-sm font-medium lowercase text-background transition-colors hover:bg-transparent hover:text-foreground">
               explorar coleção
             </Link>
           </div>

@@ -10,20 +10,8 @@ import { cn } from "@/lib/utils";
 const items = [
   { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
-  { to: "/admin/categorias", label: "Categorias", icon: FolderTree },
-  { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
-  { to: "/admin/clientes", label: "Clientes", icon: Users },
-  { to: "/admin/cupons", label: "Cupons", icon: Ticket },
-  { to: "/admin/banner", label: "Banner", icon: ImageIcon },
-  { to: "/admin/colecoes", label: "Coleções", icon: Layers },
-  { to: "/admin/menu", label: "Menu", icon: ListTree },
-  { to: "/admin/paginas", label: "Páginas", icon: FileText },
-  { to: "/admin/estoque", label: "Estoque", icon: Boxes },
-  
-  { to: "/admin/aparencia", label: "Aparência", icon: Palette },
-  { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
-  { to: "/admin/usuarios", label: "Usuários", icon: UserCog },
 ] as const;
+
 
 export function AdminSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
