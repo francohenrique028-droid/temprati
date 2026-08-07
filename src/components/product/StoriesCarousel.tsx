@@ -94,7 +94,7 @@ export function StoriesCarousel({ cards }: Props) {
                   <img
                     src={card.image}
                     alt={card.name}
-                    className="h-full w-full object-contain"
+                    className="h-full w-full object-cover"
                     draggable={false}
                   />
                 )}
