@@ -23,30 +23,30 @@ const nav: NavItem[] = [
     ],
   },
   {
-    label: "roupas",
-    to: "/categoria/feminino",
+    label: "vestidos",
+    to: "/categoria/vestidos",
     mega: [
-      { title: "peças", links: ["vestidos", "blusas", "calças", "saias"] },
-      { title: "outros", links: ["conjuntos", "alfaiataria", "tricot"] },
+      { title: "estilos", links: ["midi", "longo", "curto", "festa"] },
+      { title: "tecidos", links: ["linho", "seda", "algodão", "alfaiataria"] },
     ],
   },
   {
-    label: "calçados",
-    to: "/categoria/calcados",
+    label: "blusas",
+    to: "/categoria/blusas",
     mega: [
-      { title: "modelos", links: ["tênis", "scarpin", "sandálias", "botas"] },
-      { title: "estilos", links: ["casual", "festa", "dia a dia"] },
+      { title: "peças", links: ["regatas", "camisas", "croppeds", "t-shirts"] },
+      { title: "detalhes", links: ["acetinadas", "tricot", "estampadas"] },
     ],
   },
   {
-    label: "acessórios",
-    to: "/categoria/acessorios",
+    label: "conjuntos",
+    to: "/categoria/conjuntos",
     mega: [
-      { title: "essenciais", links: ["bolsas", "cintos", "óculos"] },
-      { title: "detalhes", links: ["bijoux", "cachecóis", "chapéus"] },
+      { title: "ocasiões", links: ["trabalho", "casual", "noite"] },
+      { title: "materiais", links: ["camurça", "linho", "alfaiataria"] },
     ],
   },
-  { label: "coleções", to: "/categoria/novidades" },
+  { label: "calçados", to: "/categoria/calcados" },
   { label: "promoções", to: "/categoria/promocoes" },
 ];
 
