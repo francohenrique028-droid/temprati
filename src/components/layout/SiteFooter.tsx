@@ -25,8 +25,8 @@ export function SiteFooter() {
         </div>
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs opacity-60 md:flex-row">
           <p>{f.copyright}</p>
+          <p>feito com cuidado no brasil.</p>
         </div>
-
       </div>
     </footer>
   );

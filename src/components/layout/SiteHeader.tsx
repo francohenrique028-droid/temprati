@@ -80,7 +80,7 @@ export function SiteHeader() {
   }, [announcements.length]);
 
   return (
-    <div className="sticky top-0 z-40 w-full bg-background">
+    <>
       {/* Announcement bar */}
       <div className="bg-primary text-primary-foreground">
         <div className="container-x flex h-9 items-center justify-center overflow-hidden">
@@ -91,7 +91,7 @@ export function SiteHeader() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -10, opacity: 0 }}
               transition={{ duration: 0.35, ease: [0.2, 0.6, 0.2, 1] }}
-              className="text-[11px] font-bold lowercase tracking-wide"
+              className="text-[11px] font-medium lowercase tracking-wide"
             >
               {announcements[ann]}
             </motion.span>
@@ -102,7 +102,7 @@ export function SiteHeader() {
       <header
         data-editor-block="header"
         onMouseLeave={() => setHovered(null)}
-        className={`border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_hsl(28_67%_80%_/_0.12)]" : ""}`}
+        className={`${theme.header.sticky ? "sticky top-0" : ""} z-40 border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_hsl(28_67%_80%_/_0.12)]" : ""}`}
       >
         <div className="container-x">
           <div className="flex items-center justify-between gap-4 py-4">
@@ -203,7 +203,7 @@ export function SiteHeader() {
           </nav>
         </aside>
       </div>
-    </div>
+    </>
   );
 }
 
