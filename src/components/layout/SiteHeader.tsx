@@ -80,7 +80,7 @@ export function SiteHeader() {
   }, [announcements.length]);
 
   return (
-    <>
+    <div className="sticky top-0 z-40 w-full">
       {/* Announcement bar */}
       <div className="bg-primary text-primary-foreground">
         <div className="container-x flex h-9 items-center justify-center overflow-hidden">
@@ -102,7 +102,7 @@ export function SiteHeader() {
       <header
         data-editor-block="header"
         onMouseLeave={() => setHovered(null)}
-        className={`${theme.header.sticky ? "sticky top-0" : ""} z-40 border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_hsl(28_67%_80%_/_0.12)]" : ""}`}
+        className={`border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_hsl(28_67%_80%_/_0.12)]" : ""}`}
       >
         <div className="container-x">
           <div className="flex items-center justify-between gap-4 py-4">
@@ -203,7 +203,7 @@ export function SiteHeader() {
           </nav>
         </aside>
       </div>
-    </>
+    </div>
   );
 }
 
