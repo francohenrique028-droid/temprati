@@ -80,7 +80,7 @@ export function SiteHeader() {
   }, [announcements.length]);
 
   return (
-    <div className="sticky top-0 z-40 w-full">
+    <div className="sticky top-0 z-40 w-full bg-background">
       {/* Announcement bar */}
       <div className="bg-primary text-primary-foreground">
         <div className="container-x flex h-9 items-center justify-center overflow-hidden">
