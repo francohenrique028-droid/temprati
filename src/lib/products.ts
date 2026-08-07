@@ -17,8 +17,6 @@ import novidade1 from "@/assets/novidade-1.jpg.asset.json";
 import novidade2 from "@/assets/novidade-2.jpg.asset.json";
 import novidade3 from "@/assets/novidade-3.jpg.asset.json";
 
-
-
 export type Product = {
   id: string;
   slug: string;
@@ -39,14 +37,14 @@ export type Product = {
 };
 
 export const products: Product[] = [
-  { id:"1", slug:"vestido-midi-rose", name:"Conjunto Camurça", category:"vestidos", collection:"lancamentos", brand:"temprati", price:289, oldPrice:349, badge:"Best Seller", images:[vestidoMidiRose.url, vestidoMidiRose.url], colors:["hsl(28 67% 80%)"], sizes:["PP","P","M","G"], bestseller:true, description:"Vestido midi em tecido fluido, corte alinhado e caimento impecável." },
-  { id:"2", slug:"blusa-manga-longa-off-white", name:"blusa regata acetinada", category:"blusas", collection:"lancamentos", brand:"temprati", price:159, images:[novidade1.url], colors:["#FFFFFF"], sizes:["P","M","G","GG"], isNew:true, badge:"Novo", description:"Blusa regata em tecido acetinado, decote V transpassado e caimento leve." },
-  { id:"3", slug:"blusa-cropped-tricot", name:"colete de alfaiataria", category:"blusas", collection:"bestsellers", brand:"temprati", price:89, oldPrice:119, badge:"Promoção", images:[croppedTricotRosa.url], colors:["hsl(28 67% 80%)"], sizes:["Único"], bestseller:true, description:"Colete de alfaiataria com caimento estruturado e acabamento refinado.", video: croppedTricotRosaVideo.url },
-  { id:"4", slug:"calca-alfaiataria-wide", name:"Vestido De Linho Midi Branco", category:"feminino", collection:"bestsellers", brand:"temprati", price:129, images:[calcaAlfaiatariaWide.url, calcaAlfaiatariaWide.url], colors:["hsl(28 67% 96%)"], sizes:["36","38","40","42"], bestseller:true, description:"Vestido midi em linho branco, caimento fluido e acabamento refinado." },
-  { id:"5", slug:"saia-plissada-rose", name:"blusa regata azul", category:"feminino", collection:"lancamentos", brand:"temprati", price:149, images:[novidade2.url], colors:["#A0C4FF"], sizes:["P","M","G"], isNew:true, badge:"Novo", description:"Blusa regata acetinada em tom azul, ideal para composições elegantes." },
-  { id:"6", slug:"conjunto-blazer-calca", name:"Conjunto Urbana Chic", category:"conjuntos", collection:"bestsellers", brand:"temprati", price:459, oldPrice:589, badge:"Promoção", images:[conjuntoBlazerCalca.url], colors:["hsl(28 67% 80%)"], sizes:["PP","P","M","G"], bestseller:true, description:"Conjunto alfaiataria com blazer estruturado e calça reta. Look completo pronto para usar." },
-  { id:"7", slug:"bolsa-couro-rose", name:"blusa regata marrom", category:"acessorios", collection:"lancamentos", brand:"temprati", price:149, images:[novidade3.url], colors:["#5D4037"], sizes:["Único"], isNew:true, badge:"Novo", description:"Blusa regata acetinada em tom marrom terroso, versátil e sofisticada." },
-  { id:"8", slug:"tenis-branco-minimal", name:"tênis branco minimal", category:"calcados", collection:"bestsellers", brand:"temprati", price:99, oldPrice:139, badge:"Best Seller", images:[tenisBrancoMinimal.url], colors:["hsl(28 67% 88%)"], sizes:["34","35","36","37","38","39"], bestseller:true, description:"Tênis minimalista em couro sintético, solado macio e visual clean." },
+  { id:"1", slug:"conjunto-camurca", name:"Conjunto Camurça", category:"conjuntos", collection:"lancamentos", brand:"temprati", price:289, oldPrice:349, badge:"Best Seller", images:[vestidoMidiRose.url, vestidoMidiRose.url], colors:["hsl(28 67% 80%)"], sizes:["PP","P","M","G"], bestseller:true, description:"Conjunto em tecido tipo camurça, corte moderno e caimento impecável." },
+  { id:"2", slug:"regata-acetinada-off-white", name:"Regata Acetinada Off White", category:"blusas", collection:"lancamentos", brand:"temprati", price:159, images:[novidade1.url], colors:["#FFFFFF"], sizes:["P","M","G","GG"], isNew:true, badge:"Novo", description:"Blusa regata em tecido acetinado premium, decote sofisticado e caimento leve." },
+  { id:"3", slug:"colete-alfaiataria-peach", name:"Colete de Alfaiataria", category:"blusas", collection:"bestsellers", brand:"temprati", price:89, oldPrice:119, badge:"Promoção", images:[croppedTricotRosa.url], colors:["hsl(28 67% 80%)"], sizes:["Único"], bestseller:true, description:"Colete de alfaiataria com caimento estruturado e acabamento refinado de alto luxo.", video: croppedTricotRosaVideo.url },
+  { id:"4", slug:"vestido-linho-midi-branco", name:"Vestido de Linho Midi Branco", category:"vestidos", collection:"bestsellers", brand:"temprati", price:129, images:[calcaAlfaiatariaWide.url, calcaAlfaiatariaWide.url], colors:["hsl(28 67% 96%)"], sizes:["36","38","40","42"], bestseller:true, description:"Vestido midi confeccionado em linho puro, frescor e elegância para todas as ocasiões." },
+  { id:"5", slug:"regata-acetinada-azul", name:"Regata Acetinada Azul", category:"blusas", collection:"lancamentos", brand:"temprati", price:149, images:[novidade2.url], colors:["#A0C4FF"], sizes:["P","M","G"], isNew:true, badge:"Novo", description:"Blusa regata acetinada em tom azul exclusivo, ideal para composições de luxo." },
+  { id:"6", slug:"conjunto-urbana-chic", name:"Conjunto Urbana Chic", category:"conjuntos", collection:"bestsellers", brand:"temprati", price:459, oldPrice:589, badge:"Promoção", images:[conjuntoBlazerCalca.url], colors:["hsl(28 67% 80%)"], sizes:["PP","P","M","G"], bestseller:true, description:"Conjunto alfaiataria premium com blazer estruturado e calça reta de corte perfeito." },
+  { id:"7", slug:"regata-acetinada-marrom", name:"Regata Acetinada Marrom", category:"blusas", collection:"lancamentos", brand:"temprati", price:149, images:[novidade3.url], colors:["#5D4037"], sizes:["Único"], isNew:true, badge:"Novo", description:"Blusa regata acetinada em tom marrom terroso, versátil e essencial no guarda-roupa sofisticado." },
+  { id:"8", slug:"tenis-minimalista-branco", name:"Tênis Minimalista Branco", category:"calcados", collection:"bestsellers", brand:"temprati", price:99, oldPrice:139, badge:"Best Seller", images:[tenisBrancoMinimal.url], colors:["hsl(28 67% 88%)"], sizes:["34","35","36","37","38","39"], bestseller:true, description:"Tênis minimalista em couro premium, solado anatômico e design atemporal." },
 ];
 
 export const formatPrice = (n: number) => n.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
