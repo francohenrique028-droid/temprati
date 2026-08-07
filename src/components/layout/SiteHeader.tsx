@@ -203,7 +203,7 @@ export function SiteHeader() {
           </nav>
         </aside>
       </div>
-    </>
+    </div>
   );
 }
 
