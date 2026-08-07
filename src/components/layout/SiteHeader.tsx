@@ -23,30 +23,30 @@ const nav: NavItem[] = [
     ],
   },
   {
-    label: "vestidos",
-    to: "/categoria/vestidos",
+    label: "roupas",
+    to: "/categoria/feminino",
     mega: [
-      { title: "estilos", links: ["midi", "longo", "curto", "festa"] },
-      { title: "tecidos", links: ["linho", "seda", "algodão", "alfaiataria"] },
+      { title: "peças", links: ["vestidos", "blusas", "calças", "saias"] },
+      { title: "outros", links: ["conjuntos", "alfaiataria", "tricot"] },
     ],
   },
   {
-    label: "blusas",
-    to: "/categoria/blusas",
+    label: "calçados",
+    to: "/categoria/calcados",
     mega: [
-      { title: "peças", links: ["regatas", "camisas", "croppeds", "t-shirts"] },
-      { title: "detalhes", links: ["acetinadas", "tricot", "estampadas"] },
+      { title: "modelos", links: ["tênis", "scarpin", "sandálias", "botas"] },
+      { title: "estilos", links: ["casual", "festa", "dia a dia"] },
     ],
   },
   {
-    label: "conjuntos",
-    to: "/categoria/conjuntos",
+    label: "acessórios",
+    to: "/categoria/acessorios",
     mega: [
-      { title: "ocasiões", links: ["trabalho", "casual", "noite"] },
-      { title: "materiais", links: ["camurça", "linho", "alfaiataria"] },
+      { title: "essenciais", links: ["bolsas", "cintos", "óculos"] },
+      { title: "detalhes", links: ["bijoux", "cachecóis", "chapéus"] },
     ],
   },
-  { label: "calçados", to: "/categoria/calcados" },
+  { label: "coleções", to: "/categoria/novidades" },
   { label: "promoções", to: "/categoria/promocoes" },
 ];
 
