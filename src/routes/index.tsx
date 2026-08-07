@@ -156,7 +156,7 @@ function HomePage() {
             <p className="mt-4 max-w-md text-sm text-muted-foreground md:text-base">
               peças versáteis, tecidos leves e modelagens que valorizam. do casual ao sofisticado, um look para cada momento.
             </p>
-            <Link to="/categoria/novidades" className="mt-6 inline-block rounded-full border border-foreground bg-foreground px-7 py-3 text-sm font-medium lowercase text-background transition-colors hover:bg-transparent hover:text-foreground">
+            <Link to="/categoria/$slug" params={{ slug: "novidades" }} className="mt-6 inline-block rounded-full border border-foreground bg-foreground px-7 py-3 text-sm font-medium lowercase text-background transition-colors hover:bg-transparent hover:text-foreground">
               explorar coleção
             </Link>
           </div>
