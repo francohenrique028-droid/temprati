@@ -91,7 +91,7 @@ export function SiteHeader() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -10, opacity: 0 }}
               transition={{ duration: 0.35, ease: [0.2, 0.6, 0.2, 1] }}
-              className="text-[11px] font-medium lowercase tracking-wide"
+              className="text-[11px] font-bold lowercase tracking-wide"
             >
               {announcements[ann]}
             </motion.span>
