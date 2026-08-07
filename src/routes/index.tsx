@@ -142,7 +142,7 @@ function HomePage() {
             <p className="text-xs font-medium lowercase tracking-wider text-primary">recém-chegados</p>
             <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">novidades</h2>
           </div>
-          <Link to="/categoria/novidades" className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
+          <Link to="/categoria/$slug" params={{ slug: "novidades" }} className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
         </div>
         <ProductGrid items={newArrivals()} />
       </section>
