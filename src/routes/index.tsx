@@ -31,12 +31,13 @@ export const Route = createFileRoute("/")({
 });
 
 const categories = [
-  { name: "vestidos", href: "/categoria/vestidos", img: catVestidos.url },
-  { name: "blusas", href: "/categoria/blusas", img: catBlusas.url },
-  { name: "calças", href: "/categoria/calcas", img: catCalcas.url },
-  { name: "calçados", href: "/categoria/calcados", img: catCalcados.url },
-  { name: "acessórios", href: "/categoria/acessorios", img: catAcessorios.url },
-  { name: "bolsas", href: "/categoria/bolsas", img: catBolsas },
+  { name: "vestidos", href: "/categoria/$slug", params: { slug: "vestidos" }, img: catVestidos.url },
+  { name: "blusas", href: "/categoria/$slug", params: { slug: "blusas" }, img: catBlusas.url },
+  { name: "calças", href: "/categoria/$slug", params: { slug: "calcas" }, img: catCalcas.url },
+  { name: "calçados", href: "/categoria/$slug", params: { slug: "calcados" }, img: catCalcados.url },
+  { name: "acessórios", href: "/categoria/$slug", params: { slug: "acessorios" }, img: catAcessorios.url },
+  { name: "bolsas", href: "/categoria/$slug", params: { slug: "bolsas" }, img: catBolsas },
+
 ];
 
 const testimonials = [
