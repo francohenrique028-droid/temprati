@@ -116,15 +116,9 @@ function HomePage() {
       {/* STORIES CAROUSEL — destaques */}
       <section className="container-x py-16">
         <StoriesCarousel
-          cards={products.slice(0, 5).map((p, idx, arr) => ({
+          cards={products.filter(p => ["2", "5", "7"].includes(p.id)).map((p, idx, arr) => ({
             id: p.id,
             image: p.images[0],
-            video:
-              idx === Math.floor(arr.length / 2)
-                ? "https://i.imgur.com/NoM4yk1.mp4"
-                : idx === 1
-                ? "https://i.imgur.com/q25ep9M.mp4"
-                : undefined,
             thumb: p.images[0],
             name: p.name,
             price: p.price,
@@ -134,6 +128,7 @@ function HomePage() {
           }))}
         />
       </section>
+
 
       {/* NOVIDADES / LANÇAMENTOS */}
       <section className="container-x py-14">
