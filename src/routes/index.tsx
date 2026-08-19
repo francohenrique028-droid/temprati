@@ -107,7 +107,7 @@ function HomePage() {
             <p className="text-xs font-medium lowercase tracking-wider text-primary">best sellers</p>
             <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">mais vendidos</h2>
           </div>
-          <Link to="/categoria/feminino" className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
+          <Link to="/categoria/$slug" params={{ slug: "feminino" }} className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
         </div>
         <ProductGrid items={bestsellers()} />
       </section>
@@ -135,7 +135,7 @@ function HomePage() {
             <p className="text-xs font-medium lowercase tracking-wider text-primary">recém-chegados</p>
             <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">novidades</h2>
           </div>
-          <Link to="/categoria/novidades" className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
+          <Link to="/categoria/$slug" params={{ slug: "novidades" }} className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline">ver todos →</Link>
         </div>
         <ProductGrid items={newArrivals()} />
       </section>
@@ -149,7 +149,7 @@ function HomePage() {
             <p className="mt-4 max-w-md text-sm text-muted-foreground md:text-base">
               peças versáteis, tecidos leves e modelagens que valorizam. do casual ao sofisticado, um look para cada momento.
             </p>
-            <Link to="/categoria/novidades" className="mt-6 inline-block rounded-full border border-foreground bg-foreground px-7 py-3 text-sm font-medium lowercase text-background transition-colors hover:bg-transparent hover:text-foreground">
+            <Link to="/categoria/$slug" params={{ slug: "novidades" }} className="mt-6 inline-block rounded-full border border-foreground bg-foreground px-7 py-3 text-sm font-medium lowercase text-background transition-colors hover:bg-transparent hover:text-foreground">
               explorar coleção
             </Link>
           </div>
