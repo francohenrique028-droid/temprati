@@ -113,7 +113,6 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
                   navigate({ to: "/produto/$slug", params: { slug: product.slug } });
                 } else {
                   add(product);
-                  toast.success("Produto adicionado!");
                 }
               }}
               className="h-11 flex-1 truncate rounded-xl bg-[#FF0080] px-2 text-[10px] font-bold uppercase tracking-widest text-white transition-opacity hover:opacity-90 sm:px-4"
@@ -125,7 +124,6 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
               onClick={(e) => {
                 e.preventDefault();
                 add(product);
-                toast.success("Produto adicionado!");
               }}
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#FF0080] text-[#FF0080] transition-colors hover:bg-[#FF0080]/5"
             >
