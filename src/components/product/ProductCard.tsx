@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Heart } from "lucide-react";
+import { Heart, Plus, ShoppingBag } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Product } from "@/lib/products";
 import { formatPrice, installment } from "@/lib/products";
@@ -93,20 +93,33 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
                 {product.oldPrice ? formatPrice(product.oldPrice) : "\u00A0"}
               </span>
             </div>
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={(e) => {
-                e.preventDefault();
-                if (product.sizes.length > 1) {
-                  navigate({ to: "/produto/$slug", params: { slug: product.slug } });
-                } else {
+            <div className="flex items-center gap-2">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (product.sizes.length > 1) {
+                    navigate({ to: "/produto/$slug", params: { slug: product.slug } });
+                  } else {
+                    add(product);
+                  }
+                }}
+                className="rounded-xl bg-[#FF0080] px-6 py-2 text-[10px] font-bold uppercase tracking-widest text-white transition-all hover:bg-[#FF0080]/90"
+              >
+                Comprar
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={(e) => {
+                  e.preventDefault();
                   add(product);
-                }
-              }}
-              className="rounded-lg border border-primary bg-background px-5 py-2 text-xs font-bold lowercase tracking-wide text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
-            >
-              add
-            </motion.button>
+                }}
+                className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-[#FF0080] text-[#FF0080] transition-all hover:bg-[#FF0080]/5"
+              >
+                <Plus className="h-3 w-3 mr-0.5" />
+                <ShoppingBag className="h-4 w-4" />
+              </motion.button>
+            </div>
           </div>
         </div>
       </div>
