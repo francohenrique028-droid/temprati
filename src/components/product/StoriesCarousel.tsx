@@ -44,8 +44,8 @@ export function StoriesCarousel({ cards }: Props) {
   };
 
   return (
-    <div className="relative w-full overflow-hidden py-8 md:py-14">
-      <div className="relative mx-auto h-[420px] w-full max-w-5xl md:h-[560px]">
+    <div className="relative w-full py-8 md:py-14">
+      <div className="relative mx-auto h-[480px] w-full max-w-5xl md:h-[620px]">
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           drag="x"
