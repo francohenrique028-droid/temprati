@@ -52,18 +52,55 @@ export function CartDrawer() {
                   ))}
                 </div>
                 <div className="border-t border-border p-6">
-                  <div className="flex gap-2">
-                    <input value={coupon} onChange={e => setCoupon(e.target.value)} placeholder="Cupom de desconto" className="flex-1 rounded-2xl border border-border bg-card px-4 py-3 text-sm outline-none focus:border-primary" />
-                    <button className="rounded-2xl border border-border px-4 text-sm hover:bg-secondary">Aplicar</button>
+                  <div className="space-y-4">
+                    <div className="flex gap-2">
+                      <input 
+                        value={coupon} 
+                        onChange={e => setCoupon(e.target.value)} 
+                        placeholder="Cupom de desconto" 
+                        className="flex-1 rounded-2xl border border-border bg-card px-4 py-3 text-sm outline-none focus:border-primary" 
+                      />
+                      <button className="rounded-2xl border border-border px-4 text-sm hover:bg-secondary font-medium transition-colors">Aplicar</button>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Truck className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <input 
+                          placeholder="Calcular frete (CEP)" 
+                          className="w-full rounded-2xl border border-border bg-card pl-10 pr-4 py-3 text-sm outline-none focus:border-primary" 
+                        />
+                      </div>
+                      <button className="rounded-2xl border border-border px-4 text-sm hover:bg-secondary font-medium transition-colors">Calcular</button>
+                    </div>
                   </div>
-                  <div className="mt-5 space-y-2 text-sm">
-                    <div className="flex justify-between text-muted-foreground"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
-                    <div className="flex justify-between text-muted-foreground"><span>Frete</span><span>Calculado no checkout</span></div>
-                    <div className="flex justify-between pt-2 text-base font-semibold"><span>Total</span><span>{formatPrice(subtotal)}</span></div>
+
+                  <div className="mt-6 space-y-3">
+                    <div className="flex justify-between items-center text-sm font-bold">
+                      <span className="text-foreground uppercase tracking-wider">descontos</span>
+                      <span className="text-[#FF0080]">-R$ 0,00</span>
+                    </div>
+                    <div className="flex justify-between items-center text-lg font-bold">
+                      <span className="text-foreground uppercase tracking-wider">total</span>
+                      <span className="text-[#FF0080]">{formatPrice(subtotal)}</span>
+                    </div>
                   </div>
-                  <Link to="/checkout" onClick={() => setOpen(false)} className="mt-5 block w-full rounded-2xl bg-primary py-4 text-center text-sm font-medium text-primary-foreground hover:bg-[#333] transition-colors">
-                    Finalizar Compra
-                  </Link>
+
+                  <div className="mt-8 flex items-center justify-between gap-4">
+                    <button 
+                      onClick={() => setOpen(false)} 
+                      className="text-xs font-bold uppercase underline underline-offset-4 decoration-2 hover:opacity-70 transition-opacity"
+                    >
+                      continuar comprando
+                    </button>
+                    <Link 
+                      to="/checkout" 
+                      onClick={() => setOpen(false)} 
+                      className="flex-1 rounded-2xl bg-[#FF0080] py-4 text-center text-xs font-bold uppercase tracking-widest text-white hover:bg-[#FF0080]/90 transition-colors shadow-lg shadow-[#FF0080]/20"
+                    >
+                      finalizar compra
+                    </Link>
+                  </div>
                 </div>
               </>
             )}
