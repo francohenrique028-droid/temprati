@@ -14,7 +14,7 @@ export function CartDrawer() {
       {open && (
         <div className="fixed inset-0 z-50">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)} className="absolute inset-0 bg-black/30" />
-          <motion.aside initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "tween", duration: 0.35, ease: [0.2, 0.6, 0.2, 1] }} className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-background shadow-2xl">
+          <motion.aside initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "tween", duration: 0.35, ease: [0.2, 0.6, 0.2, 1] }} className="absolute inset-y-0 right-0 flex w-[90%] max-w-md flex-col bg-background shadow-2xl sm:w-full">
             <div className="flex items-center justify-between border-b border-border px-6 py-5">
               <h2 className="text-sm font-semibold uppercase tracking-[0.2em]">Sacola ({items.length})</h2>
               <button onClick={() => setOpen(false)} aria-label="Fechar"><X className="h-5 w-5" /></button>
