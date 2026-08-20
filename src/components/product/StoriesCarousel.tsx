@@ -44,8 +44,8 @@ export function StoriesCarousel({ cards }: Props) {
   };
 
   return (
-    <div className="relative w-full overflow-hidden py-8 md:py-14">
-      <div className="relative mx-auto h-[420px] w-full max-w-5xl md:h-[560px]">
+    <div className="relative w-full py-8 md:py-14">
+      <div className="relative mx-auto h-[520px] w-full max-w-5xl md:h-[680px]">
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           drag="x"
@@ -58,7 +58,7 @@ export function StoriesCarousel({ cards }: Props) {
             const abs = Math.abs(offset);
             if (abs > 2) return null;
             const isActive = offset === 0;
-            const translateX = offset * (isMobile ? 78 : 72); // % of card width
+            const translateX = offset * (isMobile ? 32 : 28); // Even tighter for mobile peeking
             const scale = isActive ? 1 : 0.82;
             const opacity = abs > 1 ? 0 : 1;
             const zIndex = isActive ? 10 : 10 - abs - 1;
@@ -86,7 +86,7 @@ export function StoriesCarousel({ cards }: Props) {
                 <img
                   src={card.image}
                   alt={card.name}
-                  className="h-full w-full object-contain"
+                  className="h-full w-full object-cover"
                   draggable={false}
                 />
 
@@ -95,7 +95,7 @@ export function StoriesCarousel({ cards }: Props) {
                 <a
                   href={card.href ?? "#"}
                   onClick={(e) => e.stopPropagation()}
-                  className="absolute inset-x-3 bottom-3 flex items-center gap-3 rounded-2xl bg-white/95 p-2.5 shadow-sm backdrop-blur transition hover:bg-white"
+                  className="absolute inset-x-3 bottom-4 flex items-center gap-3 rounded-2xl bg-white/95 p-2.5 shadow-lg backdrop-blur transition hover:bg-white"
                 >
                   <img
                     src={card.thumb ?? card.image}
@@ -155,23 +155,25 @@ export function StoriesCarousel({ cards }: Props) {
           })}
         </motion.div>
 
-        {/* arrows */}
-        <button
-          type="button"
-          onClick={() => go(-1)}
-          aria-label="anterior"
-          className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/90 p-2 text-black shadow-md backdrop-blur transition hover:bg-white md:left-6"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <button
-          type="button"
-          onClick={() => go(1)}
-          aria-label="próximo"
-          className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/90 p-2 text-black shadow-md backdrop-blur transition hover:bg-white md:right-6"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
+        {/* Navigation buttons moved below if desired, but image shows arrows on sides or maybe no arrows. Keeping arrows but positioning them better for the "Instagram" look */}
+        <div className="absolute inset-x-0 top-1/2 z-20 flex -translate-y-1/2 justify-between px-4 md:px-12">
+          <button
+            type="button"
+            onClick={() => go(-1)}
+            aria-label="anterior"
+            className="rounded-full bg-white/30 p-2 text-white shadow-sm backdrop-blur-md transition hover:bg-white/50"
+          >
+            <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+          <button
+            type="button"
+            onClick={() => go(1)}
+            aria-label="próximo"
+            className="rounded-full bg-white/30 p-2 text-white shadow-sm backdrop-blur-md transition hover:bg-white/50"
+          >
+            <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+        </div>
       </div>
 
     </div>
