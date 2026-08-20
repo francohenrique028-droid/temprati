@@ -3,11 +3,22 @@ import { useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@/lib/products";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function CartDrawer() {
   const { open, setOpen, items, update, remove, subtotal } = useCart();
   const [coupon, setCoupon] = useState("");
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [open]);
 
   return (
     <AnimatePresence>
