@@ -155,23 +155,25 @@ export function StoriesCarousel({ cards }: Props) {
           })}
         </motion.div>
 
-        {/* arrows */}
-        <button
-          type="button"
-          onClick={() => go(-1)}
-          aria-label="anterior"
-          className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/90 p-2 text-black shadow-md backdrop-blur transition hover:bg-white md:left-6"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <button
-          type="button"
-          onClick={() => go(1)}
-          aria-label="próximo"
-          className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/90 p-2 text-black shadow-md backdrop-blur transition hover:bg-white md:right-6"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
+        {/* Navigation buttons moved below if desired, but image shows arrows on sides or maybe no arrows. Keeping arrows but positioning them better for the "Instagram" look */}
+        <div className="absolute inset-x-0 top-1/2 z-20 flex -translate-y-1/2 justify-between px-4 md:px-12">
+          <button
+            type="button"
+            onClick={() => go(-1)}
+            aria-label="anterior"
+            className="rounded-full bg-white/30 p-2 text-white shadow-sm backdrop-blur-md transition hover:bg-white/50"
+          >
+            <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+          <button
+            type="button"
+            onClick={() => go(1)}
+            aria-label="próximo"
+            className="rounded-full bg-white/30 p-2 text-white shadow-sm backdrop-blur-md transition hover:bg-white/50"
+          >
+            <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+        </div>
       </div>
 
     </div>
