@@ -26,100 +26,112 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.3), ease: [0.2, 0.6, 0.2, 1] }}
       className="group relative flex h-full w-full"
     >
-      <div className="flex h-full w-full flex-col justify-between overflow-hidden rounded-xl border border-border bg-card text-card-foreground transition-all duration-300 hover:shadow-md">
-        {/* Image */}
-        <Link
-          to="/produto/$slug"
-          params={{ slug: product.slug }}
-          className="relative block aspect-square overflow-hidden bg-muted"
-        >
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover transition-all duration-500 group-hover:scale-105 group-hover:opacity-0"
-          />
-          <img
-            src={product.images[1]}
-            alt=""
-            aria-hidden
-            loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-          />
+      <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground transition-all duration-300 hover:shadow-md">
+        {/* Image Area */}
+        <div className="relative aspect-[4/5] w-full overflow-hidden bg-muted">
+          <Link
+            to="/produto/$slug"
+            params={{ slug: product.slug }}
+            className="block h-full w-full"
+          >
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              loading="lazy"
+              className="h-full w-full object-cover transition-all duration-500 group-hover:scale-105 group-hover:opacity-0"
+            />
+            {product.images[1] && (
+              <img
+                src={product.images[1]}
+                alt=""
+                aria-hidden
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+              />
+            )}
+          </Link>
 
-          {(discount || product.badge) && (
-            <div
-              className={cn(
-                "absolute left-2 top-2 rounded-md px-2 py-0.5 text-[10px] font-semibold lowercase tracking-wide",
-                discount
-                  ? "bg-green-200 text-green-900"
-                  : product.badge === "Novo"
-                  ? "bg-background text-foreground border border-border"
-                  : "bg-primary text-primary-foreground"
-              )}
-            >
-              {discount ?? product.badge}
+          {/* Badges */}
+          {discount && (
+            <div className="absolute left-3 top-3 z-10 rounded-md bg-green-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+              {discount}
+            </div>
+          )}
+          {!discount && product.badge && (
+            <div className="absolute left-3 top-3 z-10 rounded-md bg-primary px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
+              {product.badge}
             </div>
           )}
 
+          {/* Favorite */}
           <button
             onClick={(e) => {
               e.preventDefault();
               toggle(product.id);
               toast(isFav ? "removido dos favoritos" : "adicionado aos favoritos");
             }}
-            className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-background/95 backdrop-blur-sm shadow-sm transition-all duration-300 hover:bg-background"
+            className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm transition-transform hover:scale-110"
             aria-label="Favoritar"
           >
-            <Heart className={cn("h-4 w-4", isFav ? "fill-primary text-primary" : "text-foreground")} />
+            <Heart className={cn("h-4 w-4", isFav ? "fill-[#FF0080] text-[#FF0080]" : "text-foreground")} />
           </button>
-        </Link>
+        </div>
 
-        {/* Details */}
-        <div className="flex flex-1 flex-col space-y-3 p-4">
+        {/* Info Area */}
+        <div className="flex flex-1 flex-col p-4">
           <Link
             to="/produto/$slug"
             params={{ slug: product.slug }}
-            className="line-clamp-2 h-10 text-sm font-medium lowercase text-foreground transition-colors hover:text-primary"
+            className="mb-1 line-clamp-2 min-h-[40px] text-sm font-semibold text-black transition-colors hover:text-[#FF0080]"
           >
             {product.name}
           </Link>
-          <p className="min-h-[16px] text-[11px] leading-4 lowercase text-muted-foreground line-clamp-1">{installment(product.price)}</p>
 
-          <div className="mt-auto flex items-end justify-between gap-2">
-            <div className="flex min-w-0 flex-col">
-              <span className="text-base font-semibold text-foreground">{formatPrice(product.price)}</span>
-              <span className="min-h-[16px] text-xs text-muted-foreground line-through">
-                {product.oldPrice ? formatPrice(product.oldPrice) : "\u00A0"}
+          <p className="mb-4 text-[11px] text-muted-foreground line-clamp-1">
+            {installment(product.price)}
+          </p>
+
+          <div className="mt-auto space-y-1">
+            {product.oldPrice && (
+              <span className="text-[13px] text-muted-foreground line-through">
+                {formatPrice(product.oldPrice)}
               </span>
+            )}
+            <div className="flex items-baseline gap-2">
+              <span className="text-lg font-bold text-black">{formatPrice(product.price)}</span>
+              <span className="text-[11px] text-muted-foreground">ou 6x {formatPrice(product.price / 6)}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (product.sizes.length > 1) {
-                    navigate({ to: "/produto/$slug", params: { slug: product.slug } });
-                  } else {
-                    add(product);
-                  }
-                }}
-                className="rounded-xl bg-[#FF0080] px-6 py-2 text-[10px] font-bold uppercase tracking-widest text-white transition-all hover:bg-[#FF0080]/90"
-              >
-                Comprar
-              </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={(e) => {
-                  e.preventDefault();
+          </div>
+
+          {/* Actions */}
+          <div className="mt-4 flex items-center gap-2">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.preventDefault();
+                if (product.sizes.length > 1) {
+                  navigate({ to: "/produto/$slug", params: { slug: product.slug } });
+                } else {
                   add(product);
-                }}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border-2 border-[#FF0080] text-[#FF0080] transition-all hover:bg-[#FF0080]/5"
-              >
-                <Plus className="h-3 w-3 mr-0.5" />
-                <ShoppingBag className="h-4 w-4" />
-              </motion.button>
-            </div>
+                  toast.success("Produto adicionado!");
+                }
+              }}
+              className="h-11 flex-1 rounded-xl bg-[#FF0080] px-4 text-xs font-bold uppercase tracking-widest text-white transition-opacity hover:opacity-90"
+            >
+              Comprar
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.preventDefault();
+                add(product);
+                toast.success("Produto adicionado!");
+              }}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#FF0080] text-[#FF0080] transition-colors hover:bg-[#FF0080]/5"
+            >
+              <Plus className="h-3 w-3 mr-0.5" />
+              <ShoppingBag className="h-4 w-4" />
+            </motion.button>
           </div>
         </div>
       </div>
