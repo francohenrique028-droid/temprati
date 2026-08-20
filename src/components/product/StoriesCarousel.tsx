@@ -114,7 +114,7 @@ export function StoriesCarousel({ cards }: Props) {
                       )}
                     </div>
                   </div>
-                  <div className="ml-2 flex items-center gap-1.5">
+                  <div className="ml-2 flex flex-col gap-1.5 sm:flex-row sm:items-center">
                     <button
                       type="button"
                       onClick={(e) => {
@@ -122,7 +122,7 @@ export function StoriesCarousel({ cards }: Props) {
                         e.stopPropagation();
                         if (card.href) window.location.href = card.href;
                       }}
-                      className="rounded-lg bg-[#FF0080] px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-sm transition hover:bg-[#FF0080]/90"
+                      className="whitespace-nowrap rounded-lg bg-[#FF0080] px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-sm transition hover:bg-[#FF0080]/90"
                     >
                       Comprar
                     </button>
@@ -133,7 +133,7 @@ export function StoriesCarousel({ cards }: Props) {
                         e.stopPropagation();
                         console.log("Added to cart:", card.id);
                       }}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#FF0080] text-[#FF0080] shadow-sm transition hover:bg-[#FF0080]/5"
+                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#FF0080] text-[#FF0080] shadow-sm transition hover:bg-[#FF0080]/5 sm:h-8 sm:w-8"
                     >
                       <Plus className="h-2.5 w-2.5 mr-0.5" />
                       <ShoppingBag className="h-3.5 w-3.5" />

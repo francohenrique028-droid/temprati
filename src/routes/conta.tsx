@@ -78,7 +78,7 @@ function AccountPage() {
           {tab === "favs" && (
             <div>
               <h2 className="mb-6 text-xl font-medium">Favoritos</h2>
-              {favs.length ? <ProductGrid items={favs} cols={3} /> : <p className="text-sm text-muted-foreground">Nenhum favorito ainda.</p>}
+              {favs.length ? <ProductGrid items={favs} /> : <p className="text-sm text-muted-foreground">Nenhum favorito ainda.</p>}
             </div>
           )}
           {tab === "addr" && (
