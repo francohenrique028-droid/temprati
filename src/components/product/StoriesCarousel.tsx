@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Plus, ShoppingBag } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { findBySlug } from "@/lib/products";
 
 export type StoryCard = {
   id: string | number;
@@ -23,6 +25,7 @@ interface Props {
 export function StoriesCarousel({ cards }: Props) {
   const [active, setActive] = useState(() => Math.floor(cards.length / 2));
   const [isMobile, setIsMobile] = useState(false);
+  const { add } = useCart();
   const total = cards.length;
 
   useEffect(() => {
@@ -131,7 +134,14 @@ export function StoriesCarousel({ cards }: Props) {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log("Added to cart:", card.id);
+                        // Find the product by ID or Slug to add to cart properly
+                        const productSlug = card.href?.split("/").pop();
+                        if (productSlug) {
+                          const product = findBySlug(productSlug);
+                          if (product) {
+                            add(product);
+                          }
+                        }
                       }}
                       className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#FF0080] text-[#FF0080] shadow-sm transition hover:bg-[#FF0080]/5 sm:h-8 sm:w-8"
                     >
