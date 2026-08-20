@@ -104,35 +104,35 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           </div>
 
           {/* Actions */}
-            <div className="flex items-center gap-2">
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (product.sizes.length > 1) {
-                    navigate({ to: "/produto/$slug", params: { slug: product.slug } });
-                  } else {
-                    add(product);
-                    toast.success("Produto adicionado!");
-                  }
-                }}
-                className="h-11 flex-1 truncate rounded-xl bg-[#FF0080] px-2 text-[10px] font-bold uppercase tracking-widest text-white transition-opacity hover:opacity-90 sm:px-4"
-              >
-                Comprar
-              </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={(e) => {
-                  e.preventDefault();
+          <div className="mt-4 flex items-center gap-2">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.preventDefault();
+                if (product.sizes.length > 1) {
+                  navigate({ to: "/produto/$slug", params: { slug: product.slug } });
+                } else {
                   add(product);
                   toast.success("Produto adicionado!");
-                }}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#FF0080] text-[#FF0080] transition-colors hover:bg-[#FF0080]/5"
-              >
-                <Plus className="h-3 w-3 mr-0.5" />
-                <ShoppingBag className="h-4 w-4" />
-              </motion.button>
-            </div>
+                }
+              }}
+              className="h-11 flex-1 truncate rounded-xl bg-[#FF0080] px-2 text-[10px] font-bold uppercase tracking-widest text-white transition-opacity hover:opacity-90 sm:px-4"
+            >
+              Comprar
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.preventDefault();
+                add(product);
+                toast.success("Produto adicionado!");
+              }}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#FF0080] text-[#FF0080] transition-colors hover:bg-[#FF0080]/5"
+            >
+              <Plus className="h-3 w-3 mr-0.5" />
+              <ShoppingBag className="h-4 w-4" />
+            </motion.button>
+          </div>
         </div>
       </div>
     </motion.div>
