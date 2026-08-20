@@ -135,12 +135,14 @@ function ProductPage() {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => { add(product, { size, color, qty }); }} 
+
                 className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-[#FF0080] px-6 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-white hover:bg-[#FF0080]/90 transition-colors shadow-lg shadow-[#FF0080]/20"
               >
                 Comprar
               </button>
               <button 
                 onClick={() => { add(product, { size, color, qty }); setOpen(false); }} 
+
                 className="flex h-[58px] w-[58px] items-center justify-center rounded-2xl border-2 border-[#FF0080] text-[#FF0080] hover:bg-[#FF0080]/5 transition-colors"
               >
                 <Plus className="h-4 w-4 mr-0.5" />
