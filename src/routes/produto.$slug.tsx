@@ -132,12 +132,21 @@ function ProductPage() {
           </div>
 
           <div className="mt-8 grid gap-3">
-            <button onClick={() => { add(product, { size, color, qty }); }} className="flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-4 text-xs font-medium uppercase tracking-[0.2em] text-primary-foreground hover:bg-[#333] transition-colors">
-              <ShoppingBag className="h-4 w-4" /> Adicionar ao Carrinho
-            </button>
-            <button onClick={() => { add(product, { size, color, qty }); setOpen(false); window.location.href = "/checkout"; }} className="rounded-2xl border border-primary px-6 py-4 text-xs font-medium uppercase tracking-[0.2em] hover:bg-primary hover:text-primary-foreground transition-colors">
-              Comprar Agora
-            </button>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => { add(product, { size, color, qty }); }} 
+                className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-[#FF0080] px-6 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-white hover:bg-[#FF0080]/90 transition-colors shadow-lg shadow-[#FF0080]/20"
+              >
+                Comprar
+              </button>
+              <button 
+                onClick={() => { add(product, { size, color, qty }); setOpen(false); }} 
+                className="flex h-[58px] w-[58px] items-center justify-center rounded-2xl border-2 border-[#FF0080] text-[#FF0080] hover:bg-[#FF0080]/5 transition-colors"
+              >
+                <Plus className="h-4 w-4 mr-0.5" />
+                <ShoppingBag className="h-5 w-5" />
+              </button>
+            </div>
             <button onClick={() => { toggle(product.id); toast(has(product.id) ? "Removido dos favoritos" : "Adicionado aos favoritos"); }} className="flex items-center justify-center gap-2 py-3 text-xs text-muted-foreground hover:text-foreground">
               <Heart className={`h-4 w-4 ${has(product.id) ? "fill-primary text-primary" : ""}`} /> Favoritar
             </button>
