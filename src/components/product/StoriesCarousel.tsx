@@ -95,7 +95,7 @@ export function StoriesCarousel({ cards }: Props) {
                 <a
                   href={card.href ?? "#"}
                   onClick={(e) => e.stopPropagation()}
-                  className="absolute inset-x-3 bottom-3 flex items-center gap-3 rounded-2xl bg-white/95 p-2.5 shadow-sm backdrop-blur transition hover:bg-white"
+                  className="absolute inset-x-3 bottom-4 flex items-center gap-3 rounded-2xl bg-white/95 p-2.5 shadow-lg backdrop-blur transition hover:bg-white"
                 >
                   <img
                     src={card.thumb ?? card.image}
