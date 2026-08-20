@@ -114,13 +114,12 @@ export function StoriesCarousel({ cards }: Props) {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 ml-2">
+                  <div className="ml-2 flex items-center gap-1.5">
                     <button
                       type="button"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        // Navigation or add logic here if needed
                         if (card.href) window.location.href = card.href;
                       }}
                       className="rounded-lg bg-[#FF0080] px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-sm transition hover:bg-[#FF0080]/90"
@@ -132,8 +131,6 @@ export function StoriesCarousel({ cards }: Props) {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        // In a real app we'd call the cart context here
-                        // For now we just show a toast or similar
                         console.log("Added to cart:", card.id);
                       }}
                       className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#FF0080] text-[#FF0080] shadow-sm transition hover:bg-[#FF0080]/5"
@@ -141,6 +138,7 @@ export function StoriesCarousel({ cards }: Props) {
                       <Plus className="h-2.5 w-2.5 mr-0.5" />
                       <ShoppingBag className="h-3.5 w-3.5" />
                     </button>
+                  </div>
                 </a>
               </motion.button>
             );
