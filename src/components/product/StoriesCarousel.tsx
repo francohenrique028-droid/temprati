@@ -45,6 +45,14 @@ export function StoriesCarousel({ cards }: Props) {
 
   return (
     <div className="relative w-full py-8 md:py-14">
+      <div className="mb-8 text-center px-4">
+        <h2 className="text-2xl font-bold tracking-tight md:text-3xl text-black">
+          Veja o <span className="text-[#84cc16]">iShorts em ação</span>
+        </h2>
+        <p className="mt-3 text-base md:text-lg text-[#475569] max-w-sm mx-auto leading-tight">
+          Uma experiência de compra imersiva em qualquer dispositivo
+        </p>
+      </div>
       <div className="relative mx-auto h-[520px] w-full max-w-5xl md:h-[680px]">
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
@@ -155,25 +163,7 @@ export function StoriesCarousel({ cards }: Props) {
           })}
         </motion.div>
 
-        {/* Navigation buttons moved below if desired, but image shows arrows on sides or maybe no arrows. Keeping arrows but positioning them better for the "Instagram" look */}
-        <div className="absolute inset-x-0 top-1/2 z-20 flex -translate-y-1/2 justify-between px-4 md:px-12">
-          <button
-            type="button"
-            onClick={() => go(-1)}
-            aria-label="anterior"
-            className="rounded-full bg-white/30 p-2 text-white shadow-sm backdrop-blur-md transition hover:bg-white/50"
-          >
-            <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
-          </button>
-          <button
-            type="button"
-            onClick={() => go(1)}
-            aria-label="próximo"
-            className="rounded-full bg-white/30 p-2 text-white shadow-sm backdrop-blur-md transition hover:bg-white/50"
-          >
-            <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
-          </button>
-        </div>
+        {/* Navigation buttons removed as requested */}
       </div>
 
     </div>
