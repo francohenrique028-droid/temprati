@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import bannerImg from "@/assets/banner.jpg";
 import bannerDesktop from "@/assets/banner-desktop.png.asset.json";
 import bannerMobile from "@/assets/banner-mobile.png.asset.json";
+import bannerPromo from "@/assets/banner-promo.png.asset.json";
 import catVestidos from "@/assets/cat-vestidos.jpg.asset.json";
 import catBlusas from "@/assets/cat-blusas.jpg.asset.json";
 import catCalcas from "@/assets/cat-calcas.jpg.asset.json";
