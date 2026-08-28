@@ -11,8 +11,14 @@ export const Route = createFileRoute("/admin/produtos")({
 });
 
 type Product = {
-  id: string; name: string; sku: string | null; price: number; stock: number;
-  category: string | null; status: string; image_url: string | null;
+  id: string;
+  name: string;
+  sku: string | null;
+  price: number;
+  stock: number;
+  category: string | null;
+  status: string;
+  image_url: string | null;
 };
 
 const PAGE_SIZE = 20;
@@ -26,7 +32,10 @@ function ProdutosPage() {
 
   async function load() {
     setLoading(true);
-    let query = supabase.from("products").select("id,name,sku,price,stock,category,status,image_url").order("created_at", { ascending: false });
+    let query = supabase
+      .from("products")
+      .select("id,name,sku,price,stock,category,status,image_url")
+      .order("created_at", { ascending: false });
     if (status !== "all") query = query.eq("status", status);
     if (q) query = query.ilike("name", `%${q}%`);
     query = query.range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
@@ -36,7 +45,9 @@ function ProdutosPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [q, status, page]);
+  useEffect(() => {
+    load(); /* eslint-disable-next-line */
+  }, [q, status, page]);
 
   async function handleDelete(id: string) {
     if (!confirm("Excluir este produto?")) return;
@@ -55,13 +66,21 @@ function ProdutosPage() {
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
             <input
-              value={q} onChange={(e) => { setPage(0); setQ(e.target.value); }}
+              value={q}
+              onChange={(e) => {
+                setPage(0);
+                setQ(e.target.value);
+              }}
               placeholder="Pesquisar por nome…"
               className="w-full rounded-lg border border-neutral-300 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-neutral-900"
             />
           </div>
           <select
-            value={status} onChange={(e) => { setPage(0); setStatus(e.target.value as typeof status); }}
+            value={status}
+            onChange={(e) => {
+              setPage(0);
+              setStatus(e.target.value as typeof status);
+            }}
             className="rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm"
           >
             <option value="all">Todos</option>
@@ -70,7 +89,8 @@ function ProdutosPage() {
           </select>
         </div>
         <Link
-          to="/admin/produtos/$id" params={{ id: "novo" }}
+          to="/admin/produtos/$id"
+          params={{ id: "novo" }}
           className="inline-flex items-center gap-2 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
         >
           <Plus className="h-4 w-4" /> Novo produto
@@ -92,17 +112,27 @@ function ProdutosPage() {
           </thead>
           <tbody className="divide-y divide-neutral-100">
             {loading && (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-neutral-400">Carregando…</td></tr>
+              <tr>
+                <td colSpan={7} className="px-4 py-8 text-center text-neutral-400">
+                  Carregando…
+                </td>
+              </tr>
             )}
             {empty && (
-              <tr><td colSpan={7} className="px-4 py-12 text-center text-neutral-400">Nenhum produto cadastrado.</td></tr>
+              <tr>
+                <td colSpan={7} className="px-4 py-12 text-center text-neutral-400">
+                  Nenhum produto cadastrado.
+                </td>
+              </tr>
             )}
             {rows.map((p) => (
               <tr key={p.id} className="hover:bg-neutral-50">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 overflow-hidden rounded-md bg-neutral-100">
-                      {p.image_url && <img src={p.image_url} alt="" className="h-full w-full object-cover" />}
+                      {p.image_url && (
+                        <img src={p.image_url} alt="" className="h-full w-full object-cover" />
+                      )}
                     </div>
                     <span className="font-medium">{p.name}</span>
                   </div>
@@ -112,16 +142,25 @@ function ProdutosPage() {
                 <td className="px-4 py-3">{p.stock}</td>
                 <td className="px-4 py-3 text-neutral-500">{p.category ?? "—"}</td>
                 <td className="px-4 py-3">
-                  <span className={`rounded-full px-2 py-0.5 text-xs ${p.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-neutral-100 text-neutral-600"}`}>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs ${p.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-neutral-100 text-neutral-600"}`}
+                  >
                     {p.status === "active" ? "Ativo" : "Rascunho"}
                   </span>
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-2">
-                    <Link to="/admin/produtos/$id" params={{ id: p.id }} className="rounded p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900">
+                    <Link
+                      to="/admin/produtos/$id"
+                      params={{ id: p.id }}
+                      className="rounded p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+                    >
                       <Pencil className="h-4 w-4" />
                     </Link>
-                    <button onClick={() => handleDelete(p.id)} className="rounded p-1.5 text-neutral-500 hover:bg-red-50 hover:text-red-600">
+                    <button
+                      onClick={() => handleDelete(p.id)}
+                      className="rounded p-1.5 text-neutral-500 hover:bg-red-50 hover:text-red-600"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -135,8 +174,20 @@ function ProdutosPage() {
       <div className="mt-4 flex items-center justify-between text-xs text-neutral-500">
         <span>Página {page + 1}</span>
         <div className="flex gap-2">
-          <button disabled={page === 0} onClick={() => setPage((p) => Math.max(0, p - 1))} className="rounded border border-neutral-200 px-3 py-1.5 disabled:opacity-40">Anterior</button>
-          <button disabled={rows.length < PAGE_SIZE} onClick={() => setPage((p) => p + 1)} className="rounded border border-neutral-200 px-3 py-1.5 disabled:opacity-40">Próxima</button>
+          <button
+            disabled={page === 0}
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            className="rounded border border-neutral-200 px-3 py-1.5 disabled:opacity-40"
+          >
+            Anterior
+          </button>
+          <button
+            disabled={rows.length < PAGE_SIZE}
+            onClick={() => setPage((p) => p + 1)}
+            className="rounded border border-neutral-200 px-3 py-1.5 disabled:opacity-40"
+          >
+            Próxima
+          </button>
         </div>
       </div>
     </AdminShell>

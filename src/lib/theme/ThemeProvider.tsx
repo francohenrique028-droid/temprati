@@ -5,14 +5,14 @@ import { defaultTheme, type ThemeConfig } from "./types";
 type Ctx = { theme: ThemeConfig; isEditorPreview: boolean };
 const ThemeCtx = createContext<Ctx>({ theme: defaultTheme, isEditorPreview: false });
 
-function deepMerge<T>(base: T, patch: any): T {
+function deepMerge<T>(base: T, patch: unknown): T {
   if (patch === null || patch === undefined) return base;
-  if (typeof base !== "object" || Array.isArray(base)) return patch ?? base;
-  const out: any = { ...base };
-  for (const k of Object.keys(patch)) {
-    out[k] = deepMerge((base as any)[k], patch[k]);
+  if (typeof base !== "object" || Array.isArray(base)) return (patch as T) ?? base;
+  const out = { ...base } as Record<string, unknown>;
+  for (const k of Object.keys(patch as Record<string, unknown>)) {
+    out[k] = deepMerge((base as Record<string, unknown>)[k], (patch as Record<string, unknown>)[k]);
   }
-  return out;
+  return out as T;
 }
 
 function applyCssVars(theme: ThemeConfig) {
@@ -33,7 +33,10 @@ function applyCssVars(theme: ThemeConfig) {
   root.style.setProperty("--ring", c.primary);
   root.style.setProperty("--tp-footer-bg", c.footerBg);
   root.style.setProperty("--tp-footer-text", c.footerText);
-  root.style.setProperty("--tp-font-family", `"${theme.typography.fontFamily}", ui-sans-serif, system-ui, sans-serif`);
+  root.style.setProperty(
+    "--tp-font-family",
+    `"${theme.typography.fontFamily}", ui-sans-serif, system-ui, sans-serif`,
+  );
   root.style.setProperty("--tp-base-size", `${theme.typography.baseSize}px`);
   document.body.style.fontFamily = `"${theme.typography.fontFamily}", ui-sans-serif, system-ui, sans-serif`;
   document.body.style.fontSize = `${theme.typography.baseSize}px`;
@@ -45,6 +48,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase as any)
         .from("theme_settings")
         .select("config")
@@ -53,12 +57,20 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       if (cancelled) return;
       if (data?.config) setTheme(deepMerge(defaultTheme, data.config));
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  useEffect(() => { applyCssVars(theme); }, [theme]);
+  useEffect(() => {
+    applyCssVars(theme);
+  }, [theme]);
 
-  return <ThemeCtx.Provider value={{ theme, isEditorPreview: false }}>{children}</ThemeCtx.Provider>;
+  return (
+    <ThemeCtx.Provider value={{ theme, isEditorPreview: false }}>{children}</ThemeCtx.Provider>
+  );
 }
 
-export function useTheme() { return useContext(ThemeCtx); }
+export function useTheme() {
+  return useContext(ThemeCtx);
+}

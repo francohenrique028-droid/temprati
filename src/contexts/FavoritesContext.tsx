@@ -6,9 +6,13 @@ const FavCtx = createContext<Ctx | null>(null);
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [ids, setIds] = useState<Set<string>>(new Set());
   const toggle = useCallback((id: string) => {
-    setIds(prev => {
+    setIds((prev) => {
       const n = new Set(prev);
-      n.has(id) ? n.delete(id) : n.add(id);
+      if (n.has(id)) {
+        n.delete(id);
+      } else {
+        n.add(id);
+      }
       return n;
     });
   }, []);

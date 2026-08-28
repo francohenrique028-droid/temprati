@@ -29,11 +29,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground transition-all duration-300 hover:shadow-md">
         {/* Image Area */}
         <div className="relative aspect-[4/5] w-full overflow-hidden bg-muted">
-          <Link
-            to="/produto/$slug"
-            params={{ slug: product.slug }}
-            className="block h-full w-full"
-          >
+          <Link to="/produto/$slug" params={{ slug: product.slug }} className="block h-full w-full">
             <img
               src={product.images[0]}
               alt={product.name}
@@ -73,7 +69,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm transition-transform hover:scale-110"
             aria-label="Favoritar"
           >
-            <Heart className={cn("h-4 w-4", isFav ? "fill-[#FF0080] text-[#FF0080]" : "text-foreground")} />
+            <Heart
+              className={cn("h-4 w-4", isFav ? "fill-[#FF0080] text-[#FF0080]" : "text-foreground")}
+            />
           </button>
         </div>
 
@@ -99,7 +97,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             )}
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-bold text-black">{formatPrice(product.price)}</span>
-              <span className="text-[11px] text-muted-foreground">ou 6x {formatPrice(product.price / 6)}</span>
+              <span className="text-[11px] text-muted-foreground">
+                ou 6x {formatPrice(product.price / 6)}
+              </span>
             </div>
           </div>
 

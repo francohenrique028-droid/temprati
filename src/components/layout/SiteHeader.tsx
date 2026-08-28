@@ -1,5 +1,18 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Search, Heart, User, ShoppingBag, Menu, X, Package, MapPin, LogOut, LayoutDashboard, Store, Settings } from "lucide-react";
+import {
+  Search,
+  Heart,
+  User,
+  ShoppingBag,
+  Menu,
+  X,
+  Package,
+  MapPin,
+  LogOut,
+  LayoutDashboard,
+  Store,
+  Settings,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
@@ -7,8 +20,6 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { useTheme } from "@/lib/theme/ThemeProvider";
 import { useAdminAuth } from "@/lib/admin/useAdminAuth";
 import { supabase } from "@/integrations/supabase/client";
-
-
 
 type MegaCol = { title: string; links: string[] };
 type NavItem = { label: string; to: string; mega?: MegaCol[] };
@@ -50,13 +61,13 @@ const nav: NavItem[] = [
   { label: "promoções", to: "/categoria/promocoes" },
 ];
 
-const announcementsFallback = [
-  "frete grátis acima de R$ 299",
-];
+const announcementsFallback = ["frete grátis acima de R$ 299"];
 
 export function SiteHeader() {
   const { theme } = useTheme();
-  const announcements = theme.header.announcements?.length ? theme.header.announcements : announcementsFallback;
+  const announcements = theme.header.announcements?.length
+    ? theme.header.announcements
+    : announcementsFallback;
   const logoText = theme.header.logoText || "#temprati";
   const { setOpen: openCart, count } = useCart();
   const { ids } = useFavorites();
@@ -107,17 +118,23 @@ export function SiteHeader() {
         <div className="container-x">
           <div className="flex items-center justify-between gap-4 py-4">
             <div className="flex items-center gap-4 flex-1">
-              <button onClick={() => setMobileOpen(true)} className="lg:hidden -ml-2 p-2" aria-label="Menu">
+              <button
+                onClick={() => setMobileOpen(true)}
+                className="lg:hidden -ml-2 p-2"
+                aria-label="Menu"
+              >
                 <Menu className="h-5 w-5" />
               </button>
               <Link to="/" className="flex items-center" aria-label="início">
-                <span className="text-xl md:text-2xl font-bold tracking-tight lowercase text-primary">{logoText}</span>
+                <span className="text-xl md:text-2xl font-bold tracking-tight lowercase text-primary">
+                  {logoText}
+                </span>
               </Link>
             </div>
 
             {/* main nav (center) */}
             <nav className="hidden lg:flex items-center justify-center gap-8 text-sm font-medium lowercase">
-              {nav.map(n => (
+              {nav.map((n) => (
                 <div key={n.to} onMouseEnter={() => setHovered(n.label)}>
                   <Link
                     to={n.to}
@@ -131,18 +148,40 @@ export function SiteHeader() {
             </nav>
 
             <div className="flex items-center gap-0.5 justify-end flex-1">
-              {theme.header.showSearch && <button onClick={() => setSearchOpen(v => !v)} aria-label="Pesquisar" className="p-2 hover:text-primary transition-colors"><Search className="h-[18px] w-[18px]" /></button>}
+              {theme.header.showSearch && (
+                <button
+                  onClick={() => setSearchOpen((v) => !v)}
+                  aria-label="Pesquisar"
+                  className="p-2 hover:text-primary transition-colors"
+                >
+                  <Search className="h-[18px] w-[18px]" />
+                </button>
+              )}
               {theme.header.showFavorites && (
-                <Link to="/favoritos" aria-label="Favoritos" className="relative p-2 hover:text-primary transition-colors">
+                <Link
+                  to="/favoritos"
+                  aria-label="Favoritos"
+                  className="relative p-2 hover:text-primary transition-colors"
+                >
                   <Heart className="h-[18px] w-[18px]" />
-                  {ids.size > 0 && <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-primary" />}
+                  {ids.size > 0 && (
+                    <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+                  )}
                 </Link>
               )}
               {theme.header.showAccount && <AccountMenu />}
               {theme.header.showCart && (
-                <button onClick={() => openCart(true)} aria-label="Carrinho" className="relative p-2 hover:text-primary transition-colors">
+                <button
+                  onClick={() => openCart(true)}
+                  aria-label="Carrinho"
+                  className="relative p-2 hover:text-primary transition-colors"
+                >
                   <ShoppingBag className="h-[18px] w-[18px]" />
-                  {count > 0 && <span className="absolute -top-0 -right-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">{count}</span>}
+                  {count > 0 && (
+                    <span className="absolute -top-0 -right-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+                      {count}
+                    </span>
+                  )}
                 </button>
               )}
             </div>
@@ -150,7 +189,7 @@ export function SiteHeader() {
 
           {/* Mega menu */}
           <AnimatePresence>
-            {hovered && nav.find(n => n.label === hovered)?.mega && (
+            {hovered && nav.find((n) => n.label === hovered)?.mega && (
               <motion.div
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -159,16 +198,27 @@ export function SiteHeader() {
                 className="absolute inset-x-0 top-full hidden border-t border-border bg-background/98 backdrop-blur-md lg:block"
               >
                 <div className="container-x grid grid-cols-4 gap-10 py-10">
-                  {nav.find(n => n.label === hovered)?.mega?.map(col => (
-                    <div key={col.title}>
-                      <p className="mb-4 text-[11px] font-medium lowercase tracking-wide text-primary">{col.title}</p>
-                      <ul className="space-y-2.5">
-                        {col.links.map(l => (
-                          <li key={l}><Link to={nav.find(n => n.label === hovered)!.to} className="text-sm lowercase text-foreground/80 transition-colors hover:text-primary">{l}</Link></li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
+                  {nav
+                    .find((n) => n.label === hovered)
+                    ?.mega?.map((col) => (
+                      <div key={col.title}>
+                        <p className="mb-4 text-[11px] font-medium lowercase tracking-wide text-primary">
+                          {col.title}
+                        </p>
+                        <ul className="space-y-2.5">
+                          {col.links.map((l) => (
+                            <li key={l}>
+                              <Link
+                                to={nav.find((n) => n.label === hovered)!.to}
+                                className="text-sm lowercase text-foreground/80 transition-colors hover:text-primary"
+                              >
+                                {l}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
                 </div>
               </motion.div>
             )}
@@ -176,10 +226,28 @@ export function SiteHeader() {
 
           {searchOpen && (
             <div className="border-t border-border py-4">
-              <form onSubmit={(e) => { e.preventDefault(); window.location.href = `/busca?q=${encodeURIComponent(q)}`; }} className="mx-auto flex max-w-2xl items-center gap-3 rounded-full border border-border bg-card px-5 py-3">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  window.location.href = `/busca?q=${encodeURIComponent(q)}`;
+                }}
+                className="mx-auto flex max-w-2xl items-center gap-3 rounded-full border border-border bg-card px-5 py-3"
+              >
                 <Search className="h-4 w-4 text-muted-foreground" />
-                <input autoFocus value={q} onChange={e => setQ(e.target.value)} placeholder="buscar por produto, categoria..." className="w-full bg-transparent text-sm lowercase outline-none placeholder:text-muted-foreground" />
-                <button type="button" onClick={() => setSearchOpen(false)} className="text-muted-foreground hover:text-primary"><X className="h-4 w-4" /></button>
+                <input
+                  autoFocus
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  placeholder="buscar por produto, categoria..."
+                  className="w-full bg-transparent text-sm lowercase outline-none placeholder:text-muted-foreground"
+                />
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen(false)}
+                  className="text-muted-foreground hover:text-primary"
+                >
+                  <X className="h-4 w-4" />
+                </button>
               </form>
             </div>
           )}
@@ -188,18 +256,40 @@ export function SiteHeader() {
 
       {/* Mobile drawer */}
       <div className={`fixed inset-0 z-50 lg:hidden ${mobileOpen ? "" : "pointer-events-none"}`}>
-        <div onClick={() => setMobileOpen(false)} className={`absolute inset-0 bg-black/30 transition-opacity ${mobileOpen ? "opacity-100" : "opacity-0"}`} />
-        <aside className={`absolute inset-y-0 left-0 w-[85%] max-w-sm bg-background p-6 shadow-2xl transition-transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        <div
+          onClick={() => setMobileOpen(false)}
+          className={`absolute inset-0 bg-black/30 transition-opacity ${mobileOpen ? "opacity-100" : "opacity-0"}`}
+        />
+        <aside
+          className={`absolute inset-y-0 left-0 w-[85%] max-w-sm bg-background p-6 shadow-2xl transition-transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
+        >
           <div className="flex items-center justify-between">
-            <span className="text-lg font-bold tracking-tight lowercase text-primary">{logoText}</span>
-            <button onClick={() => setMobileOpen(false)}><X className="h-5 w-5" /></button>
+            <span className="text-lg font-bold tracking-tight lowercase text-primary">
+              {logoText}
+            </span>
+            <button onClick={() => setMobileOpen(false)}>
+              <X className="h-5 w-5" />
+            </button>
           </div>
           <nav className="mt-8 flex flex-col gap-1">
-            {nav.map(n => (
-              <Link key={n.to} to={n.to} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">{n.label}</Link>
+            {nav.map((n) => (
+              <Link
+                key={n.to}
+                to={n.to}
+                onClick={() => setMobileOpen(false)}
+                className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary"
+              >
+                {n.label}
+              </Link>
             ))}
             <MobileAccountLink onNavigate={() => setMobileOpen(false)} />
-            <Link to="/favoritos" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">favoritos</Link>
+            <Link
+              to="/favoritos"
+              onClick={() => setMobileOpen(false)}
+              className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary"
+            >
+              favoritos
+            </Link>
           </nav>
         </aside>
       </div>
@@ -229,12 +319,20 @@ function AccountMenu() {
   }
 
   if (loading) {
-    return <span className="p-2 hidden sm:inline-flex opacity-50"><User className="h-[18px] w-[18px]" /></span>;
+    return (
+      <span className="p-2 hidden sm:inline-flex opacity-50">
+        <User className="h-[18px] w-[18px]" />
+      </span>
+    );
   }
 
   if (!user) {
     return (
-      <Link to="/login" aria-label="Entrar" className="p-2 hover:text-primary transition-colors hidden sm:inline-flex">
+      <Link
+        to="/login"
+        aria-label="Entrar"
+        className="p-2 hover:text-primary transition-colors hidden sm:inline-flex"
+      >
         <User className="h-[18px] w-[18px]" />
       </Link>
     );
@@ -257,7 +355,7 @@ function AccountMenu() {
   return (
     <div ref={wrapRef} className="relative hidden sm:inline-flex">
       <button
-        onClick={() => setOpen(v => !v)}
+        onClick={() => setOpen((v) => !v)}
         aria-label="Conta"
         className="p-2 hover:text-primary transition-colors"
       >
@@ -307,12 +405,23 @@ function MobileAccountLink({ onNavigate }: { onNavigate: () => void }) {
   const { loading, user, isAdmin } = useAdminAuth();
   if (loading) return null;
   if (!user) {
-    return <Link to="/login" onClick={onNavigate} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">entrar / criar conta</Link>;
+    return (
+      <Link
+        to="/login"
+        onClick={onNavigate}
+        className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary"
+      >
+        entrar / criar conta
+      </Link>
+    );
   }
   return (
-    <Link to={isAdmin ? "/admin" : "/conta"} onClick={onNavigate} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">
+    <Link
+      to={isAdmin ? "/admin" : "/conta"}
+      onClick={onNavigate}
+      className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary"
+    >
       {isAdmin ? "painel admin" : "minha conta"}
     </Link>
   );
 }
-

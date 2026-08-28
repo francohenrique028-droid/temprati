@@ -15,8 +15,7 @@ export type StoryCard = {
   href?: string;
 };
 
-const brl = (v: number) =>
-  v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 interface Props {
   cards: StoryCard[];
@@ -98,7 +97,6 @@ export function StoriesCarousel({ cards }: Props) {
                   draggable={false}
                 />
 
-
                 {/* bottom info card */}
                 <a
                   href={card.href ?? "#"}
@@ -115,9 +113,7 @@ export function StoriesCarousel({ cards }: Props) {
                       {card.name}
                     </h4>
                     <div className="mt-1 flex items-baseline gap-1.5">
-                      <span className="text-sm font-bold text-black">
-                        {brl(card.price)}
-                      </span>
+                      <span className="text-sm font-bold text-black">{brl(card.price)}</span>
                       {card.oldPrice && (
                         <span className="text-[11px] text-neutral-400 line-through">
                           {brl(card.oldPrice)}
@@ -165,7 +161,6 @@ export function StoriesCarousel({ cards }: Props) {
 
         {/* Navigation buttons removed as requested */}
       </div>
-
     </div>
   );
 }

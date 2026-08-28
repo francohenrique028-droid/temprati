@@ -14,7 +14,11 @@ export function AdminShell({ children, title }: { children: ReactNode; title?: s
   }, [loading, user, navigate]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-neutral-50 text-sm text-neutral-500">Carregando…</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50 text-sm text-neutral-500">
+        Carregando…
+      </div>
+    );
   }
   if (!user) return null;
   if (!isAdmin) {
@@ -22,11 +26,19 @@ export function AdminShell({ children, title }: { children: ReactNode; title?: s
       <div className="min-h-screen flex items-center justify-center bg-neutral-50 px-4">
         <div className="max-w-md rounded-2xl border border-neutral-200 bg-white p-8 text-center">
           <h1 className="text-lg font-semibold">Acesso restrito</h1>
-          <p className="mt-2 text-sm text-neutral-500">Sua conta não tem permissão de administrador.</p>
+          <p className="mt-2 text-sm text-neutral-500">
+            Sua conta não tem permissão de administrador.
+          </p>
           <button
-            onClick={async () => { const { supabase } = await import("@/integrations/supabase/client"); await supabase.auth.signOut(); window.location.href = "/admin/login"; }}
+            onClick={async () => {
+              const { supabase } = await import("@/integrations/supabase/client");
+              await supabase.auth.signOut();
+              window.location.href = "/admin/login";
+            }}
             className="mt-6 rounded-lg bg-neutral-900 px-4 py-2 text-sm text-white hover:bg-neutral-800"
-          >Sair</button>
+          >
+            Sair
+          </button>
         </div>
       </div>
     );
