@@ -43,16 +43,20 @@ export function StoriesCarousel({ cards }: Props) {
   };
 
   return (
-    <div className="relative w-full overflow-hidden py-8 md:py-14">
-      <div className="mb-8 text-center px-4">
-        <h2 className="text-2xl font-bold tracking-tight md:text-3xl text-black">
-          Veja o <span className="text-[#84cc16]">iShorts em ação</span>
+    <div className="relative w-full overflow-hidden py-8 md:py-14 bg-[#fafafa]">
+      <div className="mb-8 text-center px-4 flex flex-col items-center">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-neutral-500">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#84cc16]"></span>
+          VITRINE
+        </div>
+        <h2 className="text-3xl font-bold tracking-tight md:text-4xl text-neutral-900">
+          Veja o iShorts <span className="text-[#84cc16]">em ação</span>
         </h2>
-        <p className="mt-3 text-base md:text-lg text-[#475569] max-w-sm mx-auto leading-tight">
+        <p className="mt-3 text-sm md:text-base text-neutral-500 max-w-sm mx-auto leading-relaxed">
           Uma experiência de compra imersiva em qualquer dispositivo
         </p>
       </div>
-      <div className="relative mx-auto h-[520px] w-full max-w-5xl md:h-[680px]">
+      <div className="relative mx-auto h-[480px] w-full md:h-[600px]">
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           drag="x"
@@ -63,26 +67,26 @@ export function StoriesCarousel({ cards }: Props) {
           {cards.map((card, i) => {
             const offset = i - active;
             const abs = Math.abs(offset);
-            if (abs > 2) return null;
+            if (abs > 4) return null; // Show up to 9 cards
             const isActive = offset === 0;
-            const translateX = offset * (isMobile ? 32 : 28); // Even tighter for mobile peeking
-            const scale = isActive ? 1 : 0.82;
-            const opacity = abs > 1 ? 0 : 1;
-            const zIndex = isActive ? 10 : 10 - abs - 1;
+            // 105% of width apart. If scale is 0.85, 105 - 85 = 20% gap
+            const translateX = offset * (isMobile ? 100 : 105);
+            const scale = isActive ? 1 : 0.85;
+            const opacity = abs > 3 ? 0 : 1;
+            const zIndex = isActive ? 10 : 10 - abs;
 
             return (
               <motion.button
                 key={card.id}
                 type="button"
                 onClick={() => (isActive ? undefined : setActive(i))}
-                className="absolute top-1/2 left-1/2 aspect-[9/16] h-full max-h-[540px] overflow-hidden rounded-3xl bg-white"
+                className="absolute top-1/2 left-1/2 aspect-[9/16] h-full max-h-[500px] overflow-hidden rounded-2xl bg-white"
                 initial={{
                   x: `calc(-50% + ${translateX}%)`,
                   y: "-50%",
                   scale,
                   opacity,
                   zIndex,
-                  filter: isActive ? "blur(0px)" : "blur(4px)",
                 }}
                 animate={{
                   x: `calc(-50% + ${translateX}%)`,
@@ -90,13 +94,12 @@ export function StoriesCarousel({ cards }: Props) {
                   scale,
                   opacity,
                   zIndex,
-                  filter: isActive ? "blur(0px)" : "blur(4px)",
                   boxShadow: isActive
-                    ? "0 24px 60px rgba(0,0,0,0.22)"
-                    : "0 10px 28px rgba(0,0,0,0.10)",
+                    ? "0 20px 40px rgba(0,0,0,0.15)"
+                    : "0 4px 12px rgba(0,0,0,0.05)",
                 }}
-                transition={{ type: "spring", stiffness: 260, damping: 30 }}
-                style={{ pointerEvents: abs > 1 ? "none" : "auto" }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                style={{ pointerEvents: abs > 2 ? "none" : "auto" }}
               >
                 <img
                   src={card.image}

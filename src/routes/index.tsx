@@ -149,7 +149,7 @@ function HomePage() {
       {/* STORIES CAROUSEL — destaques */}
       <section className="container-x py-16">
         <StoriesCarousel
-          cards={products.slice(0, 5).map((p) => ({
+          cards={products.slice(0, 9).map((p) => ({
             id: p.id,
             image: p.images[0],
             thumb: p.images[0],
