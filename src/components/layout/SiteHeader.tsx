@@ -125,8 +125,8 @@ export function SiteHeader() {
               >
                 <Menu className="h-5 w-5" />
               </button>
-              <Link to="/" className="flex items-center" aria-label="início">
-                <span className="text-xl md:text-2xl font-bold tracking-tight lowercase text-primary">
+              <Link to="/" className="flex items-center min-w-0" aria-label="início">
+                <span className="text-xl md:text-2xl font-bold tracking-tight lowercase text-primary truncate">
                   {logoText}
                 </span>
               </Link>

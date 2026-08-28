@@ -43,7 +43,7 @@ export function StoriesCarousel({ cards }: Props) {
   };
 
   return (
-    <div className="relative w-full py-8 md:py-14">
+    <div className="relative w-full overflow-hidden py-8 md:py-14">
       <div className="mb-8 text-center px-4">
         <h2 className="text-2xl font-bold tracking-tight md:text-3xl text-black">
           Veja o <span className="text-[#84cc16]">iShorts em ação</span>

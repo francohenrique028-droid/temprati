@@ -137,7 +137,7 @@ export function CartDrawer() {
                     </div>
                   </div>
 
-                  <div className="mt-8 flex items-center justify-between gap-4">
+                  <div className="mt-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
                     <button
                       onClick={() => setOpen(false)}
                       className="text-xs font-bold uppercase underline underline-offset-4 decoration-2 hover:opacity-70 transition-opacity"
@@ -147,7 +147,7 @@ export function CartDrawer() {
                     <Link
                       to="/checkout"
                       onClick={() => setOpen(false)}
-                      className="flex-1 rounded-2xl bg-[#FF0080] py-4 text-center text-xs font-bold uppercase tracking-widest text-white hover:bg-[#FF0080]/90 transition-colors shadow-lg shadow-[#FF0080]/20"
+                      className="w-full sm:flex-1 rounded-2xl bg-[#FF0080] py-4 text-center text-xs font-bold uppercase tracking-widest text-white hover:bg-[#FF0080]/90 transition-colors shadow-lg shadow-[#FF0080]/20"
                     >
                       finalizar compra
                     </Link>

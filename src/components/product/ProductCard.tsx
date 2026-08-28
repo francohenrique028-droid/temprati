@@ -95,7 +95,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
                 {formatPrice(product.oldPrice)}
               </span>
             )}
-            <div className="flex items-baseline gap-2">
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <span className="text-lg font-bold text-black">{formatPrice(product.price)}</span>
               <span className="text-[11px] text-muted-foreground">
                 ou 6x {formatPrice(product.price / 6)}
