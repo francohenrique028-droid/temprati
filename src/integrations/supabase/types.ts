@@ -14,6 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
+      products: {
+        Row: {
+          brand: string | null
+          category: string | null
+          collection: string | null
+          created_at: string
+          description: string | null
+          featured: boolean
+          height: number | null
+          id: string
+          image_url: string | null
+          length: number | null
+          name: string
+          price: number
+          sale_price: number | null
+          seo_description: string | null
+          seo_title: string | null
+          sku: string | null
+          slug: string
+          status: string
+          stock: number
+          updated_at: string
+          weight: number | null
+          width: number | null
+        }
+        Insert: {
+          brand?: string | null
+          category?: string | null
+          collection?: string | null
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          height?: number | null
+          id?: string
+          image_url?: string | null
+          length?: number | null
+          name: string
+          price?: number
+          sale_price?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
+          sku?: string | null
+          slug: string
+          status?: string
+          stock?: number
+          updated_at?: string
+          weight?: number | null
+          width?: number | null
+        }
+        Update: {
+          brand?: string | null
+          category?: string | null
+          collection?: string | null
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          height?: number | null
+          id?: string
+          image_url?: string | null
+          length?: number | null
+          name?: string
+          price?: number
+          sale_price?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
+          sku?: string | null
+          slug?: string
+          status?: string
+          stock?: number
+          updated_at?: string
+          weight?: number | null
+          width?: number | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
