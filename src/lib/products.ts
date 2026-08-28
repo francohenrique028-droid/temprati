@@ -1,17 +1,12 @@
-import prod1 from "@/assets/prod-1.jpg";
-import prod2 from "@/assets/prod-2.jpg";
-import prod3 from "@/assets/prod-3.jpg";
-import prod4 from "@/assets/prod-4.jpg";
-import prod5 from "@/assets/prod-5.jpg";
-import prod6 from "@/assets/prod-6.jpg";
-import prod7 from "@/assets/prod-7.jpg";
-import prod8 from "@/assets/prod-8.jpg";
 import vestidoMidiRose from "@/assets/vestido-midi-rose.jpg.asset.json";
 import croppedTricotRosa from "@/assets/cropped-tricot-rosa.jpg.asset.json";
 import croppedTricotRosaVideo from "@/assets/cropped-tricot-rosa.mp4.asset.json";
 import calcaAlfaiatariaWide from "@/assets/calca-alfaiataria-wide.jpg.asset.json";
 import conjuntoBlazerCalca from "@/assets/conjunto-blazer-calca.jpg.asset.json";
 import tenisBrancoMinimal from "@/assets/tenis-branco-minimal.jpg.asset.json";
+import catBlusas from "@/assets/cat-blusas.jpg.asset.json";
+import catCalcas from "@/assets/cat-calcas.jpg.asset.json";
+import catAcessorios from "@/assets/cat-acessorios.jpg.asset.json";
 
 export type Product = {
   id: string;
@@ -57,7 +52,7 @@ export const products: Product[] = [
     collection: "lancamentos",
     brand: "temprati",
     price: 159,
-    images: [prod2, prod4],
+    images: [catBlusas.url, catBlusas.url],
     colors: ["#FFFFFF"],
     sizes: ["P", "M", "G", "GG"],
     isNew: true,
@@ -104,7 +99,7 @@ export const products: Product[] = [
     collection: "lancamentos",
     brand: "temprati",
     price: 79,
-    images: [prod5, prod8],
+    images: [catCalcas.url, catCalcas.url],
     colors: ["hsl(335 75% 82%)"],
     sizes: ["P", "M", "G"],
     isNew: true,
@@ -136,7 +131,7 @@ export const products: Product[] = [
     collection: "lancamentos",
     brand: "temprati",
     price: 329,
-    images: [prod7, prod2],
+    images: [catAcessorios.url, catAcessorios.url],
     colors: ["hsl(335 75% 82%)"],
     sizes: ["Único"],
     isNew: true,
