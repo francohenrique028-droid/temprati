@@ -43,7 +43,7 @@ export function StoriesCarousel({ cards }: Props) {
   };
 
   return (
-    <div className="relative w-full overflow-hidden py-8 md:py-14 bg-[#fafafa]">
+    <div className="relative w-full overflow-hidden py-8 md:py-14">
       <div className="mb-8 text-center px-4 flex flex-col items-center">
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-neutral-500">
           <span className="h-1.5 w-1.5 rounded-full bg-[#84cc16]"></span>
@@ -65,13 +65,18 @@ export function StoriesCarousel({ cards }: Props) {
           onDragEnd={onDragEnd}
         >
           {cards.map((card, i) => {
-            const offset = i - active;
+            let offset = i - active;
+            const half = Math.floor(total / 2);
+            // Wrap around for infinite effect
+            if (offset > half) offset -= total;
+            else if (offset < -half) offset += total;
+
             const abs = Math.abs(offset);
-            if (abs > 4) return null; // Show up to 9 cards
             const isActive = offset === 0;
-            // 105% of width apart. If scale is 0.85, 105 - 85 = 20% gap
-            const translateX = offset * (isMobile ? 100 : 105);
+            // 92% of width apart. Card is scaled to 85%, so they have a ~7% gap
+            const translateX = offset * (isMobile ? 88 : 92);
             const scale = isActive ? 1 : 0.85;
+            // Hide items far away so they can wrap invisibly
             const opacity = abs > 3 ? 0 : 1;
             const zIndex = isActive ? 10 : 10 - abs;
 
