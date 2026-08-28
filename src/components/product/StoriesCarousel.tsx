@@ -76,6 +76,14 @@ export function StoriesCarousel({ cards }: Props) {
                 type="button"
                 onClick={() => (isActive ? undefined : setActive(i))}
                 className="absolute top-1/2 left-1/2 aspect-[9/16] h-full max-h-[540px] overflow-hidden rounded-3xl bg-white"
+                initial={{
+                  x: `calc(-50% + ${translateX}%)`,
+                  y: "-50%",
+                  scale,
+                  opacity,
+                  zIndex,
+                  filter: isActive ? "blur(0px)" : "blur(4px)",
+                }}
                 animate={{
                   x: `calc(-50% + ${translateX}%)`,
                   y: "-50%",

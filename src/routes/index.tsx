@@ -53,20 +53,7 @@ const categories = [
   { name: "bolsas", href: "/categoria/bolsas", img: catBolsas },
 ];
 
-const testimonials = [
-  {
-    name: "marina c.",
-    text: "as peças têm um caimento impecável, tecido de qualidade e acabamento digno de marca de luxo.",
-  },
-  {
-    name: "juliana p.",
-    text: "amei meu vestido! modelagem perfeita, tecido leve e super confortável para usar o dia todo.",
-  },
-  {
-    name: "beatriz s.",
-    text: "meu pedido chegou rápido, super bem embalado e ainda mais bonito do que na foto!",
-  },
-];
+
 
 function HomePage() {
   const { theme } = useTheme();
@@ -179,27 +166,7 @@ function HomePage() {
 
 
 
-      {/* DEPOIMENTOS */}
-      <section className="container-x py-20">
-        <div className="mb-10 text-center">
-          <p className="text-xs font-medium lowercase tracking-wider text-primary">
-            quem usa conta
-          </p>
-          <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">
-            depoimentos
-          </h2>
-        </div>
-        <div className="grid gap-5 md:grid-cols-3">
-          {testimonials.map((t) => (
-            <div key={t.name} className="rounded-2xl border border-border bg-card p-8 shadow-soft">
-              <p className="text-sm leading-relaxed italic text-foreground/85">"{t.text}"</p>
-              <p className="mt-6 text-xs font-medium lowercase tracking-wider text-primary">
-                — {t.name}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+
 
       {/* NEWSLETTER */}
       <Newsletter />
