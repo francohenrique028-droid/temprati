@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 
-import bannerImg from "@/assets/banner.jpg";
+
 import bannerDesktop from "@/assets/banner-desktop.png.asset.json";
 import bannerMobile from "@/assets/banner-mobile.png.asset.json";
 import catVestidos from "@/assets/cat-vestidos.jpg.asset.json";
@@ -177,38 +177,7 @@ function HomePage() {
 
 
 
-      {/* NOVA COLEÇÃO */}
-      <section className="container-x py-16">
-        <div className="grid items-center gap-8 rounded-2xl border border-border bg-secondary/50 p-8 md:grid-cols-2 md:p-14">
-          <div>
-            <p className="text-xs font-medium lowercase tracking-wider text-primary">
-              nova coleção
-            </p>
-            <h3 className="mt-3 text-3xl font-semibold lowercase tracking-tight md:text-5xl">
-              essenciais femininos
-            </h3>
-            <p className="mt-4 max-w-md text-sm text-muted-foreground md:text-base">
-              peças versáteis, tecidos leves e modelagens que valorizam. do casual ao sofisticado,
-              um look para cada momento.
-            </p>
-            <Link
-              to="/categoria/$slug"
-              params={{ slug: "novidades" }}
-              className="mt-6 inline-block rounded-full border border-foreground bg-foreground px-7 py-3 text-sm font-medium lowercase text-background transition-colors hover:bg-transparent hover:text-foreground"
-            >
-              explorar coleção
-            </Link>
-          </div>
-          <img
-            src={bannerImg}
-            alt="Nova coleção feminina"
-            loading="lazy"
-            width={1200}
-            height={700}
-            className="h-64 w-full rounded-xl object-cover shadow-soft md:h-80"
-          />
-        </div>
-      </section>
+
 
       {/* DEPOIMENTOS */}
       <section className="container-x py-20">
