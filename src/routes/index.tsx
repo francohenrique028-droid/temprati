@@ -19,7 +19,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { StoriesCarousel } from "@/components/product/StoriesCarousel";
-import { bestsellers, newArrivals, products } from "@/lib/products";
+import { bestsellers, products } from "@/lib/products";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useTheme } from "@/lib/theme/ThemeProvider";
@@ -175,27 +175,7 @@ function HomePage() {
         />
       </section>
 
-      {/* NOVIDADES / LANÇAMENTOS */}
-      <section className="container-x py-14">
-        <div className="mb-10 flex items-end justify-between">
-          <div>
-            <p className="text-xs font-medium lowercase tracking-wider text-primary">
-              recém-chegados
-            </p>
-            <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">
-              novidades
-            </h2>
-          </div>
-          <Link
-            to="/categoria/$slug"
-            params={{ slug: "novidades" }}
-            className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline"
-          >
-            ver todos →
-          </Link>
-        </div>
-        <ProductGrid items={newArrivals()} />
-      </section>
+
 
       {/* NOVA COLEÇÃO */}
       <section className="container-x py-16">
