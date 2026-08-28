@@ -71,7 +71,7 @@ function CategoryPage() {
       </div>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[240px_1fr]">
-        <aside className="hidden lg:block">
+        <aside id="mobile-filters" className="hidden lg:block">
           <div className="sticky top-32 space-y-8">
             <FilterBlock title="Preço">
               <input
@@ -144,7 +144,7 @@ function CategoryPage() {
 
         <div>
           <div className="mb-8 flex items-center justify-between gap-3">
-            <button className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs lg:hidden">
+            <button onClick={() => document.getElementById('mobile-filters')?.classList.toggle('hidden')} className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs lg:hidden">
               <SlidersHorizontal className="h-3.5 w-3.5" /> Filtros
             </button>
             <select

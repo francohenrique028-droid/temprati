@@ -303,31 +303,33 @@ function ProductPage() {
             {product.description}
           </TabsContent>
           <TabsContent value="size" className="max-w-2xl py-8">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border text-left text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                  <th className="py-3">Tam</th>
-                  <th>Busto</th>
-                  <th>Cintura</th>
-                  <th>Quadril</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  ["P", "86", "68", "94"],
-                  ["M", "90", "72", "98"],
-                  ["G", "94", "76", "102"],
-                  ["GG", "98", "80", "106"],
-                ].map((r) => (
-                  <tr key={r[0]} className="border-b border-border">
-                    <td className="py-3 font-medium">{r[0]}</td>
-                    <td>{r[1]}</td>
-                    <td>{r[2]}</td>
-                    <td>{r[3]}</td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[300px]">
+                <thead>
+                  <tr className="border-b border-border text-left text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                    <th className="py-3">Tam</th>
+                    <th>Busto</th>
+                    <th>Cintura</th>
+                    <th>Quadril</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {[
+                    ["P", "86", "68", "94"],
+                    ["M", "90", "72", "98"],
+                    ["G", "94", "76", "102"],
+                    ["GG", "98", "80", "106"],
+                  ].map((r) => (
+                    <tr key={r[0]} className="border-b border-border/50">
+                      <td className="py-3 font-semibold">{r[0]}</td>
+                      <td>{r[1]} cm</td>
+                      <td>{r[2]} cm</td>
+                      <td>{r[3]} cm</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </TabsContent>
           <TabsContent value="rev" className="max-w-2xl py-8 space-y-6">
             {[
