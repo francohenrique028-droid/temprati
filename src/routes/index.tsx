@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import bannerImg from "@/assets/banner.jpg";
 import bannerDesktop from "@/assets/banner-desktop.png.asset.json";
 import bannerMobile from "@/assets/banner-mobile.png.asset.json";
-import bannerPromo from "@/assets/banner-promo.png.asset.json";
 import catVestidos from "@/assets/cat-vestidos.jpg.asset.json";
 import catBlusas from "@/assets/cat-blusas.jpg.asset.json";
 import catCalcas from "@/assets/cat-calcas.jpg.asset.json";
@@ -55,19 +54,10 @@ function HomePage() {
       {/* HERO */}
       {theme.banner.visible !== false && (
         <section className="w-full" data-editor-block="home-banner">
-          <Carousel opts={{ loop: true, align: "start" }} className="w-full">
-            <CarouselContent className="ml-0">
-              <CarouselItem className="pl-0">
-                <img src={mob} alt="banner" className="block w-full aspect-[2496/3000] object-cover md:hidden" />
-                <img src={desk} alt="banner" className="hidden md:block w-full aspect-[4000/1302] object-cover" />
-              </CarouselItem>
-              <CarouselItem className="pl-0">
-                <img src={bannerPromo.url} alt="banner promo" className="w-full aspect-[2496/3000] object-cover md:aspect-[4000/1302]" />
-              </CarouselItem>
-            </CarouselContent>
-            <CarouselPrevious className="left-4 bg-white/50 backdrop-blur-sm border-none hover:bg-white/80 transition-colors" />
-            <CarouselNext className="right-4 bg-white/50 backdrop-blur-sm border-none hover:bg-white/80 transition-colors" />
-          </Carousel>
+          <div>
+            <img src={mob} alt="banner" className="block w-full aspect-[2496/3000] object-cover md:hidden" />
+            <img src={desk} alt="banner" className="hidden md:block w-full aspect-[4000/1302] object-cover" />
+          </div>
         </section>
       )}
 
