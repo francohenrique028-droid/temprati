@@ -32,10 +32,12 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-pink-soft: var(--pink-soft);
+  --color-pink-accent: var(--pink-accent);
   --color-peach-soft: var(--peach-soft);
   --color-peach-accent: var(--peach-accent);
-  --shadow-soft: 0 1px 2px hsl(28 67% 80% / 0.04), 0 4px 20px hsl(28 67% 80% / 0.06);
-  --shadow-elevated: 0 2px 8px hsl(28 67% 80% / 0.06), 0 24px 60px -20px hsl(28 67% 80% / 0.15);
+  --shadow-soft: 0 1px 2px hsl(335 75% 82% / 0.04), 0 4px 20px hsl(335 75% 82% / 0.06);
+  --shadow-elevated: 0 2px 8px hsl(335 75% 82% / 0.06), 0 24px 60px -20px hsl(335 75% 82% / 0.15);
 }
 
 :root {
@@ -47,23 +49,25 @@
   --card-foreground: oklch(0.18 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0 0);
-  /* Warm peach primary hsl(28, 67%, 80%) */
-  --primary: oklch(0.85 0.07 55);
+  /* Pink primary hsl(335, 75%, 82%) */
+  --primary: oklch(0.82 0.11 345);
   --primary-foreground: oklch(0.18 0 0);
-  /* Soft peach */
-  --secondary: oklch(0.96 0.025 60);
+  /* Soft pink */
+  --secondary: oklch(0.97 0.025 345);
   --secondary-foreground: oklch(0.18 0 0);
   --muted: oklch(0.96 0.005 0);
   --muted-foreground: oklch(0.5 0 0);
-  --accent: oklch(0.96 0.025 60);
+  --accent: oklch(0.97 0.025 345);
   --accent-foreground: oklch(0.18 0 0);
   --destructive: oklch(0.55 0.19 25);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.95 0.005 0);
   --input: oklch(0.95 0.005 0);
-  --ring: oklch(0.85 0.07 55);
-  --peach-soft: hsl(28 67% 96%);
-  --peach-accent: hsl(28 67% 80%);
+  --ring: oklch(0.82 0.11 345);
+  --pink-soft: hsl(335 70% 96%);
+  --pink-accent: hsl(335 75% 82%);
+  --peach-soft: hsl(335 70% 96%);
+  --peach-accent: hsl(335 75% 82%);
 }
 
 html, body { font-family: "Plus Jakarta Sans", "DM Sans", ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }

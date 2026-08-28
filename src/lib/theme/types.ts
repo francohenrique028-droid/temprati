@@ -67,13 +67,13 @@ export type ThemeConfig = {
 
 export const defaultTheme: ThemeConfig = {
   colors: {
-    primary: "hsl(28 67% 80%)",
+    primary: "hsl(335 75% 82%)",
     primaryForeground: "#1F1F1F",
     background: "#FFFFFF",
     foreground: "#1F1F1F",
     muted: "#F5F5F5",
     mutedForeground: "#707070",
-    secondary: "hsl(28 67% 96%)",
+    secondary: "hsl(335 70% 96%)",
     border: "#ECE8E1",
     footerBg: "#111111",
     footerText: "#E5E5E5",
