@@ -8,6 +8,13 @@ export type AdminAuthState = {
   isAdmin: boolean;
 };
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+  return Promise.race([
+    promise,
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), ms)),
+  ]);
+}
+
 export function useAdminAuth(): AdminAuthState {
   const [state, setState] = useState<AdminAuthState>({ loading: true, user: null, isAdmin: false });
 
@@ -19,13 +26,29 @@ export function useAdminAuth(): AdminAuthState {
         if (mounted) setState({ loading: false, user: null, isAdmin: false });
         return;
       }
-      const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" });
-      if (mounted) setState({ loading: false, user, isAdmin: Boolean(data) });
+
+      const roleResult = await withTimeout(
+        supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }),
+        7000,
+      );
+      if (!mounted) return;
+
+      setState({
+        loading: false,
+        user,
+        isAdmin: Boolean(roleResult?.data),
+      });
     }
 
-    supabase.auth.getUser().then(({ data }) => check(data.user));
+    async function initialize() {
+      const result = await withTimeout(supabase.auth.getSession(), 7000);
+      if (!mounted) return;
+      await check(result?.data.session?.user ?? null);
+    }
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+    initialize();
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       check(session?.user ?? null);
     });
 
