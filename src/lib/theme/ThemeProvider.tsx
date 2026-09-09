@@ -80,20 +80,21 @@ function setReactInputValue(input: HTMLInputElement, value: string) {
 
 function installProductSkuAutofill() {
   if (typeof window === "undefined" || typeof document === "undefined") return () => undefined;
-  if (window.location.pathname !== "/admin/produtos/novo") return () => undefined;
+  if (!window.location.pathname.startsWith("/admin/produtos/novo")) return () => undefined;
 
   let generating = false;
 
   const fillSku = async () => {
     if (generating) return;
-    const input = document.querySelector<HTMLInputElement>('input[placeholder="Ex: VEST-MIDI-01"]');
-    if (!input || input.value.trim()) return;
+    const skuInput = document.querySelector<HTMLInputElement>('input[placeholder="Ex: VEST-MIDI-01"]');
+    if (!skuInput || skuInput.value.trim()) return;
 
     generating = true;
     try {
       const sku = await createUniqueSku();
       const currentInput = document.querySelector<HTMLInputElement>('input[placeholder="Ex: VEST-MIDI-01"]');
-      if (currentInput && !currentInput.value.trim()) {
+      const nameInput = document.querySelector<HTMLInputElement>('input[placeholder="Ex: Vestido Midi Evasê em Crepe"]');
+      if (currentInput && nameInput?.value.trim() && !currentInput.value.trim()) {
         setReactInputValue(currentInput, sku);
       }
     } finally {
@@ -101,14 +102,28 @@ function installProductSkuAutofill() {
     }
   };
 
-  const observer = new MutationObserver(() => {
+  const handleInput = (event: Event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement)) return;
+    if (target.placeholder !== "Ex: Vestido Midi Evasê em Crepe") return;
+    if (!target.value.trim()) return;
     void fillSku();
+  };
+
+  document.addEventListener("input", handleInput, true);
+
+  const observer = new MutationObserver(() => {
+    if (document.querySelector<HTMLInputElement>('input[placeholder="Ex: Vestido Midi Evasê em Crepe"]')?.value.trim()) {
+      void fillSku();
+    }
   });
 
   observer.observe(document.body, { childList: true, subtree: true });
-  void fillSku();
 
-  return () => observer.disconnect();
+  return () => {
+    document.removeEventListener("input", handleInput, true);
+    observer.disconnect();
+  };
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
