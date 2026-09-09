@@ -24,19 +24,27 @@ function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  async function loadDashboard() {
-    setRefreshing(true);
-    const { data, error } = await supabase.from("products").select("id,stock");
+  async function loadDashboard(isManualRefresh = false) {
+    if (isManualRefresh) setRefreshing(true);
+
+    // Não bloqueia a navegação/renderização do Dashboard: a consulta roda em background.
+    const { data, error } = await supabase
+      .from("products")
+      .select("id,stock");
+
     if (!error) {
       const rows = data ?? [];
       setProducts(rows.length);
       setLowStock(rows.filter((row) => Number(row.stock ?? 0) <= 5).length);
     }
+
     setLoading(false);
-    setRefreshing(false);
+    if (isManualRefresh) setRefreshing(false);
   }
 
-  useEffect(() => { loadDashboard(); }, []);
+  useEffect(() => {
+    void loadDashboard();
+  }, []);
 
   const metrics: Metric[] = [
     { label: "Produtos", value: loading ? "—" : products, icon: Package, iconClass: "text-slate-500", iconBg: "bg-slate-100", to: "/admin/produtos" },
@@ -55,7 +63,7 @@ function DashboardPage() {
               <h1 className="text-[30px] font-extrabold leading-none tracking-[-0.035em] text-[#102a48] md:text-[36px]">DASHBOARD</h1>
               <p className="mt-2 text-[12px] text-[#7890aa]">Bem-vindo ao painel administrativo da #temprati.</p>
             </div>
-            <button type="button" onClick={loadDashboard} className="inline-flex h-9 shrink-0 items-center gap-2 rounded-lg border border-[#d7dee7] bg-white px-3.5 text-[11px] font-semibold text-[#33475b] shadow-sm transition hover:bg-[#f9fafb]">
+            <button type="button" onClick={() => void loadDashboard(true)} className="inline-flex h-9 shrink-0 items-center gap-2 rounded-lg border border-[#d7dee7] bg-white px-3.5 text-[11px] font-semibold text-[#33475b] shadow-sm transition hover:bg-[#f9fafb]">
               <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />Atualizar dados
             </button>
           </div>
