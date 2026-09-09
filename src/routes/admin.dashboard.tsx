@@ -15,12 +15,13 @@ type Metric = {
   icon: typeof Package;
   iconClass: string;
   iconBg: string;
-  to?: "/admin/produtos" | "/admin/categorias" | "/admin/clientes";
+  to?: "/admin/produtos" | "/admin/categorias" | "/admin/clientes" | "/admin/pedidos";
 };
 
 function DashboardPage() {
   const [products, setProducts] = useState(0);
   const [clients, setClients] = useState(0);
+  const [orders, setOrders] = useState(0);
   const [lowStock, setLowStock] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -28,10 +29,11 @@ function DashboardPage() {
   async function loadDashboard(isManualRefresh = false) {
     if (isManualRefresh) setRefreshing(true);
 
-    const [productsResult, profilesResult, adminRolesResult] = await Promise.all([
+    const [productsResult, profilesResult, adminRolesResult, ordersResult] = await Promise.all([
       supabase.from("products").select("id,stock"),
       supabase.from("profiles").select("id"),
       supabase.from("user_roles").select("user_id").eq("role", "admin"),
+      supabase.from("orders").select("id"),
     ]);
 
     if (!productsResult.error) {
@@ -45,6 +47,10 @@ function DashboardPage() {
       setClients((profilesResult.data ?? []).filter((profile) => !adminIds.has(profile.id)).length);
     }
 
+    if (!ordersResult.error) {
+      setOrders((ordersResult.data ?? []).length);
+    }
+
     setLoading(false);
     if (isManualRefresh) setRefreshing(false);
   }
@@ -55,7 +61,7 @@ function DashboardPage() {
 
   const metrics: Metric[] = [
     { label: "Produtos", value: loading ? "—" : products, icon: Package, iconClass: "text-slate-500", iconBg: "bg-slate-100", to: "/admin/produtos" },
-    { label: "Pedidos", value: 0, icon: ShoppingBag, iconClass: "text-pink-500", iconBg: "bg-pink-50" },
+    { label: "Pedidos", value: loading ? "—" : orders, icon: ShoppingBag, iconClass: "text-pink-500", iconBg: "bg-pink-50", to: "/admin/pedidos" },
     { label: "Clientes", value: loading ? "—" : clients, icon: Users, iconClass: "text-rose-500", iconBg: "bg-rose-50", to: "/admin/clientes" },
     { label: "Estoque baixo", value: loading ? "—" : lowStock, icon: ArrowUpRight, iconClass: "text-rose-500", iconBg: "bg-rose-50" },
     { label: "Aguardando logística", value: 0, icon: Box, iconClass: "text-sky-500", iconBg: "bg-sky-50" },
