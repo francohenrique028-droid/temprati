@@ -26,7 +26,7 @@ const PAGE_SIZE = 20;
 function ProdutosPage() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [rows, setRows] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "draft">("all");
   const [page, setPage] = useState(0);
@@ -35,7 +35,6 @@ function ProdutosPage() {
   const isChildRoute = normalizedPath !== "/admin/produtos";
 
   async function load() {
-    setLoading(true);
     let query = supabase
       .from("products")
       .select("id,name,sku,price,stock,category,status,image_url")
@@ -50,7 +49,8 @@ function ProdutosPage() {
   }
 
   useEffect(() => {
-    if (!isChildRoute) load(); /* eslint-disable-next-line */
+    if (!isChildRoute) void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q, status, page, isChildRoute]);
 
   async function handleDelete(id: string) {
@@ -58,7 +58,7 @@ function ProdutosPage() {
     const { error } = await supabase.from("products").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Produto excluído");
-    load();
+    void load();
   }
 
   const empty = useMemo(() => !loading && rows.length === 0, [loading, rows]);
@@ -115,13 +115,6 @@ function ProdutosPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-100">
-            {loading && (
-              <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-neutral-400">
-                  Carregando...
-                </td>
-              </tr>
-            )}
             {empty && (
               <tr>
                 <td colSpan={7} className="px-4 py-12 text-center text-neutral-400">
@@ -167,7 +160,7 @@ function ProdutosPage() {
                       <Pencil className="h-4 w-4" />
                     </Link>
                     <button
-                      onClick={() => handleDelete(p.id)}
+                      onClick={() => void handleDelete(p.id)}
                       className="rounded p-1.5 text-neutral-500 hover:bg-red-50 hover:text-red-600"
                     >
                       <Trash2 className="h-4 w-4" />
