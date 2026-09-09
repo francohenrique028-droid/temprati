@@ -20,6 +20,7 @@ export type ThemeTypography = {
 
 export type ThemeHeader = {
   logoText: string;
+  logoImage: string;
   sticky: boolean;
   showSearch: boolean;
   showFavorites: boolean;
@@ -93,6 +94,7 @@ export const defaultTheme: ThemeConfig = {
   },
   header: {
     logoText: "#temprati",
+    logoImage: "",
     sticky: true,
     showSearch: true,
     showFavorites: true,
