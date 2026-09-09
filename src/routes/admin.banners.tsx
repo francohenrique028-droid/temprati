@@ -21,10 +21,10 @@ type Banner = {
 };
 
 const MAX_IMAGE_SIZE = 12 * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/jfif"];
+const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
 function validateImage(file: File) {
-  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) return "Use uma imagem PNG, JPG, WEBP ou JFIF.";
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) return "Use uma imagem PNG, JPG ou WEBP.";
   if (file.size > MAX_IMAGE_SIZE) return "A imagem deve ter no máximo 12 MB.";
   return null;
 }
@@ -63,7 +63,7 @@ function UploadField({
       <input
         ref={inputRef}
         type="file"
-        accept="image/png,image/jpeg,image/webp,image/jfif"
+        accept="image/png,image/jpeg,image/webp"
         className="hidden"
         onChange={(event) => {
           const selected = event.target.files?.[0];
@@ -84,7 +84,7 @@ function UploadField({
           <span className="flex flex-col items-center px-4">
             <span className="mb-3 rounded-full bg-pink-50 p-3 text-pink-600"><UploadCloud className="h-5 w-5" /></span>
             <strong className="text-xs text-slate-900">Clique para carregar imagem</strong>
-            <small className="mt-2 text-[10px] text-neutral-400">PNG, JPG, WEBP ou JFIF até 12MB · {recommendation}</small>
+            <small className="mt-2 text-[10px] text-neutral-400">PNG, JPG ou WEBP até 12MB · {recommendation}</small>
           </span>
         )}
       </button>
