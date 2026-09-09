@@ -60,6 +60,12 @@ type HomeCategory = {
   image_url?: string | null;
 };
 
+type HomeBanner = {
+  desktop_image_url: string;
+  mobile_image_url: string | null;
+  link_url: string | null;
+};
+
 function categorySlug(value: string) {
   return value
     .toLowerCase()
@@ -91,8 +97,9 @@ function HomePage() {
     buildHomeCategories(theme.categorySection.items),
   );
   const [loadedFromDatabase, setLoadedFromDatabase] = useState(false);
-  const desk = theme.banner.desktopImage || bannerDesktop.url;
-  const mob = theme.banner.mobileImage || bannerMobile.url;
+  const [homeBanner, setHomeBanner] = useState<HomeBanner | null>(null);
+  const desk = homeBanner?.desktop_image_url || theme.banner.desktopImage || bannerDesktop.url;
+  const mob = homeBanner?.mobile_image_url || homeBanner?.desktop_image_url || theme.banner.mobileImage || bannerMobile.url;
   const categoryTitle = theme.categorySection.title.trim();
   const categories = useMemo(
     () =>
@@ -106,6 +113,27 @@ function HomePage() {
       }),
     [homeCategories],
   );
+
+  useEffect(() => {
+    let active = true;
+    const loadBanner = async () => {
+      const { data, error } = await (supabase as any)
+        .from("banners")
+        .select("desktop_image_url,mobile_image_url,link_url")
+        .eq("status", "active")
+        .order("sort_order", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      if (!active) return;
+      if (error) {
+        if (!error.message.includes("public.banners") && !error.message.includes("banners")) toast.error(error.message);
+        return;
+      }
+      setHomeBanner(data as HomeBanner | null);
+    };
+    void loadBanner();
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -181,7 +209,7 @@ function HomePage() {
       {/* HERO */}
       {theme.banner.visible !== false && (
         <section className="w-full" data-editor-block="home-banner">
-          <div>
+          {homeBanner?.link_url ? <a href={homeBanner.link_url} className="block">
             <img
               src={mob}
               alt="banner"
@@ -192,7 +220,10 @@ function HomePage() {
               alt="banner"
               className="hidden md:block w-full aspect-[4000/1302] object-cover"
             />
-          </div>
+          </a> : <div>
+            <img src={mob} alt="banner" className="block w-full aspect-[2496/3000] object-cover md:hidden" />
+            <img src={desk} alt="banner" className="hidden md:block w-full aspect-[4000/1302] object-cover" />
+          </div>}
         </section>
       )}
 

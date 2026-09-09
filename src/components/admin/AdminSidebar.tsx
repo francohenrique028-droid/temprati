@@ -49,7 +49,7 @@ const sections = [
     title: "LOJA & MARKETING",
     items: [
       { label: "Conteúdo & Shorts", icon: Boxes },
-      { label: "Banners", icon: Boxes },
+      { label: "Banners", icon: Boxes, to: "/admin/banners" },
       { label: "Logística", icon: Box },
       { label: "Configurações", icon: CircleDollarSign },
       { label: "Estoque", icon: Warehouse },
