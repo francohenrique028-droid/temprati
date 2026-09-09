@@ -63,8 +63,6 @@ function ProdutosPage() {
 
   const empty = useMemo(() => !loading && rows.length === 0, [loading, rows]);
 
-  if (isChildRoute) return <Outlet />;
-
   return (
     <AdminShell title="Produtos">
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
@@ -77,7 +75,7 @@ function ProdutosPage() {
                 setPage(0);
                 setQ(e.target.value);
               }}
-              placeholder="Pesquisar por nome…"
+              placeholder="Pesquisar por nome..."
               className="w-full rounded-lg border border-neutral-300 bg-white pl-9 pr-3 py-2 text-sm outline-none focus:border-neutral-900"
             />
           </div>
@@ -120,7 +118,7 @@ function ProdutosPage() {
             {loading && (
               <tr>
                 <td colSpan={7} className="px-4 py-8 text-center text-neutral-400">
-                  Carregando…
+                  Carregando...
                 </td>
               </tr>
             )}
@@ -143,10 +141,10 @@ function ProdutosPage() {
                     <span className="font-medium">{p.name}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-neutral-500">{p.sku ?? "—"}</td>
+                <td className="px-4 py-3 text-neutral-500">{p.sku ?? "-"}</td>
                 <td className="px-4 py-3">R$ {Number(p.price).toFixed(2)}</td>
                 <td className="px-4 py-3">{p.stock}</td>
-                <td className="px-4 py-3 text-neutral-500">{p.category ?? "—"}</td>
+                <td className="px-4 py-3 text-neutral-500">{p.category ?? "-"}</td>
                 <td className="px-4 py-3">
                   <span
                     className={`rounded-full px-2 py-0.5 text-xs ${p.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-neutral-100 text-neutral-600"}`}
@@ -196,6 +194,8 @@ function ProdutosPage() {
           </button>
         </div>
       </div>
+
+      <Outlet />
     </AdminShell>
   );
 }
