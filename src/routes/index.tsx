@@ -191,8 +191,10 @@ function HomePage() {
     };
 
     void loadCategories();
+    window.addEventListener("focus", loadCategories);
     return () => {
       active = false;
+      window.removeEventListener("focus", loadCategories);
     };
   }, [theme.categorySection.items]);
 
