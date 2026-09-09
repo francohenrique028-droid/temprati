@@ -57,6 +57,7 @@ const categoryImages: Record<string, string> = {
 type HomeCategory = {
   name: string;
   slug: string;
+  image_url?: string | null;
 };
 
 function categorySlug(value: string) {
@@ -96,7 +97,7 @@ function HomePage() {
         return {
           name: category.name,
           href: `/categoria/${slug}`,
-          img: categoryImages[slug] ?? catBolsas,
+          img: category.image_url || categoryImages[slug] || catBolsas,
         };
       }),
     [homeCategories],
@@ -118,7 +119,7 @@ function HomePage() {
     let active = true;
     supabase
       .from("categories")
-      .select("name,slug")
+      .select("name,slug,image_url")
       .eq("status", "active")
       .eq("show_on_home", true)
       .order("sort_order", { ascending: true })
@@ -131,7 +132,7 @@ function HomePage() {
         }
 
         const nextCategories = (data ?? [])
-          .map((category) => ({ name: category.name, slug: category.slug }))
+          .map((category) => ({ name: category.name, slug: category.slug, image_url: category.image_url }))
           .filter((category) => category.name && category.slug);
 
         setHomeCategories(nextCategories.length ? nextCategories : buildHomeCategories(theme.categorySection.items));

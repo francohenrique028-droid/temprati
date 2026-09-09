@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Layers3, Loader2, Pencil, Pipette, Plus, Search, Trash2, X } from "lucide-react";
+import { Image as ImageIcon, Layers3, Loader2, Pencil, Pipette, Plus, Save, Search, Trash2, Upload, X } from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
@@ -16,6 +16,7 @@ type Category = {
   name: string;
   slug: string;
   description: string | null;
+  image_url: string | null;
   status: "active" | "draft";
   show_on_home: boolean;
   sort_order: number;
@@ -28,6 +29,9 @@ type ProductCategoryRow = {
 
 const defaultTitle = "categorias em destaques";
 const defaultTitleColor = "#000000";
+const categoryImagesBucket = "category-images";
+const allowedImageTypes = ["image/png", "image/jpeg", "image/webp", "image/jfif"];
+const maxImageBytes = 5 * 1024 * 1024;
 
 function slugify(value: string) {
   return value
@@ -42,6 +46,12 @@ function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
 }
 
+function fileExtension(file: File) {
+  const fromName = file.name.split(".").pop()?.toLowerCase();
+  if (fromName) return fromName === "jpg" ? "jpeg" : fromName;
+  return file.type.split("/").pop() ?? "jpg";
+}
+
 function CategoriasPage() {
   const [rows, setRows] = useState<Category[]>([]);
   const [products, setProducts] = useState<ProductCategoryRow[]>([]);
@@ -52,6 +62,9 @@ function CategoriasPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState("");
   const [status, setStatus] = useState<"active" | "draft">("active");
   const [showOnHome, setShowOnHome] = useState(true);
   const [sectionTitle, setSectionTitle] = useState(defaultTitle);
@@ -68,7 +81,7 @@ function CategoriasPage() {
     const [categoriesResult, productsResult, themeResult] = await Promise.all([
       supabase
         .from("categories")
-        .select("id,name,slug,description,status,show_on_home,sort_order")
+        .select("id,name,slug,description,image_url,status,show_on_home,sort_order")
         .order("sort_order", { ascending: true })
         .order("name", { ascending: true }),
       supabase.from("products").select("id,category"),
@@ -108,6 +121,12 @@ function CategoriasPage() {
     void load();
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+    };
+  }, [imagePreview]);
+
   const productCounts = useMemo(() => {
     const counts = new Map<string, number>();
     products.forEach((product) => {
@@ -128,6 +147,10 @@ function CategoriasPage() {
     setEditingId(null);
     setName("");
     setDescription("");
+    setImageUrl("");
+    setImageFile(null);
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImagePreview("");
     setStatus("active");
     setShowOnHome(true);
     setFormOpen(false);
@@ -142,9 +165,45 @@ function CategoriasPage() {
     setEditingId(category.id);
     setName(category.name);
     setDescription(category.description ?? "");
+    setImageUrl(category.image_url ?? "");
+    setImageFile(null);
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImagePreview("");
     setStatus(category.status);
     setShowOnHome(category.show_on_home);
     setFormOpen(true);
+  }
+
+  function selectImage(file: File | undefined) {
+    if (!file) return;
+    if (!allowedImageTypes.includes(file.type)) {
+      toast.error("Use uma imagem PNG, JPG, WEBP ou JFIF.");
+      return;
+    }
+    if (file.size > maxImageBytes) {
+      toast.error("A imagem deve ter no máximo 5MB.");
+      return;
+    }
+
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  }
+
+  async function uploadCategoryImage(categorySlug: string) {
+    if (!imageFile) return imageUrl || null;
+
+    const path = `${categorySlug}/${Date.now()}-${crypto.randomUUID()}.${fileExtension(imageFile)}`;
+    const { error } = await supabase.storage.from(categoryImagesBucket).upload(path, imageFile, {
+      cacheControl: "31536000",
+      contentType: imageFile.type,
+      upsert: false,
+    });
+
+    if (error) throw error;
+
+    const { data } = supabase.storage.from(categoryImagesBucket).getPublicUrl(path);
+    return data.publicUrl;
   }
 
   async function saveCategory() {
@@ -152,10 +211,28 @@ function CategoriasPage() {
     if (!cleanName) return toast.error("Informe o nome da categoria.");
 
     setSaving(true);
+    const nextSlug = slugify(cleanName);
+    if (!nextSlug) {
+      setSaving(false);
+      toast.error("Use um nome de categoria com letras ou números.");
+      return;
+    }
+
+    let uploadedImageUrl: string | null = null;
+
+    try {
+      uploadedImageUrl = await uploadCategoryImage(nextSlug);
+    } catch (error) {
+      setSaving(false);
+      toast.error(error instanceof Error ? error.message : "Não consegui enviar a foto da categoria.");
+      return;
+    }
+
     const payload = {
       name: cleanName,
-      slug: slugify(cleanName),
+      slug: nextSlug,
       description: description.trim() || null,
+      image_url: uploadedImageUrl,
       status,
       show_on_home: showOnHome,
     };
@@ -298,40 +375,117 @@ function CategoriasPage() {
           </section>
 
           {formOpen && (
-            <section className="mt-6 rounded-2xl border border-[#dbe2ea] bg-white p-6 shadow-[0_2px_7px_rgba(15,23,42,0.035)]">
-              <div className="mb-5 flex items-center justify-between">
-                <h2 className="text-[14px] font-extrabold text-[#07182c]">
-                  {editingId ? "Editar categoria" : "Nova categoria"}
-                </h2>
-                <button type="button" onClick={resetForm} className="rounded-full p-1 text-[#8393a7] hover:bg-[#f1f4f8]">
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-              <div className="grid gap-4 lg:grid-cols-[1fr_1fr_180px_180px]">
-                <label className="block">
-                  <span className="mb-1.5 block text-[12px] font-semibold text-[#10233a]">Nome</span>
-                  <input value={name} onChange={(event) => setName(event.target.value)} className="h-11 w-full rounded-xl border border-[#dbe2ea] px-4 text-[13px] outline-none focus:border-[#d9786e]" />
-                </label>
-                <label className="block">
-                  <span className="mb-1.5 block text-[12px] font-semibold text-[#10233a]">Descrição</span>
-                  <input value={description} onChange={(event) => setDescription(event.target.value)} className="h-11 w-full rounded-xl border border-[#dbe2ea] px-4 text-[13px] outline-none focus:border-[#d9786e]" />
-                </label>
-                <label className="block">
-                  <span className="mb-1.5 block text-[12px] font-semibold text-[#10233a]">Status</span>
-                  <select value={status} onChange={(event) => setStatus(event.target.value as "active" | "draft")} className="h-11 w-full rounded-xl border border-[#dbe2ea] px-4 text-[13px] outline-none focus:border-[#d9786e]">
-                    <option value="active">Ativa</option>
-                    <option value="draft">Rascunho</option>
-                  </select>
-                </label>
-                <label className="flex items-end gap-2 pb-3 text-[13px] font-semibold text-[#10233a]">
-                  <input type="checkbox" checked={showOnHome} onChange={(event) => setShowOnHome(event.target.checked)} className="h-4 w-4 accent-[#d9786e]" />
-                  Exibir na Home
-                </label>
-              </div>
-              <button type="button" onClick={() => void saveCategory()} disabled={saving} className="mt-5 inline-flex h-10 items-center justify-center rounded-xl bg-[#07182c] px-7 text-[12px] font-extrabold text-white transition hover:bg-[#102a48] disabled:opacity-60">
-                {saving ? "SALVANDO..." : "SALVAR CATEGORIA"}
-              </button>
-            </section>
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-sm">
+              <section className="w-full max-w-md rounded-[22px] bg-white px-6 pb-6 pt-7 shadow-2xl">
+                <div className="mb-4 flex items-start justify-between border-b border-[#edf0f4] pb-3">
+                  <div>
+                    <h2 className="text-[18px] font-extrabold text-[#07182c]">
+                      {editingId ? "Editar Categoria" : "Nova Categoria"}
+                    </h2>
+                    <p className="mt-1 text-[11px] text-[#6d7f93]">
+                      Preencha o nome e selecione a foto da categoria
+                    </p>
+                  </div>
+                  <button type="button" onClick={resetForm} className="rounded-full p-1 text-[#8a96a6] hover:bg-[#f1f4f8]">
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  <label className="block">
+                    <span className="mb-1.5 block text-[12px] font-extrabold text-[#10233a]">Nome da Categoria *</span>
+                    <input
+                      value={name}
+                      onChange={(event) => setName(event.target.value)}
+                      placeholder="Ex: Roupas, Vestidos, Perfumaria..."
+                      className="h-10 w-full rounded-xl border border-[#dbe2ea] bg-[#fbfcfe] px-4 text-[13px] outline-none transition placeholder:text-[#9aa8b8] focus:border-[#d9786e]"
+                    />
+                  </label>
+
+                  <div>
+                    <span className="mb-1.5 block text-[12px] font-extrabold text-[#10233a]">Foto da Categoria</span>
+                    <label className="relative flex min-h-[140px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-[#dbe2ea] bg-[#fbfcfe] px-4 text-center transition hover:border-[#d9786e]">
+                      {imagePreview || imageUrl ? (
+                        <img
+                          src={imagePreview || imageUrl}
+                          alt="Prévia da categoria"
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                      ) : (
+                        <>
+                          <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#506784] shadow-sm">
+                            <Upload className="h-5 w-5" />
+                          </span>
+                          <span className="text-[12px] font-extrabold text-[#07182c]">
+                            Clique para selecionar a foto da categoria
+                          </span>
+                          <span className="mt-3 text-[10px] font-semibold text-[#a0a8b4]">PNG, JPG, WEBP ou JFIF ate 5MB</span>
+                        </>
+                      )}
+                      {(imagePreview || imageUrl) && (
+                        <span className="relative rounded-full bg-white/90 px-3 py-1 text-[11px] font-extrabold text-[#07182c] shadow-sm">
+                          Trocar foto
+                        </span>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/jfif"
+                        className="sr-only"
+                        onChange={(event) => selectImage(event.target.files?.[0])}
+                      />
+                    </label>
+                  </div>
+
+                  <label className="block">
+                    <span className="mb-1.5 block text-[12px] font-extrabold text-[#10233a]">Descrição (Opcional)</span>
+                    <textarea
+                      value={description}
+                      onChange={(event) => setDescription(event.target.value)}
+                      placeholder="Breve descrição da categoria..."
+                      className="min-h-20 w-full resize-none rounded-xl border border-[#dbe2ea] bg-[#fbfcfe] px-4 py-3 text-[13px] outline-none transition placeholder:text-[#9aa8b8] focus:border-[#d9786e]"
+                    />
+                  </label>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <label className="block">
+                      <span className="mb-1.5 block text-[12px] font-extrabold text-[#10233a]">Status</span>
+                      <select
+                        value={status}
+                        onChange={(event) => setStatus(event.target.value as "active" | "draft")}
+                        className="h-10 w-full rounded-xl border border-[#dbe2ea] bg-[#fbfcfe] px-4 text-[13px] outline-none focus:border-[#d9786e]"
+                      >
+                        <option value="active">Ativa</option>
+                        <option value="draft">Rascunho</option>
+                      </select>
+                    </label>
+                    <label className="flex items-end gap-2 pb-2 text-[13px] font-semibold text-[#10233a]">
+                      <input
+                        type="checkbox"
+                        checked={showOnHome}
+                        onChange={(event) => setShowOnHome(event.target.checked)}
+                        className="h-4 w-4 accent-[#d9786e]"
+                      />
+                      Aparecer no site
+                    </label>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex items-center justify-end gap-5 border-t border-[#edf0f4] pt-4">
+                  <button type="button" onClick={resetForm} className="text-[12px] font-semibold text-[#394b60]">
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void saveCategory()}
+                    disabled={saving}
+                    className="inline-flex h-10 min-w-[118px] items-center justify-center gap-2 rounded-xl bg-[#07182c] px-6 text-[12px] font-extrabold text-white shadow-lg shadow-[#07182c]/20 transition hover:bg-[#102a48] disabled:opacity-60"
+                  >
+                    {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                    SALVAR
+                  </button>
+                </div>
+              </section>
+            </div>
           )}
 
           <section className="mt-6 min-h-[254px] rounded-2xl border border-[#dbe2ea] bg-white shadow-[0_2px_7px_rgba(15,23,42,0.035)]">
@@ -371,7 +525,10 @@ function CategoriasPage() {
                       className="grid gap-3 px-6 py-4 text-[13px] md:grid-cols-[1fr_140px_140px_120px]"
                     >
                       <div>
-                        <p className="font-extrabold text-[#07182c]">{category.name}</p>
+                        <p className="flex items-center gap-2 font-extrabold text-[#07182c]">
+                          {category.image_url && <ImageIcon className="h-4 w-4 text-[#6d7f93]" />}
+                          {category.name}
+                        </p>
                         <p className="mt-1 text-[11px] text-[#6d7f93]">/categoria/{category.slug}</p>
                       </div>
                       <div className="text-[#506784]">
