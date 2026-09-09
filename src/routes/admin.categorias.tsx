@@ -433,27 +433,26 @@ function CategoriasPage() {
                   </label>
 
                   <div>
-                    <span className="mb-1.5 block text-[12px] font-extrabold text-[#10233a]">Foto da Categoria</span>
-                    <label className="relative flex min-h-[140px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-[#dbe2ea] bg-[#fbfcfe] px-4 text-center transition hover:border-[#d9786e]">
+                    <span className="mb-2 block text-[12px] font-extrabold text-[#10233a]">Foto da Categoria</span>
+                    <label className="relative mx-auto flex h-32 w-32 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#dbe2ea] bg-[#fbfcfe] text-center shadow-sm transition hover:border-[#d9786e]">
                       {imagePreview || imageUrl ? (
                         <img
                           src={imagePreview || imageUrl}
-                          alt="Prévia da categoria"
+                          alt="Prévia circular da categoria"
                           className="absolute inset-0 h-full w-full object-cover"
                         />
                       ) : (
                         <>
-                          <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#506784] shadow-sm">
+                          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#506784] shadow-sm">
                             <Upload className="h-5 w-5" />
                           </span>
-                          <span className="text-[12px] font-extrabold text-[#07182c]">
-                            Clique para selecionar a foto da categoria
+                          <span className="mt-2 px-3 text-[10px] font-extrabold leading-tight text-[#07182c]">
+                            Selecionar foto
                           </span>
-                          <span className="mt-3 text-[10px] font-semibold text-[#a0a8b4]">PNG, JPG ou WEBP até 5MB</span>
                         </>
                       )}
                       {(imagePreview || imageUrl) && (
-                        <span className="relative rounded-full bg-white/90 px-3 py-1 text-[11px] font-extrabold text-[#07182c] shadow-sm">
+                        <span className="relative rounded-full bg-white/90 px-3 py-1 text-[10px] font-extrabold text-[#07182c] shadow-sm">
                           Trocar foto
                         </span>
                       )}
@@ -464,6 +463,9 @@ function CategoriasPage() {
                         onChange={(event) => selectImage(event.target.files?.[0])}
                       />
                     </label>
+                    <p className="mt-2 text-center text-[10px] font-semibold text-[#a0a8b4]">
+                      A foto será exibida em círculo · PNG, JPG ou WEBP até 5MB
+                    </p>
                   </div>
 
                   <label className="block">
