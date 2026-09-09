@@ -42,6 +42,75 @@ function applyCssVars(theme: ThemeConfig) {
   document.body.style.fontSize = `${theme.typography.baseSize}px`;
 }
 
+function createSkuCandidate() {
+  if (typeof crypto !== "undefined" && "getRandomValues" in crypto) {
+    const bytes = new Uint8Array(6);
+    crypto.getRandomValues(bytes);
+    return `TP-${Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("").toUpperCase()}`;
+  }
+
+  return `TP-${Date.now().toString(16).slice(-6).toUpperCase()}${Math.floor(Math.random() * 0xffffff)
+    .toString(16)
+    .padStart(6, "0")
+    .toUpperCase()}`;
+}
+
+async function createUniqueSku() {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const candidate = createSkuCandidate();
+    const { data, error } = await supabase
+      .from("products")
+      .select("id")
+      .eq("sku", candidate)
+      .limit(1);
+
+    if (!error && (!data || data.length === 0)) return candidate;
+    if (error) return candidate;
+  }
+
+  return createSkuCandidate();
+}
+
+function setReactInputValue(input: HTMLInputElement, value: string) {
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+  setter?.call(input, value);
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+  input.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+function installProductSkuAutofill() {
+  if (typeof window === "undefined" || typeof document === "undefined") return () => undefined;
+  if (window.location.pathname !== "/admin/produtos/novo") return () => undefined;
+
+  let generating = false;
+
+  const fillSku = async () => {
+    if (generating) return;
+    const input = document.querySelector<HTMLInputElement>('input[placeholder="Ex: VEST-MIDI-01"]');
+    if (!input || input.value.trim()) return;
+
+    generating = true;
+    try {
+      const sku = await createUniqueSku();
+      const currentInput = document.querySelector<HTMLInputElement>('input[placeholder="Ex: VEST-MIDI-01"]');
+      if (currentInput && !currentInput.value.trim()) {
+        setReactInputValue(currentInput, sku);
+      }
+    } finally {
+      generating = false;
+    }
+  };
+
+  const observer = new MutationObserver(() => {
+    void fillSku();
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+  void fillSku();
+
+  return () => observer.disconnect();
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<ThemeConfig>(defaultTheme);
 
@@ -75,6 +144,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     applyCssVars(theme);
   }, [theme]);
+
+  useEffect(() => installProductSkuAutofill(), []);
 
   return (
     <ThemeCtx.Provider value={{ theme, isEditorPreview: false }}>{children}</ThemeCtx.Provider>
