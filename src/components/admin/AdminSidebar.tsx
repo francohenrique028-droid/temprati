@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BarChart3, Box, Boxes, CircleDollarSign, ExternalLink, KeyRound, LayoutDashboard, LogOut, Package, ShoppingBag, Tags, Users, Warehouse, X } from "lucide-react";
+import { BarChart3, Box, Boxes, CircleDollarSign, ExternalLink, LayoutDashboard, LogOut, Package, ShoppingBag, Tags, Users, Warehouse, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -8,7 +8,6 @@ const sections = [
   { title: "VISÃO GERAL", items: [{ label: "Dashboard", icon: LayoutDashboard, to: "/admin/dashboard" }, { label: "Relatórios", icon: BarChart3 }] },
   { title: "CATÁLOGO", items: [{ label: "Produtos", icon: Package, to: "/admin/produtos" }, { label: "Categorias", icon: Tags, to: "/admin/categorias" }] },
   { title: "VENDAS", items: [{ label: "Pedidos", icon: ShoppingBag }, { label: "Clientes", icon: Users, to: "/admin/clientes" }] },
-  { title: "CONTROLE DE ACESSO", items: [{ label: "Logins", icon: KeyRound }] },
   { title: "LOJA & MARKETING", items: [{ label: "Conteúdo & Shorts", icon: Boxes }, { label: "Banners", icon: Boxes, to: "/admin/banners" }, { label: "Logística", icon: Box }, { label: "Configurações", icon: CircleDollarSign, to: "/admin/configuracoes" }, { label: "Estoque", icon: Warehouse }] },
 ] as const;
 
