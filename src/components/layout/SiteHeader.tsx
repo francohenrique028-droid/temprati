@@ -1,18 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import {
-  Search,
-  Heart,
-  User,
-  ShoppingBag,
-  Menu,
-  X,
-  Package,
-  MapPin,
-  LogOut,
-  LayoutDashboard,
-  Store,
-  Settings,
-} from "lucide-react";
+import { Search, Heart, User, ShoppingBag, Menu, X, Package, MapPin, LogOut, LayoutDashboard, Store, Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
@@ -25,38 +12,10 @@ type MegaCol = { title: string; links: string[] };
 type NavItem = { label: string; to: string; mega?: MegaCol[] };
 
 const nav: NavItem[] = [
-  {
-    label: "novidades",
-    to: "/categoria/novidades",
-    mega: [
-      { title: "recém-chegadas", links: ["lançamentos", "pré-venda", "edição limitada"] },
-      { title: "destaques", links: ["mais vendidas", "coleção atual", "looks completos"] },
-    ],
-  },
-  {
-    label: "roupas",
-    to: "/categoria/feminino",
-    mega: [
-      { title: "peças", links: ["vestidos", "blusas", "calças", "saias"] },
-      { title: "outros", links: ["conjuntos", "alfaiataria", "tricot"] },
-    ],
-  },
-  {
-    label: "calçados",
-    to: "/categoria/calcados",
-    mega: [
-      { title: "modelos", links: ["tênis", "scarpin", "sandálias", "botas"] },
-      { title: "estilos", links: ["casual", "festa", "dia a dia"] },
-    ],
-  },
-  {
-    label: "acessórios",
-    to: "/categoria/acessorios",
-    mega: [
-      { title: "essenciais", links: ["bolsas", "cintos", "óculos"] },
-      { title: "detalhes", links: ["bijoux", "cachecóis", "chapéus"] },
-    ],
-  },
+  { label: "novidades", to: "/categoria/novidades", mega: [{ title: "recém-chegadas", links: ["lançamentos", "pré-venda", "edição limitada"] }, { title: "destaques", links: ["mais vendidas", "coleção atual", "looks completos"] }] },
+  { label: "roupas", to: "/categoria/feminino", mega: [{ title: "peças", links: ["vestidos", "blusas", "calças", "saias"] }, { title: "outros", links: ["conjuntos", "alfaiataria", "tricot"] }] },
+  { label: "calçados", to: "/categoria/calcados", mega: [{ title: "modelos", links: ["tênis", "scarpin", "sandálias", "botas"] }, { title: "estilos", links: ["casual", "festa", "dia a dia"] }] },
+  { label: "acessórios", to: "/categoria/acessorios", mega: [{ title: "essenciais", links: ["bolsas", "cintos", "óculos"] }, { title: "detalhes", links: ["bijoux", "cachecóis", "chapéus"] }] },
   { label: "coleções", to: "/categoria/novidades" },
   { label: "promoções", to: "/categoria/promocoes" },
 ];
@@ -65,9 +24,7 @@ const announcementsFallback = ["frete grátis acima de R$ 299"];
 
 export function SiteHeader() {
   const { theme } = useTheme();
-  const announcements = theme.header.announcements?.length
-    ? theme.header.announcements
-    : announcementsFallback;
+  const announcements = theme.header.announcements?.length ? theme.header.announcements : announcementsFallback;
   const logoText = theme.header.logoText || "#temprati";
   const { setOpen: openCart, count } = useCart();
   const { ids } = useFavorites();
@@ -92,140 +49,24 @@ export function SiteHeader() {
 
   return (
     <>
-      <div className="bg-primary text-primary-foreground">
-        <div className="container-x flex h-9 items-center justify-center overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={ann}
-              initial={{ y: 10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -10, opacity: 0 }}
-              transition={{ duration: 0.35, ease: [0.2, 0.6, 0.2, 1] }}
-              className="text-[11px] font-medium lowercase tracking-wide"
-            >
-              {announcements[ann]}
-            </motion.span>
-          </AnimatePresence>
-        </div>
-      </div>
-
-      <header
-        data-editor-block="header"
-        onMouseLeave={() => setHovered(null)}
-        className={`${theme.header.sticky ? "sticky top-0" : ""} z-40 border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_hsl(335_75%_82%_/_0.12)]" : ""}`}
-      >
+      <div className="bg-primary text-primary-foreground"><div className="container-x flex h-9 items-center justify-center overflow-hidden"><AnimatePresence mode="wait"><motion.span key={ann} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -10, opacity: 0 }} transition={{ duration: 0.35, ease: [0.2, 0.6, 0.2, 1] }} className="text-[11px] font-medium lowercase tracking-wide">{announcements[ann]}</motion.span></AnimatePresence></div></div>
+      <header data-editor-block="header" onMouseLeave={() => setHovered(null)} className={`${theme.header.sticky ? "sticky top-0" : ""} z-40 border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_hsl(335_75%_82%_/_0.12)]" : ""}`}>
         <div className="container-x">
           <div className="flex items-center justify-between gap-4 py-4">
-            <div className="flex items-center gap-4 flex-1">
-              <button onClick={() => setMobileOpen(true)} className="lg:hidden -ml-2 p-2" aria-label="Menu">
-                <Menu className="h-5 w-5" />
-              </button>
-              <Link to="/" className="flex items-center min-w-0" aria-label="início">
-                <span className="text-xl md:text-2xl font-bold tracking-tight lowercase text-primary truncate">{logoText}</span>
-              </Link>
-            </div>
-
-            <nav className="hidden lg:flex items-center justify-center gap-8 text-sm font-medium lowercase">
-              {nav.map((n) => (
-                <div key={`${n.label}:${n.to}`} onMouseEnter={() => setHovered(n.label)}>
-                  <Link
-                    to={n.to}
-                    className="relative py-1 transition-colors hover:text-primary after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-px after:origin-center after:scale-x-0 after:bg-primary after:transition-transform hover:after:scale-x-100"
-                    activeProps={{ className: "text-primary [&]:after:scale-x-100" }}
-                  >
-                    {n.label}
-                  </Link>
-                </div>
-              ))}
-            </nav>
-
+            <div className="flex items-center gap-4 flex-1"><button onClick={() => setMobileOpen(true)} className="lg:hidden -ml-2 p-2" aria-label="Menu"><Menu className="h-5 w-5" /></button><Link to="/" className="flex items-center min-w-0" aria-label="início"><span className="text-xl md:text-2xl font-bold tracking-tight lowercase text-primary truncate">{logoText}</span></Link></div>
+            <nav className="hidden lg:flex items-center justify-center gap-8 text-sm font-medium lowercase">{nav.map((n) => (<div key={`${n.label}:${n.to}`} onMouseEnter={() => setHovered(n.label)}><Link to={n.to} className="relative py-1 transition-colors hover:text-primary after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-px after:origin-center after:scale-x-0 after:bg-primary after:transition-transform hover:after:scale-x-100" activeProps={{ className: "text-primary [&]:after:scale-x-100" }}>{n.label}</Link></div>))}</nav>
             <div className="flex items-center gap-0.5 justify-end flex-1">
-              {theme.header.showSearch && (
-                <button onClick={() => setSearchOpen((v) => !v)} aria-label="Pesquisar" className="p-2 hover:text-primary transition-colors">
-                  <Search className="h-[18px] w-[18px]" />
-                </button>
-              )}
-              {theme.header.showFavorites && (
-                <Link to="/favoritos" aria-label="Favoritos" className="relative p-2 hover:text-primary transition-colors">
-                  <Heart className="h-[18px] w-[18px]" />
-                  {ids.size > 0 && <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-primary" />}
-                </Link>
-              )}
+              {theme.header.showSearch && <button onClick={() => setSearchOpen((v) => !v)} aria-label="Pesquisar" className="p-2 hover:text-primary transition-colors"><Search className="h-[18px] w-[18px]" /></button>}
+              {theme.header.showFavorites && <Link to="/favoritos" aria-label="Favoritos" className="relative p-2 hover:text-primary transition-colors"><Heart className="h-[18px] w-[18px]" />{ids.size > 0 && <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-primary" />}</Link>}
               {theme.header.showAccount && <AccountMenu />}
-              {theme.header.showCart && (
-                <button onClick={() => openCart(true)} aria-label="Carrinho" className="relative p-2 hover:text-primary transition-colors">
-                  <ShoppingBag className="h-[18px] w-[18px]" />
-                  {count > 0 && <span className="absolute -top-0 -right-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">{count}</span>}
-                </button>
-              )}
+              {theme.header.showCart && <button onClick={() => openCart(true)} aria-label="Carrinho" className="relative p-2 hover:text-primary transition-colors"><ShoppingBag className="h-[18px] w-[18px]" />{count > 0 && <span className="absolute -top-0 -right-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">{count}</span>}</button>}
             </div>
           </div>
-
-          <AnimatePresence>
-            {hovered && nav.find((n) => n.label === hovered)?.mega && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.2 }}
-                className="absolute inset-x-0 top-full hidden border-t border-border bg-background/98 backdrop-blur-md lg:block"
-              >
-                <div className="container-x grid grid-cols-4 gap-10 py-10">
-                  {nav.find((n) => n.label === hovered)?.mega?.map((col) => (
-                    <div key={`${hovered}:${col.title}`}>
-                      <p className="mb-4 text-[11px] font-medium lowercase tracking-wide text-primary">{col.title}</p>
-                      <ul className="space-y-2.5">
-                        {col.links.map((l) => (
-                          <li key={`${hovered}:${col.title}:${l}`}>
-                            <Link to={nav.find((n) => n.label === hovered)!.to} className="text-sm lowercase text-foreground/80 transition-colors hover:text-primary">
-                              {l}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {searchOpen && (
-            <div className="border-t border-border py-4">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  window.location.href = `/busca?q=${encodeURIComponent(q)}`;
-                }}
-                className="mx-auto flex max-w-2xl items-center gap-3 rounded-full border border-border bg-card px-5 py-3"
-              >
-                <Search className="h-4 w-4 text-muted-foreground" />
-                <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="buscar por produto, categoria..." className="w-full bg-transparent text-sm lowercase outline-none placeholder:text-muted-foreground" />
-                <button type="button" onClick={() => setSearchOpen(false)} className="text-muted-foreground hover:text-primary"><X className="h-4 w-4" /></button>
-              </form>
-            </div>
-          )}
+          <AnimatePresence>{hovered && nav.find((n) => n.label === hovered)?.mega && <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }} className="absolute inset-x-0 top-full hidden border-t border-border bg-background/98 backdrop-blur-md lg:block"><div className="container-x grid grid-cols-4 gap-10 py-10">{nav.find((n) => n.label === hovered)?.mega?.map((col) => (<div key={`${hovered}:${col.title}`}><p className="mb-4 text-[11px] font-medium lowercase tracking-wide text-primary">{col.title}</p><ul className="space-y-2.5">{col.links.map((l) => (<li key={`${hovered}:${col.title}:${l}`}><Link to={nav.find((n) => n.label === hovered)!.to} className="text-sm lowercase text-foreground/80 transition-colors hover:text-primary">{l}</Link></li>))}</ul></div>))}</div></motion.div>}</AnimatePresence>
+          {searchOpen && <div className="border-t border-border py-4"><form onSubmit={(e) => { e.preventDefault(); window.location.href = `/busca?q=${encodeURIComponent(q)}`; }} className="mx-auto flex max-w-2xl items-center gap-3 rounded-full border border-border bg-card px-5 py-3"><Search className="h-4 w-4 text-muted-foreground" /><input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="buscar por produto, categoria..." className="w-full bg-transparent text-sm lowercase outline-none placeholder:text-muted-foreground" /><button type="button" onClick={() => setSearchOpen(false)} className="text-muted-foreground hover:text-primary"><X className="h-4 w-4" /></button></form></div>}
         </div>
       </header>
-
-      <div className={`fixed inset-0 z-50 lg:hidden ${mobileOpen ? "" : "pointer-events-none"}`}>
-        <div onClick={() => setMobileOpen(false)} className={`absolute inset-0 bg-black/30 transition-opacity ${mobileOpen ? "opacity-100" : "opacity-0"}`} />
-        <aside className={`absolute inset-y-0 left-0 w-[85%] max-w-sm bg-background p-6 shadow-2xl transition-transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
-          <div className="flex items-center justify-between">
-            <span className="text-lg font-bold tracking-tight lowercase text-primary">{logoText}</span>
-            <button onClick={() => setMobileOpen(false)}><X className="h-5 w-5" /></button>
-          </div>
-          <nav className="mt-8 flex flex-col gap-1">
-            {nav.map((n) => (
-              <Link key={`${n.label}:${n.to}`} to={n.to} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">
-                {n.label}
-              </Link>
-            ))}
-            <MobileAccountLink onNavigate={() => setMobileOpen(false)} />
-            <Link to="/favoritos" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">favoritos</Link>
-          </nav>
-        </aside>
-      </div>
+      <div className={`fixed inset-0 z-50 lg:hidden ${mobileOpen ? "" : "pointer-events-none"}`}><div onClick={() => setMobileOpen(false)} className={`absolute inset-0 bg-black/30 transition-opacity ${mobileOpen ? "opacity-100" : "opacity-0"}`} /><aside className={`absolute inset-y-0 left-0 w-[85%] max-w-sm bg-background p-6 shadow-2xl transition-transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}><div className="flex items-center justify-between"><span className="text-lg font-bold tracking-tight lowercase text-primary">{logoText}</span><button onClick={() => setMobileOpen(false)}><X className="h-5 w-5" /></button></div><nav className="mt-8 flex flex-col gap-1">{nav.map((n) => (<Link key={`${n.label}:${n.to}`} to={n.to} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">{n.label}</Link>))}<MobileAccountLink onNavigate={() => setMobileOpen(false)} /><Link to="/favoritos" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">favoritos</Link></nav></aside></div>
     </>
   );
 }
@@ -235,66 +76,19 @@ function AccountMenu() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onDoc = (e: MouseEvent) => {
-      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", onDoc);
-    return () => document.removeEventListener("mousedown", onDoc);
-  }, [open]);
-
-  async function signOut() {
-    setOpen(false);
-    await supabase.auth.signOut();
-    navigate({ to: "/", replace: true });
-  }
-
+  useEffect(() => { if (!open) return; const onDoc = (e: MouseEvent) => { if (!wrapRef.current?.contains(e.target as Node)) setOpen(false); }; document.addEventListener("mousedown", onDoc); return () => document.removeEventListener("mousedown", onDoc); }, [open]);
+  async function signOut() { setOpen(false); await supabase.auth.signOut(); navigate({ to: "/", replace: true }); }
   if (loading) return <span className="p-2 hidden sm:inline-flex opacity-50"><User className="h-[18px] w-[18px]" /></span>;
   if (!user) return <Link to="/login" aria-label="Entrar" className="p-2 hover:text-primary transition-colors hidden sm:inline-flex"><User className="h-[18px] w-[18px]" /></Link>;
-
-  const items = isAdmin
-    ? [
-        { to: "/admin", label: "theme builder", icon: LayoutDashboard },
-        { to: "/admin/produtos", label: "produtos", icon: Package },
-        { to: "/admin", label: "configurações", icon: Settings },
-        { to: "/", label: "ver loja", icon: Store },
-      ]
-    : [
-        { to: "/conta", label: "minha conta", icon: User },
-        { to: "/conta", label: "pedidos", icon: Package },
-        { to: "/favoritos", label: "favoritos", icon: Heart },
-        { to: "/conta", label: "endereços", icon: MapPin },
-      ];
-
-  return (
-    <div ref={wrapRef} className="relative hidden sm:inline-flex">
-      <button onClick={() => setOpen((v) => !v)} aria-label="Conta" className="p-2 hover:text-primary transition-colors"><User className="h-[18px] w-[18px]" /></button>
-      <AnimatePresence>
-        {open && (
-          <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="absolute right-0 top-full mt-2 w-60 rounded-2xl border border-border bg-card shadow-lg overflow-hidden z-50">
-            <div className="px-4 py-3 border-b border-border">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground">{isAdmin ? "administrador" : "cliente"}</p>
-              <p className="mt-0.5 truncate text-sm font-medium">{user.email}</p>
-            </div>
-            <div className="p-1">
-              {items.map((it, i) => (
-                <Link key={`${it.to}:${it.label}:${i}`} to={it.to} onClick={() => setOpen(false)} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm lowercase hover:bg-secondary hover:text-primary">
-                  <it.icon className="h-4 w-4" /> {it.label}
-                </Link>
-              ))}
-              <button onClick={signOut} className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm lowercase text-muted-foreground hover:bg-secondary hover:text-primary"><LogOut className="h-4 w-4" /> sair</button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
+  const items = isAdmin ? [{ to: "/admin", label: "theme builder", icon: LayoutDashboard }, { to: "/admin/produtos", label: "produtos", icon: Package }, { to: "/admin", label: "configurações", icon: Settings }, { to: "/", label: "ver loja", icon: Store }] : [{ to: "/conta", label: "minha conta", icon: User }, { to: "/conta", label: "pedidos", icon: Package }, { to: "/favoritos", label: "favoritos", icon: Heart }, { to: "/conta", label: "endereços", icon: MapPin }];
+  return <div ref={wrapRef} className="relative hidden sm:inline-flex"><button onClick={() => setOpen((v) => !v)} aria-label="Conta" className="p-2 hover:text-primary transition-colors"><User className="h-[18px] w-[18px]" /></button><AnimatePresence>{open && <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="absolute right-0 top-full mt-2 w-60 rounded-2xl border border-border bg-card shadow-lg overflow-hidden z-50"><div className="px-4 py-3 border-b border-border"><p className="text-xs uppercase tracking-wider text-muted-foreground">{isAdmin ? "administrador" : "cliente"}</p><p className="mt-0.5 truncate text-sm font-medium">{user.email}</p></div><div className="p-1">{items.map((it, i) => (<Link key={`${it.to}:${it.label}:${i}`} to={it.to} onClick={() => setOpen(false)} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm lowercase hover:bg-secondary hover:text-primary"><it.icon className="h-4 w-4" /> {it.label}</Link>))}<button onClick={signOut} className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm lowercase text-muted-foreground hover:bg-secondary hover:text-primary"><LogOut className="h-4 w-4" /> sair</button></div></motion.div>}</AnimatePresence></div>;
 }
 
 function MobileAccountLink({ onNavigate }: { onNavigate: () => void }) {
-  const { user } = useAdminAuth();
-  if (!user) return <Link to="/login" onClick={onNavigate} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">entrar</Link>;
-  return <Link to="/conta" onClick={onNavigate} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">minha conta</Link>;
+  const { loading, user, isAdmin } = useAdminAuth();
+  if (loading) return null;
+  if (!user) {
+    return <Link to="/login" onClick={onNavigate} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">entrar / criar conta</Link>;
+  }
+  return <Link to={isAdmin ? "/admin" : "/conta"} onClick={onNavigate} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">{isAdmin ? "painel admin" : "minha conta"}</Link>;
 }
