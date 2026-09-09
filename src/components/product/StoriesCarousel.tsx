@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Plus, ShoppingBag } from "lucide-react";
+import { Plus, ShoppingBag } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { findBySlug } from "@/lib/products";
 
@@ -35,7 +35,10 @@ export function StoriesCarousel({ cards }: Props) {
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  const go = (dir: number) => setActive((i) => (i + dir + total) % total);
+  const go = (dir: number) => {
+    if (!total) return;
+    setActive((i) => (i + dir + total) % total);
+  };
 
   const onDragEnd = (_: unknown, info: { offset: { x: number } }) => {
     if (info.offset.x < -60) go(1);
@@ -67,24 +70,31 @@ export function StoriesCarousel({ cards }: Props) {
           {cards.map((card, i) => {
             let offset = i - active;
             const half = Math.floor(total / 2);
-            // Wrap around for infinite effect
             if (offset > half) offset -= total;
             else if (offset < -half) offset += total;
 
             const abs = Math.abs(offset);
             const isActive = offset === 0;
-            // 92% of width apart. Card is scaled to 85%, so they have a ~7% gap
             const translateX = offset * (isMobile ? 88 : 92);
             const scale = isActive ? 1 : 0.85;
-            // Hide items far away so they can wrap invisibly
             const opacity = abs > 3 ? 0 : 1;
             const zIndex = isActive ? 10 : 10 - abs;
 
             return (
-              <motion.button
+              <motion.div
                 key={card.id}
-                type="button"
-                onClick={() => (isActive ? undefined : setActive(i))}
+                role="button"
+                tabIndex={0}
+                aria-label={`Selecionar ${card.name}`}
+                onClick={() => {
+                  if (!isActive) setActive(i);
+                }}
+                onKeyDown={(e) => {
+                  if ((e.key === "Enter" || e.key === " ") && !isActive) {
+                    e.preventDefault();
+                    setActive(i);
+                  }
+                }}
                 className="absolute top-1/2 left-1/2 aspect-[9/16] h-full max-h-[500px] overflow-hidden rounded-2xl bg-white"
                 initial={{
                   x: `calc(-50% + ${translateX}%)`,
@@ -113,35 +123,51 @@ export function StoriesCarousel({ cards }: Props) {
                   draggable={false}
                 />
 
-                {/* bottom info card */}
-                <a
-                  href={card.href ?? "#"}
-                  onClick={(e) => e.stopPropagation()}
+                <div
                   className="absolute inset-x-3 bottom-4 flex items-center gap-3 rounded-2xl bg-white/95 p-2.5 shadow-lg backdrop-blur transition hover:bg-white"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <img
-                    src={card.thumb ?? card.image}
-                    alt=""
-                    className="h-12 w-12 shrink-0 rounded-lg object-cover"
-                  />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (card.href) window.location.href = card.href;
+                    }}
+                    className="shrink-0"
+                    aria-label={`Comprar ${card.name}`}
+                  >
+                    <img
+                      src={card.thumb ?? card.image}
+                      alt=""
+                      className="h-12 w-12 shrink-0 rounded-lg object-cover"
+                    />
+                  </button>
                   <div className="min-w-0 flex-1 text-left">
-                    <h4 className="line-clamp-2 text-[13px] font-medium leading-tight text-neutral-800">
-                      {card.name}
-                    </h4>
-                    <div className="mt-1 flex items-baseline gap-1.5">
-                      <span className="text-sm font-bold text-black">{brl(card.price)}</span>
-                      {card.oldPrice && (
-                        <span className="text-[11px] text-neutral-400 line-through">
-                          {brl(card.oldPrice)}
-                        </span>
-                      )}
-                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (card.href) window.location.href = card.href;
+                      }}
+                      className="block w-full text-left"
+                    >
+                      <h4 className="line-clamp-2 text-[13px] font-medium leading-tight text-neutral-800">
+                        {card.name}
+                      </h4>
+                      <div className="mt-1 flex items-baseline gap-1.5">
+                        <span className="text-sm font-bold text-black">{brl(card.price)}</span>
+                        {card.oldPrice && (
+                          <span className="text-[11px] text-neutral-400 line-through">
+                            {brl(card.oldPrice)}
+                          </span>
+                        )}
+                      </div>
+                    </button>
                   </div>
                   <div className="ml-2 flex flex-col gap-1.5 sm:flex-row sm:items-center">
                     <button
                       type="button"
                       onClick={(e) => {
-                        e.preventDefault();
                         e.stopPropagation();
                         if (card.href) window.location.href = card.href;
                       }}
@@ -152,30 +178,25 @@ export function StoriesCarousel({ cards }: Props) {
                     <button
                       type="button"
                       onClick={(e) => {
-                        e.preventDefault();
                         e.stopPropagation();
-                        // Find the product by ID or Slug to add to cart properly
                         const productSlug = card.href?.split("/").pop();
                         if (productSlug) {
                           const product = findBySlug(productSlug);
-                          if (product) {
-                            add(product);
-                          }
+                          if (product) add(product);
                         }
                       }}
                       className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#FF0080] text-[#FF0080] shadow-sm transition hover:bg-[#FF0080]/5 sm:h-8 sm:w-8"
+                      aria-label={`Adicionar ${card.name} ao carrinho`}
                     >
                       <Plus className="h-2.5 w-2.5 mr-0.5" />
                       <ShoppingBag className="h-3.5 w-3.5" />
                     </button>
                   </div>
-                </a>
-              </motion.button>
+                </div>
+              </motion.div>
             );
           })}
         </motion.div>
-
-        {/* Navigation buttons removed as requested */}
       </div>
     </div>
   );
