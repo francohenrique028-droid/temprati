@@ -3,11 +3,10 @@ import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
-  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { SiteLayout } from "@/components/layout/SiteLayout";
@@ -69,7 +68,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" },
     ],
   }),
@@ -90,11 +89,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  // Use TanStack Router state instead of window.location during render.
-  // Reading window on the client made SSR render the storefront while the
-  // client immediately rendered the admin outlet, causing React hydration #418.
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const isAdminRoute = pathname.startsWith("/admin");
+  // Keep the initial tree identical on server and client. Resolve the admin
+  // shell only after hydration so React cannot produce hydration error #418.
+  const [isAdminRoute, setIsAdminRoute] = useState(false);
+
+  useEffect(() => {
+    setIsAdminRoute(window.location.pathname.startsWith("/admin"));
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
