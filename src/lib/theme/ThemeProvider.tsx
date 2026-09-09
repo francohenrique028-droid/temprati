@@ -1,9 +1,11 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { defaultTheme, type ThemeConfig } from "./types";
 
 type Ctx = { theme: ThemeConfig; isEditorPreview: boolean };
 const ThemeCtx = createContext<Ctx>({ theme: defaultTheme, isEditorPreview: false });
+const THEME_CACHE_KEY = "temprati:theme:cache:v1";
+const THEME_CACHE_EVENT = "temprati:theme:cache-updated";
 
 function deepMerge<T>(base: T, patch: unknown): T {
   if (patch === null || patch === undefined) return base;
@@ -13,6 +15,27 @@ function deepMerge<T>(base: T, patch: unknown): T {
     out[k] = deepMerge((base as Record<string, unknown>)[k], (patch as Record<string, unknown>)[k]);
   }
   return out as T;
+}
+
+function readCachedTheme(): ThemeConfig {
+  if (typeof window === "undefined") return defaultTheme;
+  try {
+    const raw = window.localStorage.getItem(THEME_CACHE_KEY);
+    if (!raw) return defaultTheme;
+    return deepMerge(defaultTheme, JSON.parse(raw));
+  } catch {
+    return defaultTheme;
+  }
+}
+
+function cacheTheme(theme: ThemeConfig) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(THEME_CACHE_KEY, JSON.stringify(theme));
+    window.dispatchEvent(new CustomEvent(THEME_CACHE_EVENT));
+  } catch {
+    // Ignore cache failures; the database remains the source of truth.
+  }
 }
 
 function applyCssVars(theme: ThemeConfig) {
@@ -184,7 +207,7 @@ async function installProductCategoryCleanup() {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<ThemeConfig>(defaultTheme);
+  const [theme, setTheme] = useState<ThemeConfig>(() => readCachedTheme());
 
   useEffect(() => {
     let cancelled = false;
@@ -198,18 +221,28 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           .maybeSingle();
         if (cancelled) return;
         if (error) {
-          console.warn("[Theme] Usando tema padrão:", error.message);
+          console.warn("[Theme] Usando tema armazenado localmente:", error.message);
           return;
         }
-        if (data?.config) setTheme(deepMerge(defaultTheme, data.config));
+        if (data?.config) {
+          const nextTheme = deepMerge(defaultTheme, data.config);
+          setTheme(nextTheme);
+          cacheTheme(nextTheme);
+        }
       } catch (error) {
         if (!cancelled) {
-          console.warn("[Theme] Usando tema padrão porque o Supabase ainda não respondeu.", error);
+          console.warn("[Theme] Usando tema armazenado localmente porque o Supabase ainda não respondeu.", error);
         }
       }
     })();
+
+    const onCacheUpdated = () => {
+      setTheme(readCachedTheme());
+    };
+    window.addEventListener(THEME_CACHE_EVENT, onCacheUpdated);
     return () => {
       cancelled = true;
+      window.removeEventListener(THEME_CACHE_EVENT, onCacheUpdated);
     };
   }, []);
 
