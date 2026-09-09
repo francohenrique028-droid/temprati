@@ -6,7 +6,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { SiteLayout } from "@/components/layout/SiteLayout";
@@ -89,13 +89,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  // Keep the initial tree identical on server and client. Resolve the admin
-  // shell only after hydration so React cannot produce hydration error #418.
-  const [isAdminRoute, setIsAdminRoute] = useState(false);
-
-  useEffect(() => {
-    setIsAdminRoute(window.location.pathname.startsWith("/admin"));
-  }, []);
+  const isAdminRoute = typeof window !== "undefined" && window.location.pathname.startsWith("/admin");
 
   return (
     <QueryClientProvider client={queryClient}>
