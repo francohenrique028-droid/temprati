@@ -7,7 +7,7 @@ import { toast } from "sonner";
 const sections = [
   { title: "VISÃO GERAL", items: [{ label: "Dashboard", icon: LayoutDashboard, to: "/admin/dashboard" }, { label: "Relatórios", icon: BarChart3 }] },
   { title: "CATÁLOGO", items: [{ label: "Produtos", icon: Package, to: "/admin/produtos" }, { label: "Categorias", icon: Tags, to: "/admin/categorias" }] },
-  { title: "VENDAS", items: [{ label: "Pedidos", icon: ShoppingBag }, { label: "Clientes", icon: Users }] },
+  { title: "VENDAS", items: [{ label: "Pedidos", icon: ShoppingBag }, { label: "Clientes", icon: Users, to: "/admin/clientes" }] },
   { title: "CONTROLE DE ACESSO", items: [{ label: "Logins", icon: KeyRound }] },
   { title: "LOJA & MARKETING", items: [{ label: "Conteúdo & Shorts", icon: Boxes }, { label: "Banners", icon: Boxes, to: "/admin/banners" }, { label: "Logística", icon: Box }, { label: "Configurações", icon: CircleDollarSign, to: "/admin/configuracoes" }, { label: "Estoque", icon: Warehouse }] },
 ] as const;
@@ -15,7 +15,7 @@ const sections = [
 export function AdminSidebar({ mobileOpen, setMobileOpen }: { mobileOpen?: boolean; setMobileOpen?: (v: boolean) => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   async function handleLogout() { await supabase.auth.signOut(); window.location.href = "/admin/login"; }
-  function comingSoon(label: string) { toast.info(`${label}: módulo será ativado nesta próxima etapa.`); }
+  function comingSoon(label: string) { toast.info(`${label}: módulo ainda não está disponível.`); }
   return <>
     <div className={cn("fixed inset-0 z-40 bg-black/40 md:hidden transition-opacity", mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none")} onClick={() => setMobileOpen?.(false)} />
     <aside className={cn("fixed inset-y-0 left-0 z-50 flex w-[220px] shrink-0 flex-col bg-[#091a2e] text-white transition-transform md:static md:translate-x-0", mobileOpen ? "translate-x-0" : "-translate-x-full")}>
