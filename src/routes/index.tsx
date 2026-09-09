@@ -129,7 +129,7 @@ function HomePage() {
     [storeProducts],
   );
 
-  const categoryTitle = theme.categorySection.title.trim();
+  const categoryTitle = theme.categorySection.title.trim() || "categorias em destaques";
   const desktopBanner = homeBanner?.desktop_image_url || "";
   const mobileBanner = homeBanner?.mobile_image_url || homeBanner?.desktop_image_url || "";
 
@@ -151,7 +151,7 @@ function HomePage() {
         </section>
       )}
 
-      {categoryTitle && categories.length > 0 && (
+      {categories.length > 0 && (
         <section data-editor-block="home-categories" className="container-x py-20">
           <div className="mb-10 text-center">
             <h2
@@ -164,7 +164,7 @@ function HomePage() {
           <Carousel opts={{ align: "start", loop: true }} className="relative">
             <CarouselContent className="-ml-4 md:-ml-6">
               {categories.map((c, i) => (
-                <CarouselItem key={c.name} className="basis-1/2 pl-4 md:basis-1/3 md:pl-6 lg:basis-1/4">
+                <CarouselItem key={c.slug || `${c.name}-${i}`} className="basis-1/2 pl-4 md:basis-1/3 md:pl-6 lg:basis-1/4">
                   <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -176,7 +176,7 @@ function HomePage() {
                         <img
                           src={c.img}
                           alt={c.name}
-                          loading="lazy"
+                          loading={i === 0 ? "eager" : "lazy"}
                           width={800}
                           height={800}
                           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
