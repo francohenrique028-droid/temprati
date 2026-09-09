@@ -556,12 +556,20 @@ function CategoriasPage() {
                       key={category.id}
                       className="grid gap-3 px-6 py-4 text-[13px] md:grid-cols-[1fr_140px_140px_120px]"
                     >
-                      <div>
-                        <p className="flex items-center gap-2 font-extrabold text-[#07182c]">
-                          {category.image_url && <ImageIcon className="h-4 w-4 text-[#6d7f93]" />}
-                          {category.name}
-                        </p>
-                        <p className="mt-1 text-[11px] text-[#6d7f93]">/categoria/{category.slug}</p>
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#e1e7ee] bg-[#f5f7fa]">
+                          {category.image_url ? (
+                            <img
+                              src={category.image_url}
+                              alt={category.name}
+                              loading="lazy"
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <ImageIcon className="h-5 w-5 text-[#9aa8b8]" />
+                          )}
+                        </div>
+                        <p className="font-extrabold text-[#07182c]">{category.name}</p>
                       </div>
                       <div className="text-[#506784]">
                         <span className="font-bold text-[#07182c]">{total}</span> produto(s)
