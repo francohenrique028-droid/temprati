@@ -16,19 +16,29 @@ function withTimeout<T>(promise: PromiseLike<T>, ms: number): Promise<T | null> 
 }
 
 export function useAdminAuth(): AdminAuthState {
-  const [state, setState] = useState<AdminAuthState>({ loading: true, user: null, isAdmin: false });
+  const [state, setState] = useState<AdminAuthState>({
+    loading: true,
+    user: null,
+    isAdmin: false,
+  });
 
   useEffect(() => {
     let mounted = true;
 
-    async function check(user: User | null) {
-      if (!user) {
-        if (mounted) setState({ loading: false, user: null, isAdmin: false });
+    async function check() {
+      // getUser validates the access token with Supabase Auth instead of trusting
+      // user data read only from browser storage.
+      const userResult = await withTimeout(supabase.auth.getUser(), 7000);
+      if (!mounted) return;
+
+      const user = userResult?.data.user ?? null;
+      if (!user || userResult?.error) {
+        setState({ loading: false, user: null, isAdmin: false });
         return;
       }
 
       const roleResult = await withTimeout(
-        (async () => await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }))(),
+        supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }),
         7000,
       );
       if (!mounted) return;
@@ -36,20 +46,14 @@ export function useAdminAuth(): AdminAuthState {
       setState({
         loading: false,
         user,
-        isAdmin: Boolean(roleResult?.data),
+        isAdmin: !roleResult?.error && Boolean(roleResult?.data),
       });
     }
 
-    async function initialize() {
-      const result = await withTimeout(supabase.auth.getSession(), 7000);
-      if (!mounted) return;
-      await check(result?.data.session?.user ?? null);
-    }
+    void check();
 
-    initialize();
-
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      check(session?.user ?? null);
+    const { data: sub } = supabase.auth.onAuthStateChange(() => {
+      void check();
     });
 
     return () => {
