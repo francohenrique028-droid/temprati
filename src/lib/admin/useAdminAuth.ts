@@ -8,7 +8,7 @@ export type AdminAuthState = {
   isAdmin: boolean;
 };
 
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+function withTimeout<T>(promise: PromiseLike<T>, ms: number): Promise<T | null> {
   return Promise.race([
     promise,
     new Promise<null>((resolve) => setTimeout(() => resolve(null), ms)),
@@ -28,7 +28,7 @@ export function useAdminAuth(): AdminAuthState {
       }
 
       const roleResult = await withTimeout(
-        supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }),
+        (async () => await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }))(),
         7000,
       );
       if (!mounted) return;
