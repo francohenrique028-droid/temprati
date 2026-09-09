@@ -28,9 +28,10 @@ function DashboardPage() {
   async function loadDashboard(isManualRefresh = false) {
     if (isManualRefresh) setRefreshing(true);
 
-    const [productsResult, clientsResult] = await Promise.all([
+    const [productsResult, profilesResult, adminRolesResult] = await Promise.all([
       supabase.from("products").select("id,stock"),
       supabase.from("profiles").select("id"),
+      supabase.from("user_roles").select("user_id").eq("role", "admin"),
     ]);
 
     if (!productsResult.error) {
@@ -39,8 +40,9 @@ function DashboardPage() {
       setLowStock(rows.filter((row) => Number(row.stock ?? 0) <= 5).length);
     }
 
-    if (!clientsResult.error) {
-      setClients((clientsResult.data ?? []).length);
+    if (!profilesResult.error && !adminRolesResult.error) {
+      const adminIds = new Set((adminRolesResult.data ?? []).map((row) => row.user_id));
+      setClients((profilesResult.data ?? []).filter((profile) => !adminIds.has(profile.id)).length);
     }
 
     setLoading(false);
