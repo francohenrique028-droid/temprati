@@ -4,13 +4,18 @@ values (
   'product-images',
   true,
   10485760,
-  array['image/png', 'image/jpeg', 'image/webp', 'image/jfif']
+  array['image/png', 'image/jpeg', 'image/webp', 'image/jfif']::text[]
 )
 on conflict (id) do update
 set
   public = excluded.public,
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Public can view product images" on storage.objects;
+drop policy if exists "Admins can upload product images" on storage.objects;
+drop policy if exists "Admins can update product images" on storage.objects;
+drop policy if exists "Admins can delete product images" on storage.objects;
 
 create policy "Public can view product images"
 on storage.objects
