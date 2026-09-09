@@ -35,6 +35,26 @@ function normalize(value: string) {
     .trim();
 }
 
+async function loadClientRows() {
+  const [{ data: profiles, error: profilesError }, { data: adminRoles, error: rolesError }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id,full_name,phone,created_at")
+      .order("created_at", { ascending: false })
+      .range(0, 4999),
+    supabase
+      .from("user_roles")
+      .select("user_id")
+      .eq("role", "admin"),
+  ]);
+
+  if (profilesError) throw profilesError;
+  if (rolesError) throw rolesError;
+
+  const adminIds = new Set((adminRoles ?? []).map((row) => row.user_id));
+  return ((profiles ?? []) as Client[]).filter((profile) => !adminIds.has(profile.id));
+}
+
 function ClientesPage() {
   const [rows, setRows] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,21 +66,15 @@ function ClientesPage() {
     if (isRefresh) setRefreshing(true);
     else setLoading(true);
 
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id,full_name,phone,created_at")
-      .order("created_at", { ascending: false })
-      .range(0, 4999);
-
-    if (error) {
-      toast.error(error.message);
+    try {
+      setRows(await loadClientRows());
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível carregar os clientes.");
       setRows([]);
-    } else {
-      setRows((data ?? []) as Client[]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
-
-    setLoading(false);
-    setRefreshing(false);
   }
 
   useEffect(() => {
