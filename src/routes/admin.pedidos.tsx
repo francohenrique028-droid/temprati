@@ -1,0 +1,178 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { RefreshCw, Search, ShoppingBag, Clock3, CheckCircle2, Truck, XCircle } from "lucide-react";
+import { AdminShell } from "@/components/admin/AdminShell";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+type Order = {
+  id: string;
+  order_number: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string | null;
+  payment_method: string | null;
+  payment_status: string;
+  status: string;
+  total: number;
+  created_at: string;
+};
+
+const PAGE_SIZE = 20;
+const statuses = ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"] as const;
+
+function formatDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function formatPrice(value: number) {
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value) || 0);
+}
+
+function statusLabel(status: string) {
+  const labels: Record<string, string> = {
+    pending: "Pendente",
+    confirmed: "Confirmado",
+    processing: "Em preparo",
+    shipped: "Enviado",
+    delivered: "Entregue",
+    cancelled: "Cancelado",
+  };
+  return labels[status] ?? status;
+}
+
+function StatusIcon({ status }: { status: string }) {
+  if (status === "delivered") return <CheckCircle2 className="h-4 w-4" />;
+  if (status === "shipped") return <Truck className="h-4 w-4" />;
+  if (status === "cancelled") return <XCircle className="h-4 w-4" />;
+  return <Clock3 className="h-4 w-4" />;
+}
+
+export const Route = createFileRoute("/admin/pedidos")({
+  head: () => ({ meta: [{ title: "Pedidos · Admin #temprati" }, { name: "robots", content: "noindex" }] }),
+  component: PedidosPage,
+});
+
+function PedidosPage() {
+  const [rows, setRows] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [page, setPage] = useState(0);
+
+  async function load(isRefresh = false) {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
+    const { data, error } = await supabase
+      .from("orders")
+      .select("id,order_number,customer_name,customer_email,customer_phone,payment_method,payment_status,status,total,created_at")
+      .order("created_at", { ascending: false })
+      .range(0, 4999);
+    if (error) {
+      toast.error(error.message);
+      setRows([]);
+    } else {
+      setRows((data ?? []) as Order[]);
+    }
+    setLoading(false);
+    setRefreshing(false);
+  }
+
+  useEffect(() => { void load(); }, []);
+
+  const filtered = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    return rows.filter((order) => {
+      const matchesTerm = !term || [order.order_number, order.customer_name, order.customer_email, order.customer_phone ?? ""].some((value) => value.toLowerCase().includes(term));
+      const matchesStatus = statusFilter === "all" || order.status === statusFilter;
+      return matchesTerm && matchesStatus;
+    });
+  }, [query, rows, statusFilter]);
+
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount - 1);
+  const visibleRows = filtered.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
+  const pending = rows.filter((order) => order.status === "pending").length;
+  const paid = rows.filter((order) => ["paid", "authorized"].includes(order.payment_status)).length;
+  const revenue = rows.filter((order) => order.status !== "cancelled").reduce((sum, order) => sum + Number(order.total || 0), 0);
+
+  async function updateStatus(id: string, nextStatus: string) {
+    const { error } = await supabase.from("orders").update({ status: nextStatus, updated_at: new Date().toISOString() }).eq("id", id);
+    if (error) return toast.error(error.message);
+    setRows((current) => current.map((order) => order.id === id ? { ...order, status: nextStatus } : order));
+    toast.success("Status do pedido atualizado.");
+  }
+
+  return (
+    <AdminShell title="Pedidos" hideHeader>
+      <div className="min-h-screen -m-4 md:-m-6 bg-[#f7f9fc] px-6 py-7 md:px-8 md:py-8 lg:px-9 lg:py-7">
+        <div className="mx-auto max-w-[1500px]">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h1 className="text-[30px] font-extrabold leading-none tracking-[-0.035em] text-[#102a48] md:text-[36px]">PEDIDOS</h1>
+              <p className="mt-2 text-[12px] text-[#7890aa]">Acompanhe e gerencie os pedidos realizados na loja.</p>
+            </div>
+            <button type="button" onClick={() => void load(true)} disabled={refreshing} className="inline-flex h-9 items-center gap-2 rounded-lg border border-[#d7dee7] bg-white px-3.5 text-[11px] font-semibold text-[#33475b] shadow-sm disabled:opacity-60">
+              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} /> Atualizar dados
+            </button>
+          </div>
+
+          <section className="mt-10 grid gap-4 md:grid-cols-4">
+            <Stat label="TOTAL DE PEDIDOS" value={rows.length} icon={<ShoppingBag className="h-[18px] w-[18px] text-pink-500" />} />
+            <Stat label="PENDENTES" value={pending} icon={<Clock3 className="h-[18px] w-[18px] text-amber-500" />} />
+            <Stat label="PAGOS" value={paid} icon={<CheckCircle2 className="h-[18px] w-[18px] text-emerald-500" />} />
+            <Stat label="FATURAMENTO" value={formatPrice(revenue)} icon={<span className="text-[13px] font-black text-sky-500">R$</span>} />
+          </section>
+
+          <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="relative w-full max-w-md">
+              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#94a3b8]" />
+              <input value={query} onChange={(e) => { setPage(0); setQuery(e.target.value); }} placeholder="Buscar por pedido, nome ou e-mail..." className="h-11 w-full rounded-xl border border-[#dbe2ea] bg-white pl-10 pr-4 text-[12px] text-[#10233a] outline-none focus:border-[#d9786e]" />
+            </div>
+            <select value={statusFilter} onChange={(e) => { setPage(0); setStatusFilter(e.target.value); }} className="h-11 rounded-xl border border-[#dbe2ea] bg-white px-4 text-[12px] text-[#33475b] outline-none focus:border-[#d9786e]">
+              <option value="all">Todos os status</option>
+              {statuses.map((status) => <option key={status} value={status}>{statusLabel(status)}</option>)}
+            </select>
+          </div>
+
+          <section className="mt-4 overflow-hidden rounded-2xl border border-[#dbe2ea] bg-white shadow-[0_2px_7px_rgba(15,23,42,0.035)]">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[1050px] text-sm">
+                <thead className="bg-[#f7f9fc] text-left text-[10px] uppercase tracking-[0.08em] text-[#61768d]">
+                  <tr><th className="px-5 py-3.5">Pedido</th><th className="px-5 py-3.5">Cliente</th><th className="px-5 py-3.5">Pagamento</th><th className="px-5 py-3.5">Total</th><th className="px-5 py-3.5">Status</th><th className="px-5 py-3.5">Data</th></tr>
+                </thead>
+                <tbody className="divide-y divide-[#eef1f5]">
+                  {!loading && visibleRows.length === 0 && <tr><td colSpan={6} className="px-5 py-16 text-center"><ShoppingBag className="mx-auto h-7 w-7 text-[#b5bfca]" /><p className="mt-3 text-sm font-semibold text-[#34495e]">Nenhum pedido encontrado</p><p className="mt-1 text-[11px] text-[#8a9aae]">Os pedidos finalizados na loja aparecerão aqui.</p></td></tr>}
+                  {visibleRows.map((order) => (
+                    <tr key={order.id} className="transition hover:bg-[#fbfcfe]">
+                      <td className="px-5 py-4"><p className="font-bold text-[#1f3044]">{order.order_number}</p><p className="mt-0.5 font-mono text-[9px] text-[#9aa8b8]">{order.id.slice(0, 8)}…</p></td>
+                      <td className="px-5 py-4"><p className="font-semibold text-[#1f3044]">{order.customer_name}</p><p className="mt-0.5 text-[10px] text-[#8a9aae]">{order.customer_email}{order.customer_phone ? ` · ${order.customer_phone}` : ""}</p></td>
+                      <td className="px-5 py-4"><p className="text-[#506784]">{order.payment_method || "Não informado"}</p><p className="mt-0.5 text-[10px] text-[#8a9aae]">{order.payment_status}</p></td>
+                      <td className="px-5 py-4 font-bold text-[#10233a]">{formatPrice(order.total)}</td>
+                      <td className="px-5 py-4"><label className="inline-flex items-center gap-2 rounded-full border border-[#dbe2ea] bg-white px-2.5 py-1.5 text-[10px] font-semibold text-[#506784]"><StatusIcon status={order.status} /><select value={order.status} onChange={(e) => void updateStatus(order.id, e.target.value)} className="bg-transparent outline-none"><option value="pending">Pendente</option><option value="confirmed">Confirmado</option><option value="processing">Em preparo</option><option value="shipped">Enviado</option><option value="delivered">Entregue</option><option value="cancelled">Cancelado</option></select></label></td>
+                      <td className="px-5 py-4 text-[#506784]">{formatDate(order.created_at)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="flex flex-col gap-3 border-t border-[#eef1f5] px-5 py-4 sm:flex-row sm:items-center sm:justify-between"><span className="text-[11px] text-[#7890aa]">Página {safePage + 1} de {pageCount}</span><div className="flex gap-2"><button type="button" disabled={safePage === 0} onClick={() => setPage((value) => Math.max(0, value - 1))} className="rounded-lg border border-[#dbe2ea] px-3 py-1.5 text-[11px] font-semibold text-[#506784] disabled:opacity-40">Anterior</button><button type="button" disabled={safePage >= pageCount - 1} onClick={() => setPage((value) => Math.min(pageCount - 1, value + 1))} className="rounded-lg border border-[#dbe2ea] px-3 py-1.5 text-[11px] font-semibold text-[#506784] disabled:opacity-40">Próxima</button></div></div>
+          </section>
+        </div>
+      </div>
+    </AdminShell>
+  );
+}
+
+function Stat({ label, value, icon }: { label: string; value: string | number; icon: React.ReactNode }) {
+  return <div className="flex items-center justify-between rounded-2xl border border-[#edf0f4] bg-white px-5 py-4 shadow-[0_2px_7px_rgba(15,23,42,0.045)]"><div><p className="text-[10px] font-semibold uppercase tracking-[0.09em] text-[#61768d]">{label}</p><p className="mt-2 text-[21px] font-extrabold leading-none text-[#10233a]">{value}</p></div><div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-slate-100">{icon}</div></div>;
+}
