@@ -1,7 +1,15 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { findBySlug, formatPrice, installment, products } from "@/lib/products";
+import {
+  fetchPublishedProductBySlug,
+  fetchRelatedProducts,
+  findBySlug,
+  formatPrice,
+  installment,
+  products,
+  type Product,
+} from "@/lib/products";
 import { ProductGrid } from "@/components/product/ProductGrid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ChevronRight,
   Heart,
@@ -20,8 +28,9 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/produto/$slug")({
-  loader: ({ params }) => {
-    const p = findBySlug(params.slug);
+  loader: async ({ params }) => {
+    const dbProduct = await fetchPublishedProductBySlug(params.slug);
+    const p = dbProduct ?? findBySlug(params.slug);
     if (!p) throw notFound();
     return { product: p };
   },
@@ -39,17 +48,36 @@ export const Route = createFileRoute("/produto/$slug")({
 });
 
 function ProductPage() {
-  const { product } = Route.useLoaderData();
+  const { product } = Route.useLoaderData() as { product: Product };
   const [main, setMain] = useState(0);
-  const [size, setSize] = useState(product.sizes[0]);
-  const [color, setColor] = useState(product.colors[0]);
+  const [size, setSize] = useState(product.sizes[0] ?? "Único");
+  const [color, setColor] = useState(product.colors[0] ?? "hsl(335 75% 82%)");
   const [qty, setQty] = useState(1);
   const [zoom, setZoom] = useState(false);
+  const [related, setRelated] = useState<Product[]>([]);
   const { add, setOpen } = useCart();
   const { has, toggle } = useFavorites();
-  const related = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
+
+  useEffect(() => {
+    let active = true;
+    setMain(0);
+    setSize(product.sizes[0] ?? "Único");
+    setColor(product.colors[0] ?? "hsl(335 75% 82%)");
+
+    const fallbackRelated = products
+      .filter((p) => p.category === product.category && p.id !== product.id)
+      .slice(0, 4);
+    setRelated(fallbackRelated);
+
+    fetchRelatedProducts(product.category, product.id).then((items) => {
+      if (!active || items === null) return;
+      setRelated(items);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [product.category, product.colors, product.id, product.sizes]);
 
   type Media = { type: "video" | "image"; src: string; poster?: string };
   const uniqueImages = product.images.filter(
@@ -61,7 +89,7 @@ function ProductPage() {
       : []),
     ...uniqueImages.map((src: string) => ({ type: "image" as const, src })),
   ];
-  const current = gallery[main] ?? gallery[0];
+  const current = gallery[main] ?? gallery[0] ?? { type: "image" as const, src: product.images[0] ?? "" };
 
   return (
     <div className="container-x py-8">
