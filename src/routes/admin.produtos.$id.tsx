@@ -3,12 +3,13 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Loader2, Minus, Plus, UploadCloud, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { AdminShell } from "@/components/admin/AdminShell";
 
 export const Route = createFileRoute("/admin/produtos/$id")({
   head: () => ({
     meta: [{ title: "Produto · Admin" }, { name: "robots", content: "noindex" }],
   }),
-  component: ProductEditor,
+  component: ProtectedProductEditor,
 });
 
 type Form = {
@@ -110,6 +111,14 @@ function validateImageFile(file: File) {
   }
 
   return null;
+}
+
+function ProtectedProductEditor() {
+  return (
+    <AdminShell title="Produto">
+      <ProductEditor />
+    </AdminShell>
+  );
 }
 
 function ProductEditor() {
