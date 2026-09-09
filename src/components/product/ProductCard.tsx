@@ -14,10 +14,6 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
   const navigate = useNavigate();
   const isFav = has(product.id);
 
-  const discount = product.oldPrice
-    ? `${Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}% OFF`
-    : null;
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -46,18 +42,6 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
               />
             )}
           </Link>
-
-          {/* Badges */}
-          {discount && (
-            <div className="absolute left-3 top-3 z-10 rounded-md bg-green-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-              {discount}
-            </div>
-          )}
-          {!discount && product.badge && (
-            <div className="absolute left-3 top-3 z-10 rounded-md bg-primary px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
-              {product.badge}
-            </div>
-          )}
 
           {/* Favorite */}
           <button
