@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { CircleDollarSign, Palette, Save, Store } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { CircleDollarSign, ImagePlus, Palette, Save, Store, Trash2, UploadCloud } from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ export const Route = createFileRoute("/admin/configuracoes")({
 
 type Settings = {
   storeName: string;
+  logoImage: string;
   announcement: string;
   announcementEnabled: boolean;
   announcementBg: string;
@@ -22,6 +23,7 @@ type Settings = {
 
 const defaultSettings: Settings = {
   storeName: "#temprati",
+  logoImage: "",
   announcement: "",
   announcementEnabled: false,
   announcementBg: "#CD7169",
@@ -29,6 +31,9 @@ const defaultSettings: Settings = {
   freeShippingMinimum: "199,00",
   pixDiscount: "5",
 };
+
+const MAX_LOGO_SIZE = 8 * 1024 * 1024;
+const ALLOWED_LOGO_TYPES = ["image/png", "image/jpeg", "image/webp", "image/svg+xml"];
 
 function readSettings(config: unknown): Settings {
   const value = (config ?? {}) as Record<string, any>;
@@ -38,6 +43,7 @@ function readSettings(config: unknown): Settings {
   const announcements = Array.isArray(header.announcements) ? header.announcements : [];
   return {
     storeName: String(header.logoText ?? defaultSettings.storeName),
+    logoImage: String(header.logoImage ?? ""),
     announcement: String(announcements[0] ?? commerce.announcement ?? ""),
     announcementEnabled: Boolean(commerce.announcementEnabled ?? (announcements.length > 0)),
     announcementBg: String(commerce.announcementBg ?? colors.primary ?? defaultSettings.announcementBg),
@@ -56,6 +62,9 @@ function ConfiguracoesPage() {
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let active = true;
@@ -67,14 +76,57 @@ function ConfiguracoesPage() {
         .maybeSingle();
       if (!active) return;
       if (error) toast.error("Não foi possível carregar as configurações.");
-      else setSettings(readSettings(data?.config));
+      else {
+        const next = readSettings(data?.config);
+        setSettings(next);
+        setLogoPreview(next.logoImage);
+      }
       setLoading(false);
     })();
     return () => { active = false; };
   }, []);
 
+  useEffect(() => {
+    if (!logoFile) return;
+    const url = URL.createObjectURL(logoFile);
+    setLogoPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [logoFile]);
+
   function patch(patch: Partial<Settings>) {
     setSettings((current) => ({ ...current, ...patch }));
+  }
+
+  function selectLogo(file: File | undefined) {
+    if (!file) return;
+    if (!ALLOWED_LOGO_TYPES.includes(file.type)) {
+      toast.error("Use uma logo PNG, JPG, WEBP ou SVG.");
+      return;
+    }
+    if (file.size > MAX_LOGO_SIZE) {
+      toast.error("A logo deve ter no máximo 8 MB.");
+      return;
+    }
+    setLogoFile(file);
+  }
+
+  function removeLogo() {
+    setLogoFile(null);
+    patch({ logoImage: "" });
+    setLogoPreview("");
+    if (inputRef.current) inputRef.current.value = "";
+  }
+
+  async function uploadLogo(file: File) {
+    const extension = file.name.split(".").pop()?.toLowerCase() || "png";
+    const path = `logos/${crypto.randomUUID()}.${extension}`;
+    const { error } = await supabase.storage.from("banner-images").upload(path, file, {
+      cacheControl: "31536000",
+      contentType: file.type,
+      upsert: false,
+    });
+    if (error) throw error;
+    return supabase.storage.from("banner-images").getPublicUrl(path).data.publicUrl;
   }
 
   async function save() {
@@ -87,12 +139,18 @@ function ConfiguracoesPage() {
         .maybeSingle();
       if (readError) throw readError;
 
+      let logoImage = settings.logoImage;
+      if (logoFile) {
+        logoImage = await uploadLogo(logoFile);
+      }
+
       const base = (current?.config ?? {}) as Record<string, any>;
       const next = {
         ...base,
         header: {
           ...(base.header ?? {}),
           logoText: settings.storeName.trim() || "#temprati",
+          logoImage,
           announcements: settings.announcement.trim() ? [settings.announcement.trim()] : [],
         },
         colors: {
@@ -116,6 +174,10 @@ function ConfiguracoesPage() {
         : (supabase as any).from("theme_settings").insert({ singleton: true, config: next });
       const { error } = await query;
       if (error) throw error;
+
+      setSettings((currentSettings) => ({ ...currentSettings, logoImage }));
+      setLogoFile(null);
+      setLogoPreview(logoImage);
       toast.success("Configurações salvas com sucesso.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Não foi possível salvar as configurações.");
@@ -145,6 +207,21 @@ function ConfiguracoesPage() {
 
           <div className="space-y-5 pt-5">
             <Field label="Nome da Loja (Exibido no Topo e Rodapé)"><input value={settings.storeName} disabled={loading} onChange={(e) => patch({ storeName: e.target.value })} className={inputClass} /></Field>
+
+            <Field label="Logo da Loja (Exibida no Topo e Rodapé)">
+              <div className="grid gap-3 md:grid-cols-[220px_1fr]">
+                <div className="flex h-24 items-center justify-center overflow-hidden rounded-xl border border-dashed border-[#dce2e8] bg-[#fbfcfd] p-3">
+                  {logoPreview ? <img src={logoPreview} alt="Prévia da logo da loja" className="max-h-full max-w-full object-contain" /> : <div className="flex flex-col items-center text-center text-[#9aa5b1]"><ImagePlus className="h-6 w-6" /><span className="mt-1 text-[9px]">Nenhuma logo adicionada</span></div>}
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" className="hidden" onChange={(e) => selectLogo(e.target.files?.[0])} />
+                  <button type="button" onClick={() => inputRef.current?.click()} className="inline-flex h-9 items-center gap-2 rounded-xl bg-[#0d1f35] px-4 text-[10px] font-extrabold text-white transition hover:bg-[#142a46]"><UploadCloud className="h-3.5 w-3.5" /> {logoPreview ? "TROCAR LOGO" : "ADICIONAR LOGO"}</button>
+                  {logoPreview && <button type="button" onClick={removeLogo} className="inline-flex h-9 items-center gap-2 rounded-xl border border-[#ead6d4] bg-white px-4 text-[10px] font-bold text-[#a94f48] hover:bg-[#fff8f7]"><Trash2 className="h-3.5 w-3.5" /> REMOVER</button>}
+                  <p className="basis-full text-[9px] text-[#8b98a7]">PNG, JPG, WEBP ou SVG até 8 MB. A logo será usada automaticamente na loja; sem logo, o nome da loja continuará aparecendo.</p>
+                </div>
+              </div>
+            </Field>
+
             <Field label="Aviso da Barra Superior (Faixa de Notificação do Topo)"><input value={settings.announcement} disabled={loading} placeholder="Ex: 5% DE DESCONTO NO PIX | FRETE GRÁTIS ACIMA DE R$ 199" onChange={(e) => patch({ announcement: e.target.value })} className={inputClass} /></Field>
 
             <div className="rounded-xl border border-[#e7eaee] bg-[#fbfcfd] p-3.5">
