@@ -20,12 +20,11 @@ const nav: NavItem[] = [
   { label: "promoções", to: "/categoria/promocoes" },
 ];
 
-const announcementsFallback = ["frete grátis acima de R$ 299"];
-
 export function SiteHeader() {
   const { theme } = useTheme();
-  const announcements = theme.header.announcements?.length ? theme.header.announcements : announcementsFallback;
-  const logoText = theme.header.logoText || "#temprati";
+  const announcementText = theme.commerce.announcement?.trim() || "";
+  const showAnnouncement = Boolean(theme.commerce.announcementEnabled && announcementText && theme.commerce.announcementBg && theme.commerce.announcementText);
+  const logoText = theme.header.logoText?.trim() || "";
   const logoImage = theme.header.logoImage?.trim() || "";
   const { setOpen: openCart, count } = useCart();
   const { ids } = useFavorites();
@@ -34,7 +33,6 @@ export function SiteHeader() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [q, setQ] = useState("");
   const [hovered, setHovered] = useState<string | null>(null);
-  const [ann, setAnn] = useState(0);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -43,18 +41,21 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    const t = setInterval(() => setAnn((v) => (v + 1) % announcements.length), 3500);
-    return () => clearInterval(t);
-  }, [announcements.length]);
-
-  const logoContent = (
-    logoImage ? <img src={logoImage} alt={logoText} className="h-10 max-w-[180px] object-contain md:h-11 md:max-w-[220px]" /> : <span className="text-xl md:text-2xl font-bold tracking-tight lowercase text-primary truncate">{logoText}</span>
-  );
+  const logoContent = logoImage ? (
+    <img src={logoImage} alt={logoText || "Logo da loja"} className="h-10 max-w-[180px] object-contain md:h-11 md:max-w-[220px]" />
+  ) : logoText ? (
+    <span className="text-xl md:text-2xl font-bold tracking-tight lowercase text-primary truncate">{logoText}</span>
+  ) : null;
 
   return (
     <>
-      <div className="bg-primary text-primary-foreground"><div className="container-x flex h-9 items-center justify-center overflow-hidden"><AnimatePresence mode="wait"><motion.span key={ann} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -10, opacity: 0 }} transition={{ duration: 0.35, ease: [0.2, 0.6, 0.2, 1] }} className="text-[11px] font-medium lowercase tracking-wide">{announcements[ann]}</motion.span></AnimatePresence></div></div>
+      {showAnnouncement && (
+        <div className="text-center" style={{ backgroundColor: theme.commerce.announcementBg, color: theme.commerce.announcementText }}>
+          <div className="container-x flex h-9 items-center justify-center overflow-hidden">
+            <span className="text-[11px] font-medium lowercase tracking-wide">{announcementText}</span>
+          </div>
+        </div>
+      )}
       <header data-editor-block="header" onMouseLeave={() => setHovered(null)} className={`${theme.header.sticky ? "sticky top-0" : ""} z-40 border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_hsl(335_75%_82%_/_0.12)]" : ""}`}>
         <div className="container-x">
           <div className="flex items-center justify-between gap-4 py-4">
@@ -71,7 +72,7 @@ export function SiteHeader() {
           {searchOpen && <div className="border-t border-border py-4"><form onSubmit={(e) => { e.preventDefault(); window.location.href = `/busca?q=${encodeURIComponent(q)}`; }} className="mx-auto flex max-w-2xl items-center gap-3 rounded-full border border-border bg-card px-5 py-3"><Search className="h-4 w-4 text-muted-foreground" /><input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="buscar por produto, categoria..." className="w-full bg-transparent text-sm lowercase outline-none placeholder:text-muted-foreground" /><button type="button" onClick={() => setSearchOpen(false)} className="text-muted-foreground hover:text-primary"><X className="h-4 w-4" /></button></form></div>}
         </div>
       </header>
-      <div className={`fixed inset-0 z-50 lg:hidden ${mobileOpen ? "" : "pointer-events-none"}`}><div onClick={() => setMobileOpen(false)} className={`absolute inset-0 bg-black/30 transition-opacity ${mobileOpen ? "opacity-100" : "opacity-0"}`} /><aside className={`absolute inset-y-0 left-0 w-[85%] max-w-sm bg-background p-6 shadow-2xl transition-transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}><div className="flex items-center justify-between"><div className="min-w-0">{logoImage ? <img src={logoImage} alt={logoText} className="h-9 max-w-[160px] object-contain" /> : <span className="text-lg font-bold tracking-tight lowercase text-primary">{logoText}</span>}</div><button onClick={() => setMobileOpen(false)}><X className="h-5 w-5" /></button></div><nav className="mt-8 flex flex-col gap-1">{nav.map((n) => (<Link key={`${n.label}:${n.to}`} to={n.to} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">{n.label}</Link>))}<MobileAccountLink onNavigate={() => setMobileOpen(false)} /><Link to="/favoritos" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">favoritos</Link></nav></aside></div>
+      <div className={`fixed inset-0 z-50 lg:hidden ${mobileOpen ? "" : "pointer-events-none"}`}><div onClick={() => setMobileOpen(false)} className={`absolute inset-0 bg-black/30 transition-opacity ${mobileOpen ? "opacity-100" : "opacity-0"}`} /><aside className={`absolute inset-y-0 left-0 w-[85%] max-w-sm bg-background p-6 shadow-2xl transition-transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}><div className="flex items-center justify-between"><div className="min-w-0">{logoImage ? <img src={logoImage} alt={logoText || "Logo da loja"} className="h-9 max-w-[160px] object-contain" /> : logoText ? <span className="text-lg font-bold tracking-tight lowercase text-primary">{logoText}</span> : null}</div><button onClick={() => setMobileOpen(false)}><X className="h-5 w-5" /></button></div><nav className="mt-8 flex flex-col gap-1">{nav.map((n) => (<Link key={`${n.label}:${n.to}`} to={n.to} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">{n.label}</Link>))}<MobileAccountLink onNavigate={() => setMobileOpen(false)} /><Link to="/favoritos" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">favoritos</Link></nav></aside></div>
     </>
   );
 }
@@ -85,7 +86,7 @@ function AccountMenu() {
   async function signOut() { setOpen(false); await supabase.auth.signOut(); navigate({ to: "/", replace: true }); }
   if (loading) return <span className="p-2 hidden sm:inline-flex opacity-50"><User className="h-[18px] w-[18px]" /></span>;
   if (!user) return <Link to="/login" aria-label="Entrar" className="p-2 hover:text-primary transition-colors hidden sm:inline-flex"><User className="h-[18px] w-[18px]" /></Link>;
-  const items = isAdmin ? [{ to: "/admin", label: "theme builder", icon: LayoutDashboard }, { to: "/admin/produtos", label: "produtos", icon: Package }, { to: "/admin", label: "configurações", icon: Settings }, { to: "/", label: "ver loja", icon: Store }] : [{ to: "/conta", label: "minha conta", icon: User }, { to: "/conta", label: "pedidos", icon: Package }, { to: "/favoritos", label: "favoritos", icon: Heart }, { to: "/conta", label: "endereços", icon: MapPin }];
+  const items = isAdmin ? [{ to: "/admin", label: "theme builder", icon: LayoutDashboard }, { to: "/admin/produtos", label: "produtos", icon: Package }, { to: "/admin/configuracoes", label: "configurações", icon: Settings }, { to: "/", label: "ver loja", icon: Store }] : [{ to: "/conta", label: "minha conta", icon: User }, { to: "/conta", label: "pedidos", icon: Package }, { to: "/favoritos", label: "favoritos", icon: Heart }, { to: "/conta", label: "endereços", icon: MapPin }];
   return <div ref={wrapRef} className="relative hidden sm:inline-flex"><button onClick={() => setOpen((v) => !v)} aria-label="Conta" className="p-2 hover:text-primary transition-colors"><User className="h-[18px] w-[18px]" /></button><AnimatePresence>{open && <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="absolute right-0 top-full mt-2 w-60 rounded-2xl border border-border bg-card shadow-lg overflow-hidden z-50"><div className="px-4 py-3 border-b border-border"><p className="text-xs uppercase tracking-wider text-muted-foreground">{isAdmin ? "administrador" : "cliente"}</p><p className="mt-0.5 truncate text-sm font-medium">{user.email}</p></div><div className="p-1">{items.map((it, i) => (<Link key={`${it.to}:${it.label}:${i}`} to={it.to} onClick={() => setOpen(false)} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm lowercase hover:bg-secondary hover:text-primary"><it.icon className="h-4 w-4" /> {it.label}</Link>))}<button onClick={signOut} className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm lowercase text-muted-foreground hover:bg-secondary hover:text-primary"><LogOut className="h-4 w-4" /> sair</button></div></motion.div>}</AnimatePresence></div>;
 }
 
