@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { StoriesCarousel } from "@/components/product/StoriesCarousel";
 import { fetchPublishedProducts, type Product } from "@/lib/products";
 import { useEffect, useMemo, useState } from "react";
 import { useTheme } from "@/lib/theme/ThemeProvider";
@@ -130,7 +129,6 @@ function HomePage() {
     [storeProducts],
   );
 
-  const storyProducts = useMemo(() => storeProducts.slice(0, 9), [storeProducts]);
   const categoryTitle = theme.categorySection.title.trim();
   const desktopBanner = homeBanner?.desktop_image_url || "";
   const mobileBanner = homeBanner?.mobile_image_url || homeBanner?.desktop_image_url || "";
@@ -200,37 +198,7 @@ function HomePage() {
 
       {featuredProducts.length > 0 && (
         <section data-editor-block="home-featured" className="container-x py-14">
-          <div className="mb-10 flex items-end justify-between">
-            <div>
-              <p className="text-xs font-medium lowercase tracking-wider text-primary">best sellers</p>
-              <h2 className="mt-2 text-3xl font-semibold lowercase tracking-tight md:text-4xl">mais vendidos</h2>
-            </div>
-            <Link
-              to="/categoria/$slug"
-              params={{ slug: "feminino" }}
-              className="hidden text-sm lowercase text-muted-foreground hover:text-primary md:inline"
-            >
-              ver todos →
-            </Link>
-          </div>
           <ProductGrid items={featuredProducts} />
-        </section>
-      )}
-
-      {storyProducts.length > 0 && (
-        <section className="container-x py-16">
-          <StoriesCarousel
-            cards={storyProducts.map((p) => ({
-              id: p.id,
-              image: p.images[0],
-              thumb: p.images[0],
-              name: p.name,
-              price: p.price,
-              oldPrice: p.oldPrice,
-              rating: 5,
-              href: `/produto/${p.slug}`,
-            }))}
-          />
         </section>
       )}
     </>
