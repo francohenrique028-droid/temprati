@@ -48,6 +48,12 @@ export type ThemeProducts = {
   showBadgeNew: boolean;
 };
 
+export type ThemeCategorySection = {
+  title: string;
+  titleColor: string;
+  items: string[];
+};
+
 export type ThemeFooter = {
   copyright: string;
   whatsapp: string;
@@ -62,6 +68,7 @@ export type ThemeConfig = {
   header: ThemeHeader;
   banner: ThemeBanner;
   products: ThemeProducts;
+  categorySection: ThemeCategorySection;
   footer: ThemeFooter;
 };
 
@@ -115,6 +122,11 @@ export const defaultTheme: ThemeConfig = {
     showBuyButton: true,
     showBadgeSale: true,
     showBadgeNew: true,
+  },
+  categorySection: {
+    title: "categorias em destaques",
+    titleColor: "#1F1F1F",
+    items: ["vestidos", "blusas", "calças", "calçados", "acessórios", "bolsas"],
   },
   footer: {
     copyright: "© temprati — todos os direitos reservados.",
