@@ -69,7 +69,6 @@ const empty: Form = {
 
 const quickSizes = ["P", "M", "G", "GG", "XG", "36", "38", "40", "42", "44", "Único"];
 const defaultSizes: SizeStock[] = [{ label: "P", qty: 1 }];
-const categories = ["Vestidos", "Blusas", "Calças", "Calçados", "Acessórios", "Bolsas"];
 const productFields =
   "id,name,slug,description,price,sale_price,category,collection,brand,sku,stock,weight,height,width,length,image_url,seo_title,seo_description,status,featured";
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
@@ -125,6 +124,7 @@ function ProductEditor() {
   const [imagePreview, setImagePreview] = useState("");
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [categoryOptions, setCategoryOptions] = useState<{ id: string; name: string }[]>([]);
 
   const stockTotal = useMemo(() => sizes.reduce((sum, item) => sum + item.qty, 0), [sizes]);
 
@@ -133,6 +133,38 @@ function ProductEditor() {
       if (imagePreview) URL.revokeObjectURL(imagePreview);
     };
   }, [imagePreview]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      const { data, error } = await (supabase as any)
+        .from("categories")
+        .select("id,name")
+        .eq("status", "active")
+        .order("sort_order", { ascending: true })
+        .order("name", { ascending: true });
+
+      if (cancelled) return;
+      if (error) {
+        setCategoryOptions([]);
+        return;
+      }
+
+      setCategoryOptions(
+        (data ?? [])
+          .map((row: { id?: unknown; name?: unknown }) => ({
+            id: String(row.id ?? ""),
+            name: String(row.name ?? "").trim(),
+          }))
+          .filter((row: { id: string; name: string }) => row.id && row.name),
+      );
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (isNew) return;
@@ -369,9 +401,9 @@ function ProductEditor() {
                       className={`${inputClass} ${!form.category ? "border-pink-500" : ""}`}
                     >
                       <option value="">Selecionar categoria</option>
-                      {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
+                      {categoryOptions.map((category) => (
+                        <option key={category.id} value={category.name}>
+                          {category.name}
                         </option>
                       ))}
                     </select>
