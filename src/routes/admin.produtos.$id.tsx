@@ -73,8 +73,8 @@ const defaultSizes: SizeStock[] = [{ label: "P", qty: 1 }];
 const productFields =
   "id,name,slug,description,price,sale_price,category,collection,brand,sku,stock,weight,height,width,length,image_url,seo_title,seo_description,status,featured";
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/jfif"]);
-const ALLOWED_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".jfif"];
+const ALLOWED_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
+const ALLOWED_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp"];
 
 function slugify(s: string) {
   return s
@@ -103,7 +103,7 @@ function validateImageFile(file: File) {
   const hasFileType = Boolean(file.type);
 
   if ((hasFileType && !hasValidType) || (!hasFileType && !hasValidExtension)) {
-    return "Formato inválido. Envie PNG, JPG, WEBP ou JFIF.";
+    return "Formato inválido. Envie PNG, JPG ou WEBP.";
   }
 
   if (file.size > MAX_IMAGE_BYTES) {
@@ -543,7 +543,7 @@ function ProductEditor() {
                 <label className="flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 bg-slate-50 px-4 py-8 text-center transition hover:border-pink-300 hover:bg-pink-50/30">
                   <input
                     type="file"
-                    accept="image/png,image/jpeg,image/webp,image/jfif"
+                    accept="image/png,image/jpeg,image/webp"
                     className="hidden"
                     onChange={(e) => selectPhoto(e.target.files?.[0])}
                   />
@@ -560,7 +560,7 @@ function ProductEditor() {
                       </span>
                       <span className="text-sm font-bold text-slate-900">Clique para carregar fotos do produto</span>
                       <span className="mt-2 text-xs text-neutral-400">
-                        Selecione uma ou várias fotos de uma vez (PNG, JPG, WEBP ou JFIF)
+                        Selecione uma foto (PNG, JPG ou WEBP)
                       </span>
                     </>
                   )}
