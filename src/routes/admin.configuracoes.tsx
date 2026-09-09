@@ -5,6 +5,9 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+const THEME_CACHE_KEY = "temprati:theme:cache:v1";
+const THEME_CACHE_EVENT = "temprati:theme:cache-updated";
+
 export const Route = createFileRoute("/admin/configuracoes")({
   head: () => ({ meta: [{ title: "Configurações · Admin" }, { name: "robots", content: "noindex" }] }),
   component: ConfiguracoesPage,
@@ -174,6 +177,15 @@ function ConfiguracoesPage() {
         : (supabase as any).from("theme_settings").insert({ singleton: true, config: next });
       const { error } = await query;
       if (error) throw error;
+
+      try {
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(THEME_CACHE_KEY, JSON.stringify(next));
+          window.dispatchEvent(new CustomEvent(THEME_CACHE_EVENT));
+        }
+      } catch {
+        // Cache is only an optimization; the database remains the source of truth.
+      }
 
       setSettings((currentSettings) => ({ ...currentSettings, logoImage }));
       setLogoFile(null);
