@@ -126,6 +126,63 @@ function installProductSkuAutofill() {
   };
 }
 
+async function installProductCategoryCleanup() {
+  if (typeof window === "undefined" || typeof document === "undefined") return () => undefined;
+  if (!window.location.pathname.startsWith("/admin/produtos/novo")) return () => undefined;
+
+  let categoryNames: string[] = [];
+  let categoriesLoaded = false;
+
+  const loadCategories = async () => {
+    if (categoriesLoaded) return;
+    const { data, error } = await (supabase as any)
+      .from("categories")
+      .select("name")
+      .eq("status", "active")
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true });
+
+    categoryNames = error
+      ? []
+      : (data ?? [])
+          .map((row: { name?: unknown }) => String(row.name ?? "").trim())
+          .filter(Boolean);
+    categoriesLoaded = true;
+  };
+
+  const cleanCategorySelect = async () => {
+    const select = Array.from(document.querySelectorAll<HTMLSelectElement>("select")).find((candidate) =>
+      Array.from(candidate.options).some(
+        (option) => option.value === "" && option.textContent?.trim() === "Selecionar categoria",
+      ),
+    );
+    if (!select) return;
+
+    await loadCategories();
+
+    const current = select.value;
+    while (select.options.length > 1) select.remove(1);
+
+    for (const name of categoryNames) {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      select.appendChild(option);
+    }
+
+    select.value = categoryNames.includes(current) ? current : "";
+  };
+
+  const observer = new MutationObserver(() => {
+    void cleanCategorySelect();
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+  await cleanCategorySelect();
+
+  return () => observer.disconnect();
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<ThemeConfig>(defaultTheme);
 
@@ -161,6 +218,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme]);
 
   useEffect(() => installProductSkuAutofill(), []);
+  useEffect(() => {
+    let cleanup: (() => void) | undefined;
+    void installProductCategoryCleanup().then((fn) => {
+      cleanup = fn;
+    });
+    return () => cleanup?.();
+  }, []);
 
   return (
     <ThemeCtx.Provider value={{ theme, isEditorPreview: false }}>{children}</ThemeCtx.Provider>
