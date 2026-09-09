@@ -29,6 +29,15 @@ export type ThemeHeader = {
   announcements: string[];
 };
 
+export type ThemeCommerce = {
+  announcement: string;
+  announcementEnabled: boolean;
+  announcementBg: string;
+  announcementText: string;
+  freeShippingMinimum: number;
+  pixDiscount: number;
+};
+
 export type ThemeBanner = {
   desktopImage: string;
   mobileImage: string;
@@ -67,6 +76,7 @@ export type ThemeConfig = {
   colors: ThemeColors;
   typography: ThemeTypography;
   header: ThemeHeader;
+  commerce: ThemeCommerce;
   banner: ThemeBanner;
   products: ThemeProducts;
   categorySection: ThemeCategorySection;
@@ -93,19 +103,22 @@ export const defaultTheme: ThemeConfig = {
     letterCase: "lowercase",
   },
   header: {
-    logoText: "#temprati",
+    logoText: "",
     logoImage: "",
     sticky: true,
     showSearch: true,
     showFavorites: true,
     showAccount: true,
     showCart: true,
-    announcements: [
-      "frete grátis acima de R$ 299",
-      "ganhe brinde nas compras acima de R$ 499",
-      "10% off no pix",
-      "novas peças toda semana",
-    ],
+    announcements: [],
+  },
+  commerce: {
+    announcement: "",
+    announcementEnabled: false,
+    announcementBg: "",
+    announcementText: "",
+    freeShippingMinimum: 0,
+    pixDiscount: 0,
   },
   banner: {
     desktopImage: "",
@@ -126,16 +139,16 @@ export const defaultTheme: ThemeConfig = {
     showBadgeNew: true,
   },
   categorySection: {
-    title: "categorias em destaques",
-    titleColor: "#1F1F1F",
-    items: ["vestidos", "blusas", "calças", "calçados", "acessórios", "bolsas"],
+    title: "",
+    titleColor: "",
+    items: [],
   },
   footer: {
-    copyright: "© temprati — todos os direitos reservados.",
+    copyright: "",
     whatsapp: "",
-    instagram: "https://instagram.com",
-    facebook: "https://facebook.com",
-    aboutText: "moda feminina premium com peças atemporais para o dia a dia.",
+    instagram: "",
+    facebook: "",
+    aboutText: "",
   },
 };
 
