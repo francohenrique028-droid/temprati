@@ -5,9 +5,6 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const THEME_CACHE_KEY = "temprati:theme:cache:v1";
-const THEME_CACHE_EVENT = "temprati:theme:cache-updated";
-
 export const Route = createFileRoute("/admin/configuracoes")({
   head: () => ({ meta: [{ title: "Configurações · Admin" }, { name: "robots", content: "noindex" }] }),
   component: ConfiguracoesPage,
@@ -41,16 +38,15 @@ const ALLOWED_LOGO_TYPES = ["image/png", "image/jpeg", "image/webp", "image/svg+
 function readSettings(config: unknown): Settings {
   const value = (config ?? {}) as Record<string, any>;
   const header = value.header ?? {};
-  const colors = value.colors ?? {};
   const commerce = value.commerce ?? {};
   const announcements = Array.isArray(header.announcements) ? header.announcements : [];
   return {
     storeName: String(header.logoText ?? defaultSettings.storeName),
     logoImage: String(header.logoImage ?? ""),
-    announcement: String(announcements[0] ?? commerce.announcement ?? ""),
-    announcementEnabled: Boolean(commerce.announcementEnabled ?? (announcements.length > 0)),
-    announcementBg: String(commerce.announcementBg ?? colors.primary ?? defaultSettings.announcementBg),
-    announcementText: String(commerce.announcementText ?? colors.primaryForeground ?? defaultSettings.announcementText),
+    announcement: String(commerce.announcement ?? announcements[0] ?? ""),
+    announcementEnabled: Boolean(commerce.announcementEnabled ?? false),
+    announcementBg: String(commerce.announcementBg ?? defaultSettings.announcementBg),
+    announcementText: String(commerce.announcementText ?? defaultSettings.announcementText),
     freeShippingMinimum: String(commerce.freeShippingMinimum ?? "199,00").replace(".", ","),
     pixDiscount: String(commerce.pixDiscount ?? 5),
   };
@@ -143,23 +139,16 @@ function ConfiguracoesPage() {
       if (readError) throw readError;
 
       let logoImage = settings.logoImage;
-      if (logoFile) {
-        logoImage = await uploadLogo(logoFile);
-      }
+      if (logoFile) logoImage = await uploadLogo(logoFile);
 
       const base = (current?.config ?? {}) as Record<string, any>;
       const next = {
         ...base,
         header: {
           ...(base.header ?? {}),
-          logoText: settings.storeName.trim() || "#temprati",
+          logoText: settings.storeName.trim(),
           logoImage,
           announcements: settings.announcement.trim() ? [settings.announcement.trim()] : [],
-        },
-        colors: {
-          ...(base.colors ?? {}),
-          primary: settings.announcementBg,
-          primaryForeground: settings.announcementText,
         },
         commerce: {
           ...(base.commerce ?? {}),
@@ -177,15 +166,6 @@ function ConfiguracoesPage() {
         : (supabase as any).from("theme_settings").insert({ singleton: true, config: next });
       const { error } = await query;
       if (error) throw error;
-
-      try {
-        if (typeof window !== "undefined") {
-          window.localStorage.setItem(THEME_CACHE_KEY, JSON.stringify(next));
-          window.dispatchEvent(new CustomEvent(THEME_CACHE_EVENT));
-        }
-      } catch {
-        // Cache is only an optimization; the database remains the source of truth.
-      }
 
       setSettings((currentSettings) => ({ ...currentSettings, logoImage }));
       setLogoFile(null);
