@@ -26,6 +26,7 @@ export function SiteHeader() {
   const { theme } = useTheme();
   const announcements = theme.header.announcements?.length ? theme.header.announcements : announcementsFallback;
   const logoText = theme.header.logoText || "#temprati";
+  const logoImage = theme.header.logoImage?.trim() || "";
   const { setOpen: openCart, count } = useCart();
   const { ids } = useFavorites();
   const [scrolled, setScrolled] = useState(false);
@@ -47,13 +48,17 @@ export function SiteHeader() {
     return () => clearInterval(t);
   }, [announcements.length]);
 
+  const logoContent = (
+    logoImage ? <img src={logoImage} alt={logoText} className="h-10 max-w-[180px] object-contain md:h-11 md:max-w-[220px]" /> : <span className="text-xl md:text-2xl font-bold tracking-tight lowercase text-primary truncate">{logoText}</span>
+  );
+
   return (
     <>
       <div className="bg-primary text-primary-foreground"><div className="container-x flex h-9 items-center justify-center overflow-hidden"><AnimatePresence mode="wait"><motion.span key={ann} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -10, opacity: 0 }} transition={{ duration: 0.35, ease: [0.2, 0.6, 0.2, 1] }} className="text-[11px] font-medium lowercase tracking-wide">{announcements[ann]}</motion.span></AnimatePresence></div></div>
       <header data-editor-block="header" onMouseLeave={() => setHovered(null)} className={`${theme.header.sticky ? "sticky top-0" : ""} z-40 border-b border-border bg-background/95 backdrop-blur-md transition-shadow ${scrolled ? "shadow-[0_1px_0_hsl(335_75%_82%_/_0.12)]" : ""}`}>
         <div className="container-x">
           <div className="flex items-center justify-between gap-4 py-4">
-            <div className="flex items-center gap-4 flex-1"><button onClick={() => setMobileOpen(true)} className="lg:hidden -ml-2 p-2" aria-label="Menu"><Menu className="h-5 w-5" /></button><Link to="/" className="flex items-center min-w-0" aria-label="início"><span className="text-xl md:text-2xl font-bold tracking-tight lowercase text-primary truncate">{logoText}</span></Link></div>
+            <div className="flex items-center gap-4 flex-1"><button onClick={() => setMobileOpen(true)} className="lg:hidden -ml-2 p-2" aria-label="Menu"><Menu className="h-5 w-5" /></button><Link to="/" className="flex items-center min-w-0" aria-label="início">{logoContent}</Link></div>
             <nav className="hidden lg:flex items-center justify-center gap-8 text-sm font-medium lowercase">{nav.map((n) => (<div key={`${n.label}:${n.to}`} onMouseEnter={() => setHovered(n.label)}><Link to={n.to} className="relative py-1 transition-colors hover:text-primary after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-px after:origin-center after:scale-x-0 after:bg-primary after:transition-transform hover:after:scale-x-100" activeProps={{ className: "text-primary [&]:after:scale-x-100" }}>{n.label}</Link></div>))}</nav>
             <div className="flex items-center gap-0.5 justify-end flex-1">
               {theme.header.showSearch && <button onClick={() => setSearchOpen((v) => !v)} aria-label="Pesquisar" className="p-2 hover:text-primary transition-colors"><Search className="h-[18px] w-[18px]" /></button>}
@@ -66,7 +71,7 @@ export function SiteHeader() {
           {searchOpen && <div className="border-t border-border py-4"><form onSubmit={(e) => { e.preventDefault(); window.location.href = `/busca?q=${encodeURIComponent(q)}`; }} className="mx-auto flex max-w-2xl items-center gap-3 rounded-full border border-border bg-card px-5 py-3"><Search className="h-4 w-4 text-muted-foreground" /><input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="buscar por produto, categoria..." className="w-full bg-transparent text-sm lowercase outline-none placeholder:text-muted-foreground" /><button type="button" onClick={() => setSearchOpen(false)} className="text-muted-foreground hover:text-primary"><X className="h-4 w-4" /></button></form></div>}
         </div>
       </header>
-      <div className={`fixed inset-0 z-50 lg:hidden ${mobileOpen ? "" : "pointer-events-none"}`}><div onClick={() => setMobileOpen(false)} className={`absolute inset-0 bg-black/30 transition-opacity ${mobileOpen ? "opacity-100" : "opacity-0"}`} /><aside className={`absolute inset-y-0 left-0 w-[85%] max-w-sm bg-background p-6 shadow-2xl transition-transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}><div className="flex items-center justify-between"><span className="text-lg font-bold tracking-tight lowercase text-primary">{logoText}</span><button onClick={() => setMobileOpen(false)}><X className="h-5 w-5" /></button></div><nav className="mt-8 flex flex-col gap-1">{nav.map((n) => (<Link key={`${n.label}:${n.to}`} to={n.to} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">{n.label}</Link>))}<MobileAccountLink onNavigate={() => setMobileOpen(false)} /><Link to="/favoritos" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">favoritos</Link></nav></aside></div>
+      <div className={`fixed inset-0 z-50 lg:hidden ${mobileOpen ? "" : "pointer-events-none"}`}><div onClick={() => setMobileOpen(false)} className={`absolute inset-0 bg-black/30 transition-opacity ${mobileOpen ? "opacity-100" : "opacity-0"}`} /><aside className={`absolute inset-y-0 left-0 w-[85%] max-w-sm bg-background p-6 shadow-2xl transition-transform ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}><div className="flex items-center justify-between"><div className="min-w-0">{logoImage ? <img src={logoImage} alt={logoText} className="h-9 max-w-[160px] object-contain" /> : <span className="text-lg font-bold tracking-tight lowercase text-primary">{logoText}</span>}</div><button onClick={() => setMobileOpen(false)}><X className="h-5 w-5" /></button></div><nav className="mt-8 flex flex-col gap-1">{nav.map((n) => (<Link key={`${n.label}:${n.to}`} to={n.to} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">{n.label}</Link>))}<MobileAccountLink onNavigate={() => setMobileOpen(false)} /><Link to="/favoritos" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-base lowercase hover:bg-secondary hover:text-primary">favoritos</Link></nav></aside></div>
     </>
   );
 }
