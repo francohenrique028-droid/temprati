@@ -1,11 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import { products } from "@/lib/products";
+import { fetchPublishedProducts, products, type Product } from "@/lib/products";
 import { ProductGrid } from "@/components/product/ProductGrid";
 
 function FavoritesPage() {
   const { ids } = useFavorites();
-  const items = products.filter((p) => ids.has(p.id));
+  const [catalog, setCatalog] = useState<Product[]>(products);
+
+  useEffect(() => {
+    let active = true;
+    fetchPublishedProducts().then((items) => {
+      if (!active || items === null) return;
+      setCatalog(items);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const items = catalog.filter((p) => ids.has(p.id));
   return (
     <div className="container-x py-14">
       <h1 className="text-4xl font-light tracking-tight md:text-5xl">Favoritos</h1>
