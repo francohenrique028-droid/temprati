@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ProductGrid } from "@/components/product/ProductGrid";
-import { products } from "@/lib/products";
-import { useMemo, useState } from "react";
+import { fetchPublishedProducts, products, type Product } from "@/lib/products";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, SlidersHorizontal } from "lucide-react";
 
 export const Route = createFileRoute("/categoria/$slug")({
@@ -20,20 +20,32 @@ function capitalize(s: string) {
 
 function CategoryPage() {
   const { slug } = Route.useParams();
+  const [catalog, setCatalog] = useState<Product[]>(products);
   const [sort, setSort] = useState("bestsellers");
   const [maxPrice, setMaxPrice] = useState(3000);
   const [sizes, setSizes] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
   const [collections, setCollections] = useState<string[]>([]);
 
+  useEffect(() => {
+    let active = true;
+    fetchPublishedProducts().then((data) => {
+      if (!active || data === null) return;
+      setCatalog(data);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const filtered = useMemo(() => {
-    let list = [...products];
+    let list = [...catalog];
     if (
       ["feminino", "vestidos", "blusas", "acessorios", "calcados", "conjuntos", "bolsas"].includes(
         slug,
       )
     )
-      list = list.filter((p) => p.category === slug);
+      list = slug === "feminino" ? list : list.filter((p) => p.category === slug);
     else if (slug === "novidades") list = list.filter((p) => p.isNew || p.badge === "Novo");
     else if (slug === "promocoes")
       list = list.filter((p) => !!p.oldPrice || p.badge === "Promoção");
@@ -49,11 +61,11 @@ function CategoryPage() {
     if (sort === "bestsellers")
       list.sort((a, b) => Number(!!b.bestseller) - Number(!!a.bestseller));
     return list;
-  }, [slug, sort, maxPrice, sizes, colors, collections]);
+  }, [slug, sort, maxPrice, sizes, colors, collections, catalog]);
 
-  const allSizes = Array.from(new Set(products.flatMap((p) => p.sizes)));
-  const allColors = Array.from(new Set(products.flatMap((p) => p.colors)));
-  const allCollections = ["lancamentos", "bestsellers"];
+  const allSizes = Array.from(new Set(catalog.flatMap((p) => p.sizes)));
+  const allColors = Array.from(new Set(catalog.flatMap((p) => p.colors)));
+  const allCollections = Array.from(new Set(catalog.map((p) => p.collection).filter(Boolean)));
 
   return (
     <div className="container-x py-10">
@@ -76,7 +88,7 @@ function CategoryPage() {
             <FilterBlock title="Preço">
               <input
                 type="range"
-                min={100}
+                min={0}
                 max={3000}
                 step={50}
                 value={maxPrice}
@@ -137,7 +149,7 @@ function CategoryPage() {
               </div>
             </FilterBlock>
             <FilterBlock title="Marca">
-              <p className="text-sm text-muted-foreground">Ateliê</p>
+              <p className="text-sm text-muted-foreground">temprati</p>
             </FilterBlock>
           </div>
         </aside>
