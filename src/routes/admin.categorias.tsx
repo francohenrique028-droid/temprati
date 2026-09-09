@@ -30,7 +30,7 @@ type ProductCategoryRow = {
 const defaultTitle = "categorias em destaques";
 const defaultTitleColor = "#000000";
 const categoryImagesBucket = "category-images";
-const allowedImageTypes = ["image/png", "image/jpeg", "image/webp", "image/jfif"];
+const allowedImageTypes = ["image/png", "image/jpeg", "image/webp"];
 const maxImageBytes = 5 * 1024 * 1024;
 
 function slugify(value: string) {
@@ -203,7 +203,7 @@ function CategoriasPage() {
   function selectImage(file: File | undefined) {
     if (!file) return;
     if (!allowedImageTypes.includes(file.type)) {
-      toast.error("Use uma imagem PNG, JPG, WEBP ou JFIF.");
+      toast.error("Use uma imagem PNG, JPG ou WEBP.");
       return;
     }
     if (file.size > maxImageBytes) {
@@ -449,7 +449,7 @@ function CategoriasPage() {
                           <span className="text-[12px] font-extrabold text-[#07182c]">
                             Clique para selecionar a foto da categoria
                           </span>
-                          <span className="mt-3 text-[10px] font-semibold text-[#a0a8b4]">PNG, JPG, WEBP ou JFIF ate 5MB</span>
+                          <span className="mt-3 text-[10px] font-semibold text-[#a0a8b4]">PNG, JPG ou WEBP até 5MB</span>
                         </>
                       )}
                       {(imagePreview || imageUrl) && (
@@ -459,7 +459,7 @@ function CategoriasPage() {
                       )}
                       <input
                         type="file"
-                        accept="image/png,image/jpeg,image/webp,image/jfif"
+                        accept="image/png,image/jpeg,image/webp"
                         className="sr-only"
                         onChange={(event) => selectImage(event.target.files?.[0])}
                       />
