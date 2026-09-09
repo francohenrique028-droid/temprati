@@ -28,7 +28,7 @@ export function useAdminAuth(): AdminAuthState {
       }
 
       const roleResult = await withTimeout(
-        supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }),
+        (async () => await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }))(),
         7000,
       );
       if (!mounted) return;
