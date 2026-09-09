@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Search, Pencil, Trash2 } from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -24,11 +24,15 @@ type Product = {
 const PAGE_SIZE = 20;
 
 function ProdutosPage() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [rows, setRows] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "draft">("all");
   const [page, setPage] = useState(0);
+
+  const normalizedPath = pathname.replace(/\/$/, "") || "/";
+  const isChildRoute = normalizedPath !== "/admin/produtos";
 
   async function load() {
     setLoading(true);
@@ -46,8 +50,8 @@ function ProdutosPage() {
   }
 
   useEffect(() => {
-    load(); /* eslint-disable-next-line */
-  }, [q, status, page]);
+    if (!isChildRoute) load(); /* eslint-disable-next-line */
+  }, [q, status, page, isChildRoute]);
 
   async function handleDelete(id: string) {
     if (!confirm("Excluir este produto?")) return;
@@ -58,6 +62,8 @@ function ProdutosPage() {
   }
 
   const empty = useMemo(() => !loading && rows.length === 0, [loading, rows]);
+
+  if (isChildRoute) return <Outlet />;
 
   return (
     <AdminShell title="Produtos">
