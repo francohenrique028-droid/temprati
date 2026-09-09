@@ -39,11 +39,10 @@ function readSettings(config: unknown): Settings {
   const value = (config ?? {}) as Record<string, any>;
   const header = value.header ?? {};
   const commerce = value.commerce ?? {};
-  const announcements = Array.isArray(header.announcements) ? header.announcements : [];
   return {
     storeName: String(header.logoText ?? defaultSettings.storeName),
     logoImage: String(header.logoImage ?? ""),
-    announcement: String(commerce.announcement ?? announcements[0] ?? ""),
+    announcement: String(commerce.announcement ?? ""),
     announcementEnabled: Boolean(commerce.announcementEnabled ?? false),
     announcementBg: String(commerce.announcementBg ?? defaultSettings.announcementBg),
     announcementText: String(commerce.announcementText ?? defaultSettings.announcementText),
@@ -148,7 +147,6 @@ function ConfiguracoesPage() {
           ...(base.header ?? {}),
           logoText: settings.storeName.trim(),
           logoImage,
-          announcements: settings.announcement.trim() ? [settings.announcement.trim()] : [],
         },
         commerce: {
           ...(base.commerce ?? {}),
