@@ -8,7 +8,7 @@ const sections = [
   { title: "VISÃO GERAL", items: [{ label: "Dashboard", icon: LayoutDashboard, to: "/admin/dashboard" }, { label: "Relatórios", icon: BarChart3, to: "/admin/relatorios" }] },
   { title: "CATÁLOGO", items: [{ label: "Produtos", icon: Package, to: "/admin/produtos" }, { label: "Categorias", icon: Tags, to: "/admin/categorias" }] },
   { title: "VENDAS", items: [{ label: "Pedidos", icon: ShoppingBag, to: "/admin/pedidos" }, { label: "Clientes", icon: Users, to: "/admin/clientes" }] },
-  { title: "LOJA & MARKETING", items: [{ label: "Conteúdo & Shorts", icon: Boxes }, { label: "Banners", icon: Boxes, to: "/admin/banners" }, { label: "Logística", icon: Box }, { label: "Configurações", icon: CircleDollarSign, to: "/admin/configuracoes" }, { label: "Estoque", icon: Warehouse }] },
+  { title: "LOJA & MARKETING", items: [{ label: "Conteúdo & Shorts", icon: Boxes }, { label: "Banners", icon: Boxes, to: "/admin/banners" }, { label: "Logística", icon: Box, to: "/admin/logistica" }, { label: "Configurações", icon: CircleDollarSign, to: "/admin/configuracoes" }, { label: "Estoque", icon: Warehouse }] },
 ] as const;
 
 export function AdminSidebar({ mobileOpen, setMobileOpen }: { mobileOpen?: boolean; setMobileOpen?: (v: boolean) => void }) {
