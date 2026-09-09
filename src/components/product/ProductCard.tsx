@@ -1,18 +1,13 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Heart, Plus, ShoppingBag } from "lucide-react";
+import { Plus, ShoppingBag } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Product } from "@/lib/products";
 import { formatPrice, installment } from "@/lib/products";
-import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCart } from "@/contexts/CartContext";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
-  const { has, toggle } = useFavorites();
   const { add } = useCart();
   const navigate = useNavigate();
-  const isFav = has(product.id);
 
   return (
     <motion.div
@@ -42,21 +37,6 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
               />
             )}
           </Link>
-
-          {/* Favorite */}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              toggle(product.id);
-              toast(isFav ? "removido dos favoritos" : "adicionado aos favoritos");
-            }}
-            className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm transition-transform hover:scale-110"
-            aria-label="Favoritar"
-          >
-            <Heart
-              className={cn("h-4 w-4", isFav ? "fill-[#FF0080] text-[#FF0080]" : "text-foreground")}
-            />
-          </button>
         </div>
 
         {/* Info Area */}
