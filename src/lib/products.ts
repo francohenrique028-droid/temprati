@@ -7,6 +7,7 @@ import tenisBrancoMinimal from "@/assets/tenis-branco-minimal.jpg.asset.json";
 import catBlusas from "@/assets/cat-blusas.jpg.asset.json";
 import catCalcas from "@/assets/cat-calcas.jpg.asset.json";
 import catAcessorios from "@/assets/cat-acessorios.jpg.asset.json";
+import { supabase } from "@/integrations/supabase/client";
 
 export type Product = {
   id: string;
@@ -26,6 +27,25 @@ export type Product = {
   description: string;
   video?: string;
 };
+
+type ProductRow = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  price: number | string;
+  sale_price: number | string | null;
+  category: string | null;
+  collection: string | null;
+  brand: string | null;
+  stock: number | null;
+  image_url: string | null;
+  status: string;
+  featured: boolean | null;
+  created_at: string;
+};
+
+const fallbackImage = vestidoMidiRose.url;
 
 export const products: Product[] = [
   {
@@ -164,3 +184,87 @@ export const bestsellers = () => products.filter((p) => p.bestseller);
 export const newArrivals = () => products.filter((p) => p.isNew || p.badge === "Novo");
 export const byCategory = (c: string) => products.filter((p) => p.category === c);
 export const findBySlug = (slug: string) => products.find((p) => p.slug === slug);
+
+function toSlug(value: string | null | undefined) {
+  return (value || "feminino")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function fromDbProduct(row: ProductRow): Product {
+  const basePrice = Number(row.price ?? 0);
+  const salePrice = row.sale_price == null ? null : Number(row.sale_price);
+  const hasSale = salePrice != null && salePrice > 0 && salePrice < basePrice;
+  const image = row.image_url || fallbackImage;
+  const isFeatured = Boolean(row.featured);
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    category: toSlug(row.category),
+    collection: toSlug(row.collection || (isFeatured ? "bestsellers" : "lancamentos")),
+    brand: row.brand || "temprati",
+    price: hasSale ? salePrice : basePrice,
+    oldPrice: hasSale ? basePrice : undefined,
+    badge: hasSale ? "Promoção" : isFeatured ? "Best Seller" : "Novo",
+    images: [image, image],
+    colors: ["hsl(335 75% 82%)"],
+    sizes: ["Único"],
+    bestseller: isFeatured,
+    isNew: !isFeatured,
+    description: row.description || "Produto selecionado pela #temprati.",
+  };
+}
+
+export async function fetchPublishedProducts(options: {
+  limit?: number;
+  category?: string;
+  collection?: string;
+  featured?: boolean;
+} = {}): Promise<Product[] | null> {
+  try {
+    let query = supabase
+      .from("products")
+      .select("id,slug,name,description,price,sale_price,category,collection,brand,stock,image_url,status,featured,created_at")
+      .eq("status", "active")
+      .order("created_at", { ascending: false });
+
+    if (options.category) query = query.eq("category", options.category);
+    if (options.collection) query = query.eq("collection", options.collection);
+    if (typeof options.featured === "boolean") query = query.eq("featured", options.featured);
+    if (options.limit) query = query.limit(options.limit);
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return ((data ?? []) as ProductRow[]).map(fromDbProduct);
+  } catch (error) {
+    console.error("[Products] Não foi possível carregar produtos do Supabase", error);
+    return null;
+  }
+}
+
+export async function fetchPublishedProductBySlug(slug: string): Promise<Product | null> {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("id,slug,name,description,price,sale_price,category,collection,brand,stock,image_url,status,featured,created_at")
+      .eq("status", "active")
+      .eq("slug", slug)
+      .maybeSingle();
+    if (error) throw error;
+    return data ? fromDbProduct(data as ProductRow) : null;
+  } catch (error) {
+    console.error("[Products] Não foi possível carregar produto do Supabase", error);
+    return null;
+  }
+}
+
+export async function fetchRelatedProducts(category: string, currentId: string): Promise<Product[] | null> {
+  const list = await fetchPublishedProducts({ limit: 8 });
+  if (!list) return null;
+  return list.filter((product) => product.category === category && product.id !== currentId).slice(0, 4);
+}
