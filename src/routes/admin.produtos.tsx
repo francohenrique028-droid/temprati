@@ -135,7 +135,12 @@ function ProdutosPage() {
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 overflow-hidden rounded-md bg-neutral-100">
                       {p.image_url && (
-                        <img src={p.image_url} alt="" className="h-full w-full object-cover" />
+                        <img
+                          src={p.image_url}
+                          alt=""
+                          loading="lazy"
+                          className="h-full w-full object-cover"
+                        />
                       )}
                     </div>
                     <span className="font-medium">{p.name}</span>

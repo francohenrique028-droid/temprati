@@ -70,6 +70,11 @@ const empty: Form = {
 const quickSizes = ["P", "M", "G", "GG", "XG", "36", "38", "40", "42", "44", "Único"];
 const defaultSizes: SizeStock[] = [{ label: "P", qty: 1 }];
 const categories = ["Vestidos", "Blusas", "Calças", "Calçados", "Acessórios", "Bolsas"];
+const productFields =
+  "id,name,slug,description,price,sale_price,category,collection,brand,sku,stock,weight,height,width,length,image_url,seo_title,seo_description,status,featured";
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/jfif"]);
+const ALLOWED_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".jfif"];
 
 function slugify(s: string) {
   return s
@@ -85,6 +90,27 @@ function parseMoney(value: string) {
   if (!cleaned) return 0;
   if (cleaned.includes(",")) return Number(cleaned.replace(/\./g, "").replace(",", ".")) || 0;
   return Number(cleaned) || 0;
+}
+
+function isBase64Image(value: string | null | undefined) {
+  return Boolean(value?.trim().toLowerCase().startsWith("data:image/"));
+}
+
+function validateImageFile(file: File) {
+  const extension = file.name.toLowerCase().match(/\.[a-z0-9]+$/)?.[0] ?? "";
+  const hasValidType = ALLOWED_IMAGE_TYPES.has(file.type);
+  const hasValidExtension = ALLOWED_IMAGE_EXTENSIONS.includes(extension);
+  const hasFileType = Boolean(file.type);
+
+  if ((hasFileType && !hasValidType) || (!hasFileType && !hasValidExtension)) {
+    return "Formato inválido. Envie PNG, JPG, WEBP ou JFIF.";
+  }
+
+  if (file.size > MAX_IMAGE_BYTES) {
+    return "Imagem muito grande. O limite é 10 MB por arquivo.";
+  }
+
+  return null;
 }
 
 function ProductEditor() {
@@ -103,10 +129,16 @@ function ProductEditor() {
   const stockTotal = useMemo(() => sizes.reduce((sum, item) => sum + item.qty, 0), [sizes]);
 
   useEffect(() => {
+    return () => {
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+    };
+  }, [imagePreview]);
+
+  useEffect(() => {
     if (isNew) return;
     supabase
       .from("products")
-      .select("*")
+      .select(productFields)
       .eq("id", id)
       .maybeSingle()
       .then(({ data, error }) => {
@@ -166,6 +198,11 @@ function ProductEditor() {
 
   function selectPhoto(file: File | undefined) {
     if (!file) return;
+    const error = validateImageFile(file);
+    if (error) {
+      toast.error(error);
+      return;
+    }
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
   }
@@ -200,12 +237,23 @@ function ProductEditor() {
   }
 
   async function uploadImageIfNeeded() {
+    if (isBase64Image(form.image_url)) {
+      toast.error("A imagem precisa ser arquivo no Supabase Storage, não Base64.");
+      throw new Error("Base64 image URLs are not allowed in product records.");
+    }
     if (!imageFile) return form.image_url || null;
+
+    const validationError = validateImageFile(imageFile);
+    if (validationError) {
+      toast.error(validationError);
+      throw new Error(validationError);
+    }
 
     const safeName = imageFile.name.replace(/[^a-zA-Z0-9.]/g, "-");
     const path = `${Date.now()}-${slugify(form.name) || "produto"}-${safeName}`;
     const { error } = await supabase.storage.from("product-images").upload(path, imageFile, {
       cacheControl: "3600",
+      contentType: imageFile.type || undefined,
       upsert: false,
     });
 
