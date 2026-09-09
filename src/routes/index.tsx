@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { StoriesCarousel } from "@/components/product/StoriesCarousel";
-import { fetchPublishedProducts, products, type Product } from "@/lib/products";
+import { fetchPublishedProducts, type Product } from "@/lib/products";
 import { useEffect, useMemo, useState } from "react";
 import { useTheme } from "@/lib/theme/ThemeProvider";
 import { supabase } from "@/integrations/supabase/client";
