@@ -80,6 +80,10 @@ function buildHomeCategories(names: string[]): HomeCategory[] {
   }, []);
 }
 
+function isMissingCategoryImageColumn(message: string) {
+  return message.includes("categories.image_url") && message.includes("does not exist");
+}
+
 function HomePage() {
   const { theme } = useTheme();
   const [storeProducts, setStoreProducts] = useState<Product[]>(products);
@@ -117,26 +121,48 @@ function HomePage() {
 
   useEffect(() => {
     let active = true;
-    supabase
-      .from("categories")
-      .select("name,slug,image_url")
-      .eq("status", "active")
-      .eq("show_on_home", true)
-      .order("sort_order", { ascending: true })
-      .order("name", { ascending: true })
-      .then(({ data, error }) => {
-        if (!active) return;
-        if (error) {
-          toast.error(error.message);
-          return;
-        }
+    const loadCategories = async () => {
+      const resultWithImages = await supabase
+        .from("categories")
+        .select("name,slug,image_url")
+        .eq("status", "active")
+        .eq("show_on_home", true)
+        .order("sort_order", { ascending: true })
+        .order("name", { ascending: true });
 
-        const nextCategories = (data ?? [])
-          .map((category) => ({ name: category.name, slug: category.slug, image_url: category.image_url }))
-          .filter((category) => category.name && category.slug);
+      const result =
+        resultWithImages.error && isMissingCategoryImageColumn(resultWithImages.error.message)
+          ? await supabase
+              .from("categories")
+              .select("name,slug")
+              .eq("status", "active")
+              .eq("show_on_home", true)
+              .order("sort_order", { ascending: true })
+              .order("name", { ascending: true })
+          : resultWithImages;
 
-        setHomeCategories(nextCategories.length ? nextCategories : buildHomeCategories(theme.categorySection.items));
-      });
+      if (!active) return;
+      if (result.error) {
+        toast.error(result.error.message);
+        return;
+      }
+
+      if (resultWithImages.error && isMissingCategoryImageColumn(resultWithImages.error.message)) {
+        toast.error("A migration de imagens de categoria ainda não foi aplicada no Supabase.");
+      }
+
+      const nextCategories = (result.data ?? [])
+        .map((category) => ({
+          name: category.name,
+          slug: category.slug,
+          image_url: "image_url" in category ? category.image_url : null,
+        }))
+        .filter((category) => category.name && category.slug);
+
+      setHomeCategories(nextCategories.length ? nextCategories : buildHomeCategories(theme.categorySection.items));
+    };
+
+    void loadCategories();
     return () => {
       active = false;
     };

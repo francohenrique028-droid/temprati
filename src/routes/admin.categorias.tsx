@@ -46,6 +46,10 @@ function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
 }
 
+function isMissingImageUrlColumn(message: string) {
+  return message.includes("categories.image_url") && message.includes("does not exist");
+}
+
 function fileExtension(file: File) {
   const fromName = file.name.split(".").pop()?.toLowerCase();
   if (fromName) return fromName === "jpg" ? "jpeg" : fromName;
@@ -72,13 +76,21 @@ function CategoriasPage() {
   const [themeConfig, setThemeConfig] = useState<Record<string, unknown>>({});
   const [themeReady, setThemeReady] = useState(false);
   const [loadError, setLoadError] = useState("");
+  const [imageColumnReady, setImageColumnReady] = useState(true);
 
   async function load() {
     setLoading(true);
     setLoadError("");
     setThemeReady(false);
 
-    const [categoriesResult, productsResult, themeResult] = await Promise.all([
+    const categoriesQuery = () =>
+      supabase
+        .from("categories")
+        .select("id,name,slug,description,status,show_on_home,sort_order")
+        .order("sort_order", { ascending: true })
+        .order("name", { ascending: true });
+
+    const [categoriesResultWithImage, productsResult, themeResult] = await Promise.all([
       supabase
         .from("categories")
         .select("id,name,slug,description,image_url,status,show_on_home,sort_order")
@@ -88,11 +100,25 @@ function CategoriasPage() {
       supabase.from("theme_settings").select("config").eq("singleton", true).maybeSingle(),
     ]);
 
+    const categoriesResult =
+      categoriesResultWithImage.error && isMissingImageUrlColumn(categoriesResultWithImage.error.message)
+        ? await categoriesQuery()
+        : categoriesResultWithImage;
+
+    setImageColumnReady(!categoriesResultWithImage.error || !isMissingImageUrlColumn(categoriesResultWithImage.error.message));
+
     if (categoriesResult.error) {
       toast.error(categoriesResult.error.message);
       setLoadError(categoriesResult.error.message);
     } else {
-      setRows((categoriesResult.data ?? []) as Category[]);
+      const nextRows = (categoriesResult.data ?? []).map((category) => ({
+        ...category,
+        image_url: "image_url" in category ? category.image_url : null,
+      }));
+      setRows(nextRows as Category[]);
+      if (categoriesResultWithImage.error && isMissingImageUrlColumn(categoriesResultWithImage.error.message)) {
+        toast.error("A coluna categories.image_url ainda não existe no Supabase. A lista foi carregada, mas o upload de foto depende da migration.");
+      }
     }
 
     if (productsResult.error) {
@@ -209,6 +235,10 @@ function CategoriasPage() {
   async function saveCategory() {
     const cleanName = name.trim();
     if (!cleanName) return toast.error("Informe o nome da categoria.");
+    if (imageFile && !imageColumnReady) {
+      toast.error("Para salvar foto de categoria, rode primeiro a migration que adiciona categories.image_url e o bucket category-images.");
+      return;
+    }
 
     setSaving(true);
     const nextSlug = slugify(cleanName);
@@ -232,14 +262,14 @@ function CategoriasPage() {
       name: cleanName,
       slug: nextSlug,
       description: description.trim() || null,
-      image_url: uploadedImageUrl,
       status,
       show_on_home: showOnHome,
     };
+    const payloadWithImage = imageColumnReady ? { ...payload, image_url: uploadedImageUrl } : payload;
 
     const result = editingId
-      ? await supabase.from("categories").update(payload).eq("id", editingId)
-      : await supabase.from("categories").insert({ ...payload, sort_order: rows.length });
+      ? await supabase.from("categories").update(payloadWithImage).eq("id", editingId)
+      : await supabase.from("categories").insert({ ...payloadWithImage, sort_order: rows.length });
 
     setSaving(false);
 
