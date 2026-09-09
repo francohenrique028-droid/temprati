@@ -48,14 +48,24 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data } = await (supabase as any)
-        .from("theme_settings")
-        .select("config")
-        .eq("singleton", true)
-        .maybeSingle();
-      if (cancelled) return;
-      if (data?.config) setTheme(deepMerge(defaultTheme, data.config));
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data, error } = await (supabase as any)
+          .from("theme_settings")
+          .select("config")
+          .eq("singleton", true)
+          .maybeSingle();
+        if (cancelled) return;
+        if (error) {
+          console.warn("[Theme] Usando tema padrão:", error.message);
+          return;
+        }
+        if (data?.config) setTheme(deepMerge(defaultTheme, data.config));
+      } catch (error) {
+        if (!cancelled) {
+          console.warn("[Theme] Usando tema padrão porque o Supabase ainda não respondeu.", error);
+        }
+      }
     })();
     return () => {
       cancelled = true;
