@@ -4,8 +4,7 @@ import { defaultTheme, type ThemeConfig } from "./types";
 
 type Ctx = { theme: ThemeConfig; isEditorPreview: boolean };
 const ThemeCtx = createContext<Ctx>({ theme: defaultTheme, isEditorPreview: false });
-const THEME_CACHE_KEY = "temprati:theme:cache:v1";
-const THEME_CACHE_EVENT = "temprati:theme:cache-updated";
+const LEGACY_THEME_CACHE_KEY = "temprati:theme:cache:v1";
 
 function deepMerge<T>(base: T, patch: unknown): T {
   if (patch === null || patch === undefined) return base;
@@ -15,27 +14,6 @@ function deepMerge<T>(base: T, patch: unknown): T {
     out[k] = deepMerge((base as Record<string, unknown>)[k], (patch as Record<string, unknown>)[k]);
   }
   return out as T;
-}
-
-function readCachedTheme(): ThemeConfig {
-  if (typeof window === "undefined") return defaultTheme;
-  try {
-    const raw = window.localStorage.getItem(THEME_CACHE_KEY);
-    if (!raw) return defaultTheme;
-    return deepMerge(defaultTheme, JSON.parse(raw));
-  } catch {
-    return defaultTheme;
-  }
-}
-
-function cacheTheme(theme: ThemeConfig) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(THEME_CACHE_KEY, JSON.stringify(theme));
-    window.dispatchEvent(new CustomEvent(THEME_CACHE_EVENT));
-  } catch {
-    // Ignore cache failures; the database remains the source of truth.
-  }
 }
 
 function applyCssVars(theme: ThemeConfig) {
@@ -207,13 +185,16 @@ async function installProductCategoryCleanup() {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<ThemeConfig>(() => readCachedTheme());
+  const [theme, setTheme] = useState<ThemeConfig>(() => defaultTheme);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(LEGACY_THEME_CACHE_KEY);
+    }
+
     let cancelled = false;
     (async () => {
       try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { data, error } = await (supabase as any)
           .from("theme_settings")
           .select("config")
@@ -221,28 +202,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           .maybeSingle();
         if (cancelled) return;
         if (error) {
-          console.warn("[Theme] Usando tema armazenado localmente:", error.message);
+          console.warn("[Theme] Não foi possível carregar as configurações do painel:", error.message);
           return;
         }
         if (data?.config) {
-          const nextTheme = deepMerge(defaultTheme, data.config);
-          setTheme(nextTheme);
-          cacheTheme(nextTheme);
+          setTheme(deepMerge(defaultTheme, data.config));
         }
       } catch (error) {
         if (!cancelled) {
-          console.warn("[Theme] Usando tema armazenado localmente porque o Supabase ainda não respondeu.", error);
+          console.warn("[Theme] Não foi possível carregar as configurações do painel:", error);
         }
       }
     })();
 
-    const onCacheUpdated = () => {
-      setTheme(readCachedTheme());
-    };
-    window.addEventListener(THEME_CACHE_EVENT, onCacheUpdated);
     return () => {
       cancelled = true;
-      window.removeEventListener(THEME_CACHE_EVENT, onCacheUpdated);
     };
   }, []);
 
