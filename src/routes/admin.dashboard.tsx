@@ -9,23 +9,25 @@ export const Route = createFileRoute("/admin/dashboard")({
   component: DashboardPage,
 });
 
-type Metric = { label: string; value: number | string; icon: typeof Package; iconClass: string; iconBg: string; to?: "/admin/produtos" | "/admin/categorias" | "/admin/clientes" | "/admin/pedidos" };
+type Metric = { label: string; value: number | string; icon: typeof Package; iconClass: string; iconBg: string; to?: "/admin/produtos" | "/admin/categorias" | "/admin/clientes" | "/admin/pedidos" | "/admin/logistica" };
 
 function DashboardPage() {
   const [products, setProducts] = useState(0);
   const [clients, setClients] = useState(0);
   const [orders, setOrders] = useState(0);
   const [lowStock, setLowStock] = useState(0);
+  const [logisticsPending, setLogisticsPending] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   async function loadDashboard(isManualRefresh = false) {
     if (isManualRefresh) setRefreshing(true);
-    const [productsResult, profilesResult, adminRolesResult, ordersResult] = await Promise.all([
+    const [productsResult, profilesResult, adminRolesResult, ordersResult, logisticsResult] = await Promise.all([
       supabase.from("products").select("id,stock"),
       supabase.from("profiles").select("id"),
       supabase.from("user_roles").select("user_id").eq("role", "admin"),
       (supabase as any).from("orders").select("id"),
+      (supabase as any).from("orders").select("id").not("status", "eq", "cancelled").in("logistics_status", ["awaiting_processing", "preparing", "awaiting_post"]),
     ]);
     if (!productsResult.error) {
       const rows = productsResult.data ?? [];
@@ -37,18 +39,23 @@ function DashboardPage() {
       setClients((profilesResult.data ?? []).filter((profile) => !adminIds.has(profile.id)).length);
     }
     if (!ordersResult.error) setOrders((ordersResult.data ?? []).length);
+    if (!logisticsResult.error) setLogisticsPending((logisticsResult.data ?? []).length);
     setLoading(false);
     if (isManualRefresh) setRefreshing(false);
   }
 
-  useEffect(() => { void loadDashboard(); }, []);
+  useEffect(() => {
+    void loadDashboard();
+    const channel = supabase.channel("dashboard-logistics-realtime").on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => void loadDashboard()).subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, []);
 
   const metrics: Metric[] = [
     { label: "Produtos", value: loading ? "—" : products, icon: Package, iconClass: "text-slate-500", iconBg: "bg-slate-100", to: "/admin/produtos" },
     { label: "Pedidos", value: loading ? "—" : orders, icon: ShoppingBag, iconClass: "text-pink-500", iconBg: "bg-pink-50", to: "/admin/pedidos" },
     { label: "Clientes", value: loading ? "—" : clients, icon: Users, iconClass: "text-rose-500", iconBg: "bg-rose-50", to: "/admin/clientes" },
     { label: "Estoque baixo", value: loading ? "—" : lowStock, icon: ArrowUpRight, iconClass: "text-rose-500", iconBg: "bg-rose-50" },
-    { label: "Aguardando logística", value: 0, icon: Box, iconClass: "text-sky-500", iconBg: "bg-sky-50" },
+    { label: "Aguardando logística", value: loading ? "—" : logisticsPending, icon: Box, iconClass: "text-sky-500", iconBg: "bg-sky-50", to: "/admin/logistica" },
   ];
 
   return (
