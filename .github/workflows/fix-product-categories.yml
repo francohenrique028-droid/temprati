@@ -1,0 +1,61 @@
+name: Fix product category selector
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'src/routes/admin.produtos.$id.tsx'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch category selector
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/routes/admin.produtos.$id.tsx')
+          text = path.read_text(encoding='utf-8')
+
+          old_constant = 'const categories = ["Vestidos", "Blusas", "Calças", "Calçados", "Acessórios", "Bolsas"];\n'
+          if old_constant not in text:
+              raise SystemExit('Legacy category constant not found')
+          text = text.replace(old_constant, '', 1)
+
+          old_state = '''  const [saving, setSaving] = useState(false);\n'''
+          new_state = '''  const [saving, setSaving] = useState(false);\n  const [categoryOptions, setCategoryOptions] = useState<{ id: string; name: string }[]>([]);\n'''
+          if old_state not in text:
+              raise SystemExit('State anchor not found')
+          text = text.replace(old_state, new_state, 1)
+
+          effect_anchor = '''  useEffect(() => {\n    if (isNew) return;\n'''
+          new_effect = '''  useEffect(() => {\n    let cancelled = false;\n\n    (async () => {\n      const { data, error } = await (supabase as any)\n        .from("categories")\n        .select("id,name")\n        .eq("status", "active")\n        .order("sort_order", { ascending: true })\n        .order("name", { ascending: true });\n\n      if (cancelled) return;\n      if (error) {\n        setCategoryOptions([]);\n        return;\n      }\n\n      setCategoryOptions(\n        (data ?? [])\n          .map((row: { id?: unknown; name?: unknown }) => ({\n            id: String(row.id ?? ""),\n            name: String(row.name ?? "").trim(),\n          }))\n          .filter((row: { id: string; name: string }) => row.id && row.name),\n      );\n    })();\n\n    return () => {\n      cancelled = true;\n    };\n  }, []);\n\n  useEffect(() => {\n    if (isNew) return;\n'''
+          if effect_anchor not in text:
+              raise SystemExit('Product loading effect anchor not found')
+          text = text.replace(effect_anchor, new_effect, 1)
+
+          old_render = '''                      {categories.map((category) => (\n                        <option key={category} value={category}>\n                          {category}\n                        </option>\n                      ))}\n'''
+          new_render = '''                      {categoryOptions.map((category) => (\n                        <option key={category.id} value={category.name}>\n                          {category.name}\n                        </option>\n                      ))}\n'''
+          if old_render not in text:
+              raise SystemExit('Legacy category render not found')
+          text = text.replace(old_render, new_render, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit patch and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/routes/admin.produtos.$id.tsx .github/workflows/fix-product-categories.yml
+          git rm .github/workflows/fix-product-categories.yml
+          git commit -m "fix: remove legacy product categories"
+          git push
