@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
-import { products } from "@/lib/products";
+import { useEffect, useMemo, useState } from "react";
+import { fetchPublishedProducts, products, type Product } from "@/lib/products";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Search } from "lucide-react";
 
@@ -13,13 +13,29 @@ export const Route = createFileRoute("/busca")({
 function SearchPage() {
   const { q: initial } = Route.useSearch();
   const [q, setQ] = useState(initial);
+  const [catalog, setCatalog] = useState<Product[]>(products);
+
+  useEffect(() => {
+    let active = true;
+    fetchPublishedProducts().then((items) => {
+      if (!active || items === null) return;
+      setCatalog(items);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const results = useMemo(() => {
     if (!q.trim()) return [];
     const s = q.toLowerCase();
-    return products.filter(
-      (p) => p.name.toLowerCase().includes(s) || p.category.includes(s) || p.collection.includes(s),
+    return catalog.filter(
+      (p) =>
+        p.name.toLowerCase().includes(s) ||
+        p.category.toLowerCase().includes(s) ||
+        p.collection.toLowerCase().includes(s),
     );
-  }, [q]);
+  }, [catalog, q]);
   const cats = Array.from(new Set(results.map((r) => r.category)));
 
   return (
