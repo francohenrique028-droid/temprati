@@ -3,6 +3,7 @@ import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -89,7 +90,11 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const isAdminRoute = typeof window !== "undefined" && window.location.pathname.startsWith("/admin");
+  // Use TanStack Router state instead of window.location during render.
+  // Reading window on the client made SSR render the storefront while the
+  // client immediately rendered the admin outlet, causing React hydration #418.
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const isAdminRoute = pathname.startsWith("/admin");
 
   return (
     <QueryClientProvider client={queryClient}>
