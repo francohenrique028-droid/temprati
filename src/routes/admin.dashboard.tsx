@@ -9,14 +9,7 @@ export const Route = createFileRoute("/admin/dashboard")({
   component: DashboardPage,
 });
 
-type Metric = {
-  label: string;
-  value: number | string;
-  icon: typeof Package;
-  iconClass: string;
-  iconBg: string;
-  to?: "/admin/produtos" | "/admin/categorias" | "/admin/clientes" | "/admin/pedidos";
-};
+type Metric = { label: string; value: number | string; icon: typeof Package; iconClass: string; iconBg: string; to?: "/admin/produtos" | "/admin/categorias" | "/admin/clientes" | "/admin/pedidos" };
 
 function DashboardPage() {
   const [products, setProducts] = useState(0);
@@ -28,36 +21,27 @@ function DashboardPage() {
 
   async function loadDashboard(isManualRefresh = false) {
     if (isManualRefresh) setRefreshing(true);
-
     const [productsResult, profilesResult, adminRolesResult, ordersResult] = await Promise.all([
       supabase.from("products").select("id,stock"),
       supabase.from("profiles").select("id"),
       supabase.from("user_roles").select("user_id").eq("role", "admin"),
-      supabase.from("orders").select("id"),
+      (supabase as any).from("orders").select("id"),
     ]);
-
     if (!productsResult.error) {
       const rows = productsResult.data ?? [];
       setProducts(rows.length);
       setLowStock(rows.filter((row) => Number(row.stock ?? 0) <= 5).length);
     }
-
     if (!profilesResult.error && !adminRolesResult.error) {
       const adminIds = new Set((adminRolesResult.data ?? []).map((row) => row.user_id));
       setClients((profilesResult.data ?? []).filter((profile) => !adminIds.has(profile.id)).length);
     }
-
-    if (!ordersResult.error) {
-      setOrders((ordersResult.data ?? []).length);
-    }
-
+    if (!ordersResult.error) setOrders((ordersResult.data ?? []).length);
     setLoading(false);
     if (isManualRefresh) setRefreshing(false);
   }
 
-  useEffect(() => {
-    void loadDashboard();
-  }, []);
+  useEffect(() => { void loadDashboard(); }, []);
 
   const metrics: Metric[] = [
     { label: "Produtos", value: loading ? "—" : products, icon: Package, iconClass: "text-slate-500", iconBg: "bg-slate-100", to: "/admin/produtos" },
@@ -72,32 +56,11 @@ function DashboardPage() {
       <div className="min-h-screen -m-4 md:-m-6 bg-[#f7f9fc] px-6 py-7 md:px-8 md:py-8 lg:px-9 lg:py-7">
         <div className="mx-auto max-w-[1400px]">
           <div className="flex items-start justify-between gap-6">
-            <div>
-              <h1 className="text-[30px] font-extrabold leading-none tracking-[-0.035em] text-[#102a48] md:text-[36px]">DASHBOARD</h1>
-              <p className="mt-2 text-[12px] text-[#7890aa]">Bem-vindo ao painel administrativo da #temprati.</p>
-            </div>
-            <button type="button" onClick={() => void loadDashboard(true)} className="inline-flex h-9 shrink-0 items-center gap-2 rounded-lg border border-[#d7dee7] bg-white px-3.5 text-[11px] font-semibold text-[#33475b] shadow-sm transition hover:bg-[#f9fafb]">
-              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />Atualizar dados
-            </button>
+            <div><h1 className="text-[30px] font-extrabold leading-none tracking-[-0.035em] text-[#102a48] md:text-[36px]">DASHBOARD</h1><p className="mt-2 text-[12px] text-[#7890aa]">Bem-vindo ao painel administrativo da #temprati.</p></div>
+            <button type="button" onClick={() => void loadDashboard(true)} className="inline-flex h-9 shrink-0 items-center gap-2 rounded-lg border border-[#d7dee7] bg-white px-3.5 text-[11px] font-semibold text-[#33475b] shadow-sm transition hover:bg-[#f9fafb]"><RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />Atualizar dados</button>
           </div>
           <section className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
-            {metrics.map((metric) => {
-              const Icon = metric.icon;
-              const cardClass = "group flex h-[82px] items-center justify-between rounded-2xl border border-[#edf0f4] bg-white px-5 shadow-[0_2px_7px_rgba(15,23,42,0.045)] transition-all";
-              const interactiveClass = "cursor-pointer hover:-translate-y-0.5 hover:border-[#d9e0e8] hover:shadow-[0_6px_16px_rgba(15,23,42,0.08)]";
-              const content = (
-                <>
-                  <div className="min-w-0"><p className="truncate text-[10px] font-semibold uppercase tracking-[0.09em] text-[#61768d]">{metric.label}</p><p className="mt-2 text-[21px] font-extrabold leading-none text-[#10233a]">{metric.value}</p></div>
-                  <div className={`ml-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] ${metric.iconBg}`}><Icon className={`h-[18px] w-[18px] ${metric.iconClass}`} strokeWidth={1.8} /></div>
-                </>
-              );
-
-              if (metric.to) {
-                return <Link key={metric.label} to={metric.to} aria-label={`Abrir ${metric.label}`} className={`${cardClass} ${interactiveClass}`}>{content}</Link>;
-              }
-
-              return <div key={metric.label} className={cardClass}>{content}</div>;
-            })}
+            {metrics.map((metric) => { const Icon = metric.icon; const cardClass = "group flex h-[82px] items-center justify-between rounded-2xl border border-[#edf0f4] bg-white px-5 shadow-[0_2px_7px_rgba(15,23,42,0.045)] transition-all"; const interactiveClass = "cursor-pointer hover:-translate-y-0.5 hover:border-[#d9e0e8] hover:shadow-[0_6px_16px_rgba(15,23,42,0.08)]"; const content = <><div className="min-w-0"><p className="truncate text-[10px] font-semibold uppercase tracking-[0.09em] text-[#61768d]">{metric.label}</p><p className="mt-2 text-[21px] font-extrabold leading-none text-[#10233a]">{metric.value}</p></div><div className={`ml-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] ${metric.iconBg}`}><Icon className={`h-[18px] w-[18px] ${metric.iconClass}`} strokeWidth={1.8} /></div></>; if (metric.to) return <Link key={metric.label} to={metric.to} aria-label={`Abrir ${metric.label}`} className={`${cardClass} ${interactiveClass}`}>{content}</Link>; return <div key={metric.label} className={cardClass}>{content}</div>; })}
           </section>
           <div className="min-h-[520px]" />
         </div>
