@@ -19,8 +19,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { StoriesCarousel } from "@/components/product/StoriesCarousel";
-import { bestsellers, products } from "@/lib/products";
-import { useState } from "react";
+import { bestsellers, fetchPublishedProducts, products, type Product } from "@/lib/products";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useTheme } from "@/lib/theme/ThemeProvider";
 
@@ -57,8 +57,31 @@ const categories = [
 
 function HomePage() {
   const { theme } = useTheme();
+  const [storeProducts, setStoreProducts] = useState<Product[]>(products);
+  const [loadedFromDatabase, setLoadedFromDatabase] = useState(false);
   const desk = theme.banner.desktopImage || bannerDesktop.url;
   const mob = theme.banner.mobileImage || bannerMobile.url;
+
+  useEffect(() => {
+    let active = true;
+    fetchPublishedProducts().then((data) => {
+      if (!active || data === null) return;
+      setStoreProducts(data);
+      setLoadedFromDatabase(true);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const featuredProducts = useMemo(() => {
+    const source = loadedFromDatabase ? storeProducts : bestsellers();
+    const featured = source.filter((product) => product.bestseller);
+    return (featured.length ? featured : source).slice(0, 8);
+  }, [loadedFromDatabase, storeProducts]);
+
+  const storyProducts = useMemo(() => storeProducts.slice(0, 9), [storeProducts]);
+
   return (
     <>
       {/* HERO */}
@@ -143,30 +166,32 @@ function HomePage() {
             ver todos →
           </Link>
         </div>
-        <ProductGrid items={bestsellers()} />
+        {featuredProducts.length ? (
+          <ProductGrid items={featuredProducts} />
+        ) : (
+          <p className="py-12 text-center text-sm text-muted-foreground">
+            Nenhum produto ativo cadastrado ainda.
+          </p>
+        )}
       </section>
 
       {/* STORIES CAROUSEL — destaques */}
-      <section className="container-x py-16">
-        <StoriesCarousel
-          cards={products.slice(0, 9).map((p) => ({
-            id: p.id,
-            image: p.images[0],
-            thumb: p.images[0],
-            name: p.name,
-            price: p.price,
-            oldPrice: p.oldPrice,
-            rating: 5,
-            href: `/produto/${p.slug}`,
-          }))}
-        />
-      </section>
-
-
-
-
-
-
+      {storyProducts.length > 0 && (
+        <section className="container-x py-16">
+          <StoriesCarousel
+            cards={storyProducts.map((p) => ({
+              id: p.id,
+              image: p.images[0],
+              thumb: p.images[0],
+              name: p.name,
+              price: p.price,
+              oldPrice: p.oldPrice,
+              rating: 5,
+              href: `/produto/${p.slug}`,
+            }))}
+          />
+        </section>
+      )}
 
       {/* NEWSLETTER */}
       <Newsletter />
