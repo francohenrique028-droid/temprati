@@ -31,7 +31,7 @@ const sections = [
     title: "CATÁLOGO",
     items: [
       { label: "Produtos", icon: Package, to: "/admin/produtos" },
-      { label: "Categorias", icon: Tags },
+      { label: "Categorias", icon: Tags, to: "/admin/categorias" },
     ],
   },
   {
